@@ -1,0 +1,416 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+/* =========================
+   GLOBAL RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  background: #05010f;
+  color: white;
+ font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
+}
+
+/* =========================
+   TEXT SELECTION
+========================= */
+
+*::selection {
+  background: #ffffff;
+  color: #7e22ce;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #05010f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7e22ce;
+  border-radius: 50px;
+}
+
+@media (max-width: 400px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Hide scrollbar utility */
+
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar,
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =========================
+   SHIMMER LOADER
+========================= */
+
+.stroke {
+  max-height: 380px;
+  background: #d6d6d6;
+}
+
+.animate {
+  animation: shimmer 3s infinite;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.08)
+  );
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -1000px 0;
+  }
+
+  to {
+    background-position: 1000px 0;
+  }
+}
+
+/* =========================
+   BUTTON ANIMATION
+========================= */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn.btn-bg-slide {
+  z-index: 1;
+  background: rgba(43, 5, 74, 0.75);
+}
+
+.btn.btn-bg-slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to bottom right,
+    rgba(89, 21, 134, 0.8),
+    rgba(92, 6, 138, 0.9),
+    rgba(47, 0, 78, 0.8)
+  );
+
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms ease;
+  z-index: -1;
+}
+
+.btn.btn-bg-slide:hover::before,
+.btn.btn-bg-slide:focus::before {
+  transform: scaleX(1);
+}
+
+/* =========================
+   HEADER LINKS
+========================= */
+
+.lii {
+  transition: all 0.4s ease-in-out;
+}
+
+/* =========================
+   FLOATING LABEL INPUT
+========================= */
+
+.spanCSS {
+  transition: 0.2s ease;
+}
+
+.inputCSS:focus + .spanCSS,
+.inputCSS:valid + .spanCSS {
+  top: -15px;
+  font-size: 14px;
+}
+
+/* =========================
+   CARD BOX
+========================= */
+
+.card-box {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   FOOTER SHADOW
+========================= */
+
+.foot {
+  box-shadow: 0 -4px 40px rgba(26, 26, 26, 0.7);
+}
+
+/* =========================
+   HAND ANIMATION
+========================= */
+
+.hand {
+  animation: hand 10s linear infinite;
+}
+
+@keyframes hand {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   ADMIN PANEL
+========================= */
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+
+  background: linear-gradient(
+    135deg,
+    #0f172a,
+    #1e1b4b,
+    #4c1d95
+  );
+}
+
+.admin-main {
+  width: 100%;
+  margin-left: 280px;
+  padding: 30px;
+}
+
+.admin-title {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 260px;
+  height: 100vh;
+
+  padding: 25px;
+
+  background: rgba(20, 20, 20, 0.35);
+
+  backdrop-filter: blur(20px);
+
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-logo {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+.admin-link {
+  display: block;
+
+  padding: 14px 18px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+  color: white;
+
+  transition: all 0.3s;
+}
+
+.admin-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  transform: translateX(5px);
+}
+
+.admin-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+  gap: 20px;
+}
+
+.admin-card {
+  padding: 25px;
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  text-align: center;
+  color: white;
+
+  transition: all 0.3s;
+}
+
+.admin-card:hover {
+  transform: translateY(-6px);
+}
+
+.admin-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.admin-card h1 {
+  font-size: 42px;
+}
+
+.admin-section {
+  margin-top: 30px;
+  padding: 25px;
+
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px);
+
+  color: white;
+}
+
+.logout-btn {
+  width: 100%;
+  margin-top: 40px;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 14px;
+
+  cursor: pointer;
+
+  background: #ef4444;
+  color: white;
+  font-weight: 600;
+
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+/* =========================
+   GLASS EFFECT
+========================= */
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+   PURPLE GLOW
+========================= */
+
+.glow-purple {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.35);
+}
+
+/* =========================
+   RESULT CONTAINER
+========================= */
+
+.result-container {
+  color: #f3e8ff;
+}
+
+.result-container h2 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: #ffb46c;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 12px;
+}
+
+.result-container h3 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  color: #d8a4ff;
+}
+
+.result-container p {
+  font-size: 18px;
+  line-height: 2;
+  margin-bottom: 18px;
+  color: #f5eaff;
+}
+
+.result-container ul {
+  padding-left: 30px;
+  margin-bottom: 25px;
+}
+
+.result-container li {
+  line-height: 2;
+  margin-bottom: 10px;
+}
+
+.result-container strong {
+  color: #ffd27d;
+}
+
+.result-container div {
+  margin-bottom: 15px;
+}

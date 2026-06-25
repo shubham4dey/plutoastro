@@ -1,0 +1,60 @@
+{
+  "short_name": "PlutoAstro",
+  "name": "PlutoAstro - AI Astrology & Kundli",
+  "description": "AI-powered astrology platform with Kundli generation, daily horoscope, and expert astrologer consultations. Discover your cosmic destiny with ancient Vedic wisdom.",
+
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logotext92.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+
+  "theme_color": "#4c1d95",
+  "background_color": "#0f0720",
+
+  "categories": [
+    "lifestyle",
+    "entertainment",
+    "utilities"
+  ],
+
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+
+  "related_applications": [],
+  "prefer_related_applications": false,
+
+  "lang": "en",
+  "dir": "ltr"
+}
