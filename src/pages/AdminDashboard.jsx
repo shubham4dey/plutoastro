@@ -43,7 +43,7 @@ function AdminDashboard() {
           );
 
         const res = await fetch(
-          "http://http://plutoastro-api.onrender.com/api/admin/dashboard",
+          "http://plutoastro-api.onrender.com/api/admin/dashboard",
           {
             headers: {
               Authorization:
