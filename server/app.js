@@ -19,10 +19,14 @@ const app = express();
 app.use(
   cors({
     origin: [
+      "https://plutoastro.com",
+      "https://www.plutoastro.com",
       "http://localhost:3000",
       "http://192.168.0.113:3000",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
