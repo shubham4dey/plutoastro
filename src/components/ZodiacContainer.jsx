@@ -10,7 +10,7 @@ const ZodiacContainer = () => {
 
   return (
     <div className="flex-col px-4 lg:px-14 flex justify-center lg:my-10 items-start relative w-12/12 opacity-90">
-      <div className="lg:h-[50vh] px-4 lg:px-10 flex flex-col justify-center  items-center 2xl:my-4  lg:my-14 pt-6 lg:pt-24 py-4 rounded-2xl w-full">
+      <div className="lg:h-[50vh] px-4 lg:px-10 flex flex-col justify-center  items-center 2xl:my-4  lg:my-14 pt-10 lg:pt-24 py-4 rounded-2xl w-full">
         <div className="flex justify-center items-center flex-col">
           <span className="lg:text-3xl 2xl:text-6xl text-2xl text-center lg:font-semibold  font-[600] text-purple-300 pb-1.5 lg:pb-3 tracking-wider opacity-90 lg:tracking-normal">{lang[LangKey].horoTitle}</span>
           <img alt="line"

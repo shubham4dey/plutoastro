@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import bg from "../image/bg1.jpg";
 
 const BecomeAstrologer = () => {
   const [formData, setFormData] = useState({
@@ -80,7 +81,14 @@ const BecomeAstrologer = () => {
   };
 
   return (
-    <div className="min-h-screen pt-40 pb-20 px-4 bg-gradient-to-b from-black via-[#050012] to-black">
+    <div className="relative w-full">
+  <img
+    src={bg}
+    alt="bg"
+    className="h-screen w-full md:scale-100 scale-x-[3] brightness-50 fixed top-0 left-0 -z-40"
+  />
+
+  <div className="min-h-screen pt-40 pb-20 px-4 relative z-10">
 
       {/* Back Button */}
       <div className="max-w-7xl mx-auto mb-8">
@@ -340,6 +348,7 @@ const BecomeAstrologer = () => {
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 };

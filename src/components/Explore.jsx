@@ -10,9 +10,7 @@ import hand from "../image/hand.png";
 import { addBot } from "../store/configAppSlice";
 
 const Explore = () => {
-  const Langkey = useSelector(
-    (store) => store.configApp.lang
-  );
+  const Langkey = useSelector((store) => store.configApp.lang);
 
   const dispatch = useDispatch();
 
@@ -33,8 +31,8 @@ const Explore = () => {
           justify-center
           items-center
           px-6
-          lg:px-16
-          pt-28
+          lg:px-[8rem]
+          pt-22
           lg:pt-20
           pb-20
           overflow-hidden
@@ -55,49 +53,49 @@ const Explore = () => {
           "
         >
           <h3
-className="
-text-2xl
-lg:text-5xl
-uppercase
-tracking-[12px]
-text-white
-font-light
-mb-4
-"
->
+            className="
+            text-2xl
+            lg:text-5xl
+            uppercase
+            tracking-[12px]
+            text-white
+            font-light
+            mb-4
+            "
+          >
             {lang[Langkey].welcome}
           </h3>
 
           <h1
-className="
-text-6xl
-md:text-8xl
-lg:text-[9rem]
-font-extrabold
-mb-4
-bg-gradient-to-r
-from-purple-100
-via-purple-300
-to-purple-500
-bg-clip-text
-text-transparent
-leading-none
-drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]
-"
->
+          className="
+            text-6xl
+            md:text-8xl
+            lg:text-[9rem]
+            font-extrabold
+            mb-4
+            bg-gradient-to-r
+            from-purple-100
+            via-purple-300
+            to-purple-500
+            bg-clip-text
+            text-transparent
+            leading-none
+            drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]
+            "
+        >
             {lang[Langkey].astroGPT}
           </h1>
 
           <p
-className="
-text-xl
-lg:text-4xl
-text-white
-uppercase
-tracking-[8px]
-mb-6
-"
->
+            className="
+            text-xl
+            lg:text-4xl
+            text-white
+            uppercase
+            tracking-[8px]
+            mb-6
+            "
+          >
             {lang[Langkey].finger}
           </p>
 
@@ -205,7 +203,7 @@ mb-6
             flex
             justify-center
             items-center
-            mt-16
+            mt-28
             lg:mt-0
           "
         >
@@ -214,7 +212,7 @@ mb-6
             alt="Hand Background"
             className="
               absolute
-              w-[70%]
+              w-[90%]
               lg:w-[85%]
               hand
               opacity-90
@@ -227,7 +225,7 @@ mb-6
             className="
               relative
               z-10
-              w-[35%]
+              w-[50%]
               lg:w-[45%]
             "
           />

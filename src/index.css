@@ -1,9 +1,8 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
 
 /* =========================
    GLOBAL RESET
@@ -20,9 +19,8 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
-  background: #05010f;
   color: white;
- font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   overflow-x: hidden;
 }
 
@@ -207,12 +205,7 @@ body,
   display: flex;
   min-height: 100vh;
 
-  background: linear-gradient(
-    135deg,
-    #0f172a,
-    #1e1b4b,
-    #4c1d95
-  );
+  background: linear-gradient(135deg, #0f172a, #1e1b4b, #4c1d95);
 }
 
 .admin-main {
