@@ -66,7 +66,7 @@ function AIChat() {
           return;
         }
 
-        const url = `http://plutoastro-api.onrender.com/api/ai-astrologers/${id}`;
+        const url = `https://plutoastro-api.onrender.com/api/ai-astrologers/${id}`;
 
         console.log(
           "FETCH URL =",
@@ -130,7 +130,7 @@ function AIChat() {
       try {
         const response =
           await axios.post(
-            "http://plutoastro-api.onrender.com/api/openai/chat",
+            "https://plutoastro-api.onrender.com/api/openai/chat",
             {
               messages: [
                 {
