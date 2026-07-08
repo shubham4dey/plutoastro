@@ -1,23 +1,23 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
+ 
 import lang from "../utils/langConstants";
 import ZodiacContainer from "./ZodiacContainer";
-
+ 
 import handbg from "../image/hand_bg.png";
 import hand from "../image/hand.png";
-
+ 
 import { addBot } from "../store/configAppSlice";
-
+ 
 const Explore = () => {
   const Langkey = useSelector((store) => store.configApp.lang);
-
+ 
   const dispatch = useDispatch();
-
+ 
   const handlebot = () => {
     dispatch(addBot());
   };
-
+ 
   return (
     <div className="w-full flex flex-col">
       {/* HERO SECTION */}
@@ -33,8 +33,9 @@ const Explore = () => {
           px-6
           lg:px-[8rem]
           pt-22
-          lg:pt-20
-          pb-20
+          lg:pt-0
+          pb-0
+          lg:pb-20
           overflow-hidden
         "
       >
@@ -65,7 +66,7 @@ const Explore = () => {
           >
             {lang[Langkey].welcome}
           </h3>
-
+ 
           <h1
           className="
             text-6xl
@@ -85,7 +86,7 @@ const Explore = () => {
         >
             {lang[Langkey].astroGPT}
           </h1>
-
+ 
           <p
             className="
             text-xl
@@ -98,7 +99,7 @@ const Explore = () => {
           >
             {lang[Langkey].finger}
           </p>
-
+ 
           <p
             className="
               text-sm
@@ -110,7 +111,7 @@ const Explore = () => {
           >
             {lang[Langkey].loginDescription}
           </p>
-
+ 
           {/* BUTTONS */}
           <div
             className="
@@ -144,7 +145,7 @@ const Explore = () => {
             >
               {lang[Langkey].astroBot}
             </button>
-
+ 
             {/* Kundli GPT */}
             <Link to="/kundligpt">
               <button
@@ -168,7 +169,7 @@ const Explore = () => {
                 {lang[Langkey].astroKundli}
               </button>
             </Link>
-
+ 
             {/* NEW AI ASTRO */}
             <Link to="/ai-astro">
               <button
@@ -193,7 +194,7 @@ const Explore = () => {
             </Link>
           </div>
         </div>
-
+ 
         {/* RIGHT IMAGE */}
         <div
           className="
@@ -218,7 +219,7 @@ const Explore = () => {
               opacity-90
             "
           />
-
+ 
           <img
             src={hand}
             alt="Hand"
@@ -231,11 +232,11 @@ const Explore = () => {
           />
         </div>
       </section>
-
+ 
       {/* ZODIAC SECTION */}
       <ZodiacContainer />
     </div>
   );
 };
-
+ 
 export default Explore;
