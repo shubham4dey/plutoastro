@@ -10,7 +10,7 @@ const useChat = () => {
 
     const fetchData = async () => {
         try {
-            const data = await fetch("http://https://plutoastro-api.onrender.com/api/astrologers");
+            const data = await fetch("http://http://plutoastro-api.onrender.com/api/astrologers");
             const json = await data.json();
             
             console.log("API Response:", json); // Debug

@@ -26,7 +26,7 @@ function AIAstro() {
  
   const fetchAIAstrologer = async () => {
     try {
-      const res = await axios.get("http://https://plutoastro-api.onrender.com/api/ai-astrologers");
+      const res = await axios.get("http://http://plutoastro-api.onrender.com/api/ai-astrologers");
  
       if (res.data && res.data.length > 0) {
         setAiAstrologer(res.data[0]);

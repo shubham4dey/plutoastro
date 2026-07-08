@@ -70,7 +70,7 @@ function AstrologersAdmin() {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
       const res = await fetch(
-        `http://https://plutoastro-api.onrender.com/api/admin/astrologers?page=${page}&search=${search}`,
+        `http://http://plutoastro-api.onrender.com/api/admin/astrologers?page=${page}&search=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -183,7 +183,7 @@ function AstrologersAdmin() {
         form.append("image", image);
       }
 
-      const res = await fetch("http://https://plutoastro-api.onrender.com/api/admin/astrologer", {
+      const res = await fetch("http://http://plutoastro-api.onrender.com/api/admin/astrologer", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -232,7 +232,7 @@ function AstrologersAdmin() {
       }
 
       const res = await fetch(
-        `http://https://plutoastro-api.onrender.com/api/admin/astrologer/${editingId}`,
+        `http://http://plutoastro-api.onrender.com/api/admin/astrologer/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -267,7 +267,7 @@ function AstrologersAdmin() {
     try {
       const token = localStorage.getItem("adminToken");
       const res = await fetch(
-        `http://https://plutoastro-api.onrender.com/api/admin/astrologer/${id}`,
+        `http://http://plutoastro-api.onrender.com/api/admin/astrologer/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -292,7 +292,7 @@ function AstrologersAdmin() {
     try {
       const token = localStorage.getItem("adminToken");
       const res = await fetch(
-        `http://https://plutoastro-api.onrender.com/api/admin/astrologer/${id}`,
+        `http://http://plutoastro-api.onrender.com/api/admin/astrologer/${id}`,
         {
           method: "PUT",
           headers: {
@@ -326,7 +326,7 @@ function AstrologersAdmin() {
       skills: astro.skills || [],
       languages: astro.languages || [],
     });
-    setPreview(astro.image ? `http://https://plutoastro-api.onrender.com${astro.image}` : "");
+    setPreview(astro.image ? `http://http://plutoastro-api.onrender.com${astro.image}` : "");
     setShowModal(true);
   };
 
@@ -501,7 +501,7 @@ function AstrologersAdmin() {
                       <img
                         src={
                           astro.image
-                            ? `http://https://plutoastro-api.onrender.com${astro.image}`
+                            ? `http://http://plutoastro-api.onrender.com${astro.image}`
                             : "https://via.placeholder.com/50"
                         }
                         alt=""
