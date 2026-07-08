@@ -42,7 +42,7 @@ const BecomeAstrologer = () => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/astrologer-applications/apply",
+        "http://https://plutoastro-api.onrender.com/api/astrologer-applications/apply",
         {
           method: "POST",
           body: data,

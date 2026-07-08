@@ -24,7 +24,7 @@ function AIAstrologersAdmin() {
   const fetchAstrologers = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/ai-astrologers/admin/all"
+        "http://https://plutoastro-api.onrender.com/api/ai-astrologers/admin/all"
       );
 
       const data = await response.json();
@@ -78,7 +78,7 @@ function AIAstrologersAdmin() {
 
     setPreview(
       astro.image
-        ? `http://localhost:5000${astro.image}`
+        ? `http://https://plutoastro-api.onrender.com${astro.image}`
         : ""
     );
 
@@ -132,7 +132,7 @@ function AIAstrologersAdmin() {
       }
 
       let url =
-        "http://localhost:5000/api/ai-astrologers";
+        "http://https://plutoastro-api.onrender.com/api/ai-astrologers";
 
       let method = "POST";
 
@@ -180,7 +180,7 @@ function AIAstrologersAdmin() {
 
     try {
       await fetch(
-        `http://localhost:5000/api/ai-astrologers/${id}`,
+        `http://https://plutoastro-api.onrender.com/api/ai-astrologers/${id}`,
         {
           method: "DELETE",
         }
@@ -198,7 +198,7 @@ function AIAstrologersAdmin() {
   const toggleStatus = async (id) => {
     try {
       await fetch(
-        `http://localhost:5000/api/ai-astrologers/${id}/status`,
+        `http://https://plutoastro-api.onrender.com/api/ai-astrologers/${id}/status`,
         {
           method: "PATCH",
         }
@@ -409,7 +409,7 @@ function AIAstrologersAdmin() {
               <img
                 src={
                   astro.image
-                    ? `http://localhost:5000${astro.image}`
+                    ? `http://https://plutoastro-api.onrender.com${astro.image}`
                     : "/Logo.png"
                 }
                 alt=""

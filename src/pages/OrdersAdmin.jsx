@@ -17,7 +17,7 @@ const OrdersAdmin = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/orders', {
+      const response = await fetch('http://https://plutoastro-api.onrender.com/api/admin/orders', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
