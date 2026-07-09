@@ -21,7 +21,7 @@ import AstrologersCallPage from "./AstrologersCallPage";
 import About from "./About";
 import Error from "./Error";
 import Footer from "./Footer";
-
+import TarotReading from "../pages/TarotReading";
 // AI Pages
 import AIAstro from "../pages/AIAstro";
 import AIAstroProfile from "../pages/AIAstroProfile";
@@ -35,6 +35,7 @@ import AIAstrologersAdmin from "../pages/AIAstrologersAdmin";
 import UsersAdmin from "../pages/UsersAdmin";
 import OrdersAdmin from "../pages/OrdersAdmin";
 import BecomeAstrologer from "../pages/BecomeAstrologer";
+
 const appLayout = createBrowserRouter([
   // =========================
   // ADMIN ROUTES
@@ -146,8 +147,9 @@ const appLayout = createBrowserRouter([
         element: <AstroKundli />,
       },
 
+      // ✅ UPDATED HOROSCOPE ROUTE
       {
-        path: "horoscope/:id",
+        path: "horoscope/:type?/:sign?",
         element: <Horoscope />,
       },
 
@@ -162,6 +164,16 @@ const appLayout = createBrowserRouter([
       },
 
       {
+        path: "tarot",
+        element: <TarotReading />,
+      },
+
+      {
+        path: "zodiac",
+        element: <div>Zodiac Signs Page</div>,
+      },
+
+      {
         path: "login",
         element: <LoginForm />,
       },
@@ -171,9 +183,9 @@ const appLayout = createBrowserRouter([
         element: <About />,
       },
       {
-  path: "become-astrologer",
-  element: <BecomeAstrologer />,
-},
+        path: "become-astrologer",
+        element: <BecomeAstrologer />,
+      },
 
       {
         path: "error",

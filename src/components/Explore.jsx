@@ -35,7 +35,7 @@ const Explore = () => {
           pt-22
           lg:pt-0
           pb-0
-          lg:pb-20
+          lg:pb-24
           overflow-hidden
         "
       >
@@ -68,33 +68,34 @@ const Explore = () => {
           </h3>
  
           <h1
-          className="
-            text-6xl
-            md:text-8xl
-            lg:text-[9rem]
-            font-extrabold
-            mb-4
-            bg-gradient-to-r
-            from-purple-100
-            via-purple-300
-            to-purple-500
-            bg-clip-text
-            text-transparent
-            leading-none
-            drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]
+            className="
+              text-6xl
+              md:text-8xl
+              lg:text-[9rem]
+              font-extrabold
+              mb-8
+              lg:mb-12
+              bg-gradient-to-r
+              from-purple-100
+              via-purple-300
+              to-purple-500
+              bg-clip-text
+              text-transparent
+              leading-none
+              drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]
             "
-        >
+          >
             {lang[Langkey].astroGPT}
           </h1>
  
           <p
             className="
-            text-xl
-            lg:text-4xl
-            text-white
-            uppercase
-            tracking-[8px]
-            mb-6
+              text-xl
+              lg:text-4xl
+              text-white
+              uppercase
+              tracking-[8px]
+              mb-6
             "
           >
             {lang[Langkey].finger}
@@ -214,7 +215,7 @@ const Explore = () => {
             className="
               absolute
               w-[90%]
-              lg:w-[85%]
+              lg:w-[80%]
               hand
               opacity-90
             "
@@ -226,7 +227,7 @@ const Explore = () => {
             className="
               relative
               z-10
-              w-[50%]
+              w-[35%]
               lg:w-[45%]
             "
           />

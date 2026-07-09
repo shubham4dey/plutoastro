@@ -157,15 +157,30 @@ const Header = () => {
               hidden
               lg:flex
               items-center
-              gap-8
+              gap-6
               text-white
             "
           >
+            {/* HOME Button */}
             <Link
-              to="/chat"
+              to="/"
               className={liCSS}
             >
-              {lang[Langkey].CHAT}
+              HOME
+            </Link>
+
+            {/* Chat with Astrologers - WITH GREEN BLINKING DOT */}
+            <Link
+              to="/chat"
+              className="relative flex items-center gap-2 font-semibold hover:text-purple-300 transition-all duration-300 uppercase tracking-wide text-sm cursor-pointer"
+            >
+              <span className="relative">
+                CHAT
+                <span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+              </span>
             </Link>
 
             <Link
@@ -175,11 +190,39 @@ const Header = () => {
               {lang[Langkey].CALL}
             </Link>
 
+            {/* AI ASTRO with Green Blinking Dot */}
             <Link
               to="/ai-astro"
+              className="relative flex items-center gap-2 font-semibold hover:text-purple-300 transition-all duration-300 uppercase tracking-wide text-sm cursor-pointer"
+            >
+              <span className="relative">
+                AI ASTRO
+                <span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+              </span>
+            </Link>
+
+            <Link
+              to="/horoscope"
               className={liCSS}
             >
-              AI ASTRO
+              HOROSCOPE
+            </Link>
+
+            <Link
+              to="/tarot"
+              className={liCSS}
+            >
+              TAROT
+            </Link>
+
+            <Link
+              to="/zodiac"
+              className={liCSS}
+            >
+              ZODIAC
             </Link>
 
             <Link
@@ -195,25 +238,27 @@ const Header = () => {
             >
               {lang[Langkey].ABOUT}
             </Link>
+
             <Link
               to="/become-astrologer"
               className="
-    px-4
-    py-2
-    rounded-full
-    bg-gradient-to-r
-    from-fuchsia-600
-    to-purple-700
-    text-white
-    text-sm
-    font-semibold
-    hover:scale-105
-    transition-all
-    duration-300
-  "
+                px-4
+                py-2
+                rounded-full
+                bg-gradient-to-r
+                from-fuchsia-600
+                to-purple-700
+                text-white
+                text-sm
+                font-semibold
+                hover:scale-105
+                transition-all
+                duration-300
+              "
             >
               Become Astrologer
             </Link>
+
             <Link
               to="/kundligpt"
               className={liCSS}
@@ -309,13 +354,31 @@ const Header = () => {
               text-white
             "
           >
+            {/* HOME */}
+            <Link
+              to="/"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              HOME
+            </Link>
+
+            {/* Chat with Astrologers */}
             <Link
               to="/chat"
               onClick={() =>
                 setMobileMenu(false)
               }
+              className="flex items-center gap-2"
             >
-              {lang[Langkey].CHAT}
+              <span className="relative">
+                CHAT WITH ASTROLOGERS
+                <span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+              </span>
             </Link>
 
             <Link
@@ -332,8 +395,42 @@ const Header = () => {
               onClick={() =>
                 setMobileMenu(false)
               }
+              className="flex items-center gap-2"
             >
-              AI ASTRO
+              <span className="relative">
+                AI ASTRO
+                <span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+              </span>
+            </Link>
+
+            <Link
+              to="/horoscope"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              HOROSCOPE
+            </Link>
+
+            <Link
+              to="/tarot"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              TAROT READING
+            </Link>
+
+            <Link
+              to="/zodiac"
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              ZODIAC SIGNS
             </Link>
 
             <Link
@@ -353,14 +450,15 @@ const Header = () => {
             >
               {lang[Langkey].ABOUT}
             </Link>
+
             <Link
               to="/become-astrologer"
-               onClick={() =>
-               setMobileMenu(false)
-                }
-                 >
-                  Become Astrologer
-                </Link>
+              onClick={() =>
+                setMobileMenu(false)
+              }
+            >
+              Become Astrologer
+            </Link>
 
             <Link
               to="/kundligpt"

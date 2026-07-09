@@ -1,75 +1,218 @@
-export const PROFILE_IMG = "http://aws.astrotalk.com/consultant_pic/"
-
-export const TICKED = "https://d1gcna0o0ldu5v.cloudfront.net/fit-in/24x24/assets/images/Chat_with_astrologers/webp/tick_icon.webp";
-
-export const PROFILE_BG = "https://aws.astrotalk.com/assets/images/astro-background-gray.webp"
+// src/utils/constants.js
 
 export const MULTI_LANG = [
-    { identifier: "en", name: "English" },
-    { identifier: "hindi", name: "Hindi" },
-    { identifier: "marathi", name: "Marathi" },
-    { identifier: "spanish", name: "Spanish" },
-    {identifier:"telugu",name:"Telugu"},
-    {identifier:"japanese",name:"Japanese"}
-  ];
+  { identifier: "en", name: "English", flag: "🇬" },
+  { identifier: "de", name: "Deutsch", flag: "🇩🇪" },
+  { identifier: "it", name: "Italiano", flag: "🇮🇹" },
+  { identifier: "ar", name: "العربية", flag: "🇦🇪" },
+  { identifier: "fr", name: "Français", flag: "🇫" },
+  { identifier: "pt", name: "Português", flag: "🇵🇹" },
+  { identifier: "ja", name: "日本語", flag: "🇯🇵" },
+  { identifier: "ru", name: "Русский", flag: "🇷" },
+  { identifier: "nl", name: "Nederlands", flag: "🇳🇱" },
+  { identifier: "es", name: "Español", flag: "🇪" },
+];
 
+export const GPT_LANG = [
+  { value: "en", label: "English" },
+  { value: "de", label: "Deutsch" },
+  { value: "it", label: "Italiano" },
+  { value: "ar", label: "العربية" },
+  { value: "fr", label: "Français" },
+  { value: "pt", label: "Português" },
+  { value: "ja", label: "日本語" },
+  { value: "ru", label: "Русский" },
+  { value: "nl", label: "Nederlands" },
+  { value: "es", label: "Español" },
+];
 
-  export const GPT_LANG = [
-    { identifier: "en", name: "English" },
-    { identifier: "hindi", name: "Hindi" },
-    { identifier: "marathi", name: "Marathi" },
-    { identifier: "telugu", name: "Telugu" },
-    { identifier: "tamil", name: "Tamil" },
-    { identifier: "bengali", name: "Bengali" },
-    { identifier: "gujarati", name: "Gujarati" },
-    { identifier: "kannada", name: "Kannada" },
-    { identifier: "malayalam", name: "Malayalam" },
-    { identifier: "punjabi", name: "Punjabi" },
-    { identifier: "hinglish", name: "Hinglish" },
-    { identifier: "french", name: "French" },
-    { identifier: "german", name: "German" },
-    { identifier: "russian", name: "Russian" },
-    { identifier: "italian", name: "Italian" },
-    { identifier: "arabic", name: "Arabic" },
-    { identifier: "chinese", name: "Chinese" },
-    { identifier: "portuguese", name: "Portuguese" },
-    { identifier: "dutch", name: "Dutch" }
-   
-  ];
-  
+export const PROFILE_IMG = "https://via.placeholder.com/150";
 
-export const OPEN_AI_KEY = process.env.REACT_APP_OPEN_AI_KEY;
+export const TALK_PROMPT = "Talk to our expert astrologers";
 
-export const CHAT_BOT = process.env.REACT_APP_BOT_PROMPT;
+export const CHAT_BOT = {
+  name: "Pluto Bot",
+  avatar: "https://via.placeholder.com/100",
+};
 
-export const HOROSCOPE = process.env.REACT_APP_HOROSCOPE_PROMPT;
+// ✅ UPDATED - Sirf 4 types chahiye
+export const HOROSCOPE = {
+  types: ["daily", "weekly", "monthly", "love"],
+  defaultType: "daily",
+  cacheDuration: 3600000,
+};
 
-export const TALK_PROMPT = process.env.REACT_APP_TALK_PROMPT;
+export const ZODIAC_SIGNS = [
+  { name: "Aries", date: "Mar 21 - Apr 19", icon: "♈" },
+  { name: "Taurus", date: "Apr 20 - May 20", icon: "♉" },
+  { name: "Gemini", date: "May 21 - Jun 20", icon: "♊" },
+  { name: "Cancer", date: "Jun 21 - Jul 22", icon: "♋" },
+  { name: "Leo", date: "Jul 23 - Aug 22", icon: "♌" },
+  { name: "Virgo", date: "Aug 23 - Sep 22", icon: "♍" },
+  { name: "Libra", date: "Sep 23 - Oct 22", icon: "♎" },
+  { name: "Scorpio", date: "Oct 23 - Nov 21", icon: "♏" },
+  { name: "Sagittarius", date: "Nov 22 - Dec 21", icon: "♐" },
+  { name: "Capricorn", date: "Dec 22 - Jan 19", icon: "♑" },
+  { name: "Aquarius", date: "Jan 20 - Feb 18", icon: "♒" },
+  { name: "Pisces", date: "Feb 19 - Mar 20", icon: "♓" },
+];
 
-export const ASTRO_KUNDLI_PROMPT = `<span class="text-purple-300 mb-2 text-lg lg:text-2xl w-full text-center lg:font-semibold font-medium tracking-wider lg:tracking-wide">Hey, I am an PlutoKundli integrated in PlutoGPT, created by Sir Pluto Astro, a visionary mind behind Pluto Kundli. Please note that these readings may not be fully accurate.</span><br><br>
-<div class="flex flex-col lg:flex-row lg:justify-between justify-start items-start lg:items-start">
- <div class="flex flex-col justify-start w-full lg:w-5/12">
-<h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Zodiac Sign: [Zodiac Sign]</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">As Per your Vedic astrological reading, you are born under the zodiac sign of [Zodiac Sign]. This influences your personality and life path.</p><br>
-      
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Personality:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">You are known for your [Personality Traits]. You are recognized for your [Strengths] and [Weaknesses], which shape your interactions and decisions.</p><br>
-      
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Career Prospects:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">Your career prospects show [Career Outlook]. Your strengths lie in [Career Strengths], which can lead to success in [Career Fields].</p><br>
-      
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Love Life:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">Your love life is influenced by [Love Life Insights]. Your romantic relationships are shaped by [Love Life Factors], affecting your emotional fulfillment.</p><br>
-      </div>
-      <div class="flex  flex-col justify-start w-full lg:w-5/12">
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Financial Situation:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">Your financial situation presents [Financial Challenges/Opportunities]. It's crucial to follow [Financial Advice] for stability and prosperity.</p><br>
-      
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Happiness:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">Your happiness is influenced by [Factors Affecting Happiness]. By focusing on [Happiness Tips], you can enhance your well-being and fulfillment.</p><br>
-      
-      <h1 class="text-purple-300 text-lg lg:text-xl my-2 lg:my-4 font-semibold lg:font-bold border-b-2 pb-0.5 lg:pb-1.5 border-purple-300">Motivational Message:</h1>
-      <p class="text-purple-100 font-normal lg:font-medium mb-4 lg:mb-6 text-lg tracking-wider lg:tracking-wide">Remember, [Motivational Message]. Stay true to yourself, embrace opportunities, and navigate challenges with resilience. Your journey is unique, and your potential is limitless.</p>      
-      </div>
-      </div>(remember always give responce like in this format only just change the insights for each but that h1 div and all styling part keep it as it is heading title and all okay)
-      `
+export const ASTROLOGY_CATEGORIES = [
+  { name: "Western Astrology", icon: "⭐" },
+  { name: "Numerology", icon: "🔢" },
+  { name: "Tarot Reading", icon: "🎴" },
+  { name: "Face Reading", icon: "👤" },
+  { name: "Feng Shui", icon: "🏠" },
+  { name: "Life Coaching", icon: "🎯" },
+  { name: "Psychology", icon: "🧠" },
+  { name: "Palmistry", icon: "✋" },
+  { name: "Crystal Healing", icon: "💎" },
+  { name: "Meditation", icon: "🧘" },
+];
+
+export const FILTER_OPTIONS = {
+  all: "All",
+  topRated: "Top Rated",
+  offer: "Special Offer",
+  price: "Price",
+  experience: "Experience",
+  availability: "Available Now",
+};
+
+export const GENDER_OPTIONS = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Prefer not to say" },
+];
+
+export const BIRTH_DISTRICTS = [
+  "London",
+  "New York",
+  "Los Angeles",
+  "Paris",
+  "Berlin",
+  "Rome",
+  "Dubai",
+  "Tokyo",
+  "Sydney",
+  "Toronto",
+  "Singapore",
+  "Amsterdam",
+  "Madrid",
+  "Moscow",
+  "Other",
+];
+
+export const DEFAULT_AVATAR = "https://via.placeholder.com/150";
+
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+export const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/jpg",
+  "image/webp",
+];
+
+export const API_ENDPOINTS = {
+  astrologers: "/api/astrologers",
+  aiAstrologers: "/api/ai-astrologers",
+  horoscope: "/api/horoscope",
+  auth: "/api/auth",
+  admin: "/api/admin",
+  openai: "/api/openai",
+};
+
+export const TOAST_CONFIG = {
+  position: "top-center",
+  autoClose: 3000,
+  theme: "dark",
+};
+
+export const PAGINATION = {
+  ITEMS_PER_PAGE: 12,
+  OPTIONS: [12, 24, 48],
+};
+
+export const SORT_OPTIONS = [
+  { value: "newest", label: "Newest" },
+  { value: "popular", label: "Most Popular" },
+  { value: "rating", label: "Highest Rated" },
+  { value: "price_low", label: "Price: Low to High" },
+  { value: "price_high", label: "Price: High to Low" },
+  { value: "experience", label: "Most Experienced" },
+];
+
+export const CONSULTATION_TYPES = {
+  chat: "Chat",
+  call: "Voice Call",
+  video: "Video Call",
+};
+
+export const TIME_ZONES = [
+  { value: "UTC", label: "UTC (Coordinated Universal Time)" },
+  { value: "America/New_York", label: "New York (EST/EDT)" },
+  { value: "America/Los_Angeles", label: "Los Angeles (PST/PDT)" },
+  { value: "America/Chicago", label: "Chicago (CST/CDT)" },
+  { value: "Europe/London", label: "London (GMT/BST)" },
+  { value: "Europe/Paris", label: "Paris (CET/CEST)" },
+  { value: "Europe/Berlin", label: "Berlin (CET/CEST)" },
+  { value: "Europe/Rome", label: "Rome (CET/CEST)" },
+  { value: "Europe/Moscow", label: "Moscow (MSK)" },
+  { value: "Europe/Amsterdam", label: "Amsterdam (CET/CEST)" },
+  { value: "Europe/Madrid", label: "Madrid (CET/CEST)" },
+  { value: "Asia/Dubai", label: "Dubai (GST)" },
+  { value: "Asia/Tokyo", label: "Tokyo (JST)" },
+  { value: "Asia/Singapore", label: "Singapore (SGT)" },
+  { value: "Australia/Sydney", label: "Sydney (AEST/AEDT)" },
+  { value: "America/Toronto", label: "Toronto (EST/EDT)" },
+];
+
+export const COUNTRIES = [
+  { code: "GB", name: "United Kingdom", dialCode: "+44" },
+  { code: "US", name: "United States", dialCode: "+1" },
+  { code: "DE", name: "Germany", dialCode: "+49" },
+  { code: "IT", name: "Italy", dialCode: "+39" },
+  { code: "AE", name: "United Arab Emirates", dialCode: "+971" },
+  { code: "FR", name: "France", dialCode: "+33" },
+  { code: "ES", name: "Spain", dialCode: "+34" },
+  { code: "PT", name: "Portugal", dialCode: "+351" },
+  { code: "NL", name: "Netherlands", dialCode: "+31" },
+  { code: "RU", name: "Russia", dialCode: "+7" },
+  { code: "JP", name: "Japan", dialCode: "+81" },
+  { code: "AU", name: "Australia", dialCode: "+61" },
+  { code: "CA", name: "Canada", dialCode: "+1" },
+  { code: "SG", name: "Singapore", dialCode: "+65" },
+];
+
+export const CURRENCY_OPTIONS = [
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+  { code: "JPY", symbol: "¥", name: "Japanese Yen" },
+  { code: "AUD", symbol: "A$", name: "Australian Dollar" },
+  { code: "CAD", symbol: "C$", name: "Canadian Dollar" },
+  { code: "CHF", symbol: "CHF", name: "Swiss Franc" },
+];
+
+export const CONSULTATION_DURATIONS = [
+  { value: 15, label: "15 minutes" },
+  { value: 30, label: "30 minutes" },
+  { value: 45, label: "45 minutes" },
+  { value: 60, label: "60 minutes" },
+  { value: 90, label: "90 minutes" },
+];
+
+export const RATING_OPTIONS = [
+  { value: 5, label: "5 Stars" },
+  { value: 4, label: "4+ Stars" },
+  { value: 3, label: "3+ Stars" },
+];
+
+export const AVAILABILITY_STATUS = {
+  online: "Online",
+  offline: "Offline",
+  busy: "Busy",
+  away: "Away",
+};

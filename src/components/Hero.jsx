@@ -7,6 +7,10 @@ import Chatbot from "./Chatbot";
 import Coming from "./Coming";
 import AstrologersGrid from "./AstrologersGrid";
 import AIAstrologers from "./AIAstrologers";
+import AstrologyProducts from "./AstrologyProducts";
+import FAQ from "./FAQ";
+import SpecialtiesBanner from "./SpecialtiesBanner";
+import AppDownload from "./AppDownload";
 
 import bg from "../image/newbg.jpg";
 import logo from "../image/Logo.png";
@@ -65,6 +69,11 @@ const Hero = () => {
 
         <Explore />
 
+        {/* Specialties & Languages Banner - MOVED HERE (After Explore, Before Astrologers) */}
+        <div className="mt-28 lg:mt-36">
+          <SpecialtiesBanner />
+        </div>
+
         <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
 
           {/* Human Astrologers */}
@@ -77,14 +86,29 @@ const Hero = () => {
             <AIAstrologers />
           </div>
 
+          {/* Astrology Products */}
+          <div className="mt-28 lg:mt-36">
+            <AstrologyProducts />
+          </div>
+
           {/* Zodiac Search */}
           <div className="mt-28 lg:mt-36">
             <SignSearch />
           </div>
 
           {/* Coming Soon */}
-          <div className="mt-28 lg:mt-36 pb-24">
+          <div className="mt-28 lg:mt-36">
             <Coming />
+          </div>
+
+          {/* App Download Section */}
+          <div className="mt-28 lg:mt-36">
+            <AppDownload />
+          </div>
+
+          {/* FAQ Section - ONLY ON HOME PAGE */}
+          <div className="mt-28 lg:mt-36 pb-24">
+            <FAQ />
           </div>
 
         </div>
