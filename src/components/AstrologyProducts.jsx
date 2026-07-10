@@ -12,20 +12,44 @@ const AstrologyProducts = () => {
       setLoading(true);
       setError(null);
       
+      console.log("🔍 Fetching products from API...");
+      
       const response = await fetch(
         "https://plutoastro-api.onrender.com/api/products"
       );
+      
+      console.log(" Response status:", response.status);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      setProducts(data?.products || data?.content || []);
+      console.log("📦 Received data:", data);
+      
+      // Handle different response structures
+      let productsData = [];
+      
+      if (Array.isArray(data)) {
+        productsData = data;
+      } else if (data.products && Array.isArray(data.products)) {
+        productsData = data.products;
+      } else if (data.content && Array.isArray(data.content)) {
+        productsData = data.content;
+      } else if (data.data && Array.isArray(data.data)) {
+        productsData = data.data;
+      } else {
+        console.warn("⚠️ Unexpected data structure, using fallback");
+        productsData = getFallbackProducts();
+      }
+      
+      console.log(`✅ Loaded ${productsData.length} products`);
+      setProducts(productsData);
+      
     } catch (err) {
-      console.error("Error fetching products:", err);
+      console.error("❌ Error fetching products:", err);
       setError("Failed to load products. Please try again later.");
-      // Fallback data for demo
+      // Always use fallback data
       setProducts(getFallbackProducts());
     } finally {
       setLoading(false);
@@ -171,16 +195,19 @@ const AstrologyProducts = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {products.map((product) => (
                 <div
-                  key={product._id || product.id}
+                  key={product._id || product.id || Math.random()}
                   className="group bg-purple-900/20 backdrop-blur-sm rounded-2xl border border-purple-700/30 overflow-hidden hover:border-purple-500/60 hover:shadow-2xl hover:shadow-purple-900/40 transition-all duration-500 hover:-translate-y-2"
                 >
                   {/* Image Container */}
                   <div className="relative h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-purple-900/40 to-black/60">
                     <img
-                      src={product.image || product.imageUrl}
-                      alt={product.name || product.title}
+                      src={product.image || product.imageUrl || "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f0?w=300&h=300&fit=crop"}
+                      alt={product.name || product.title || "Product"}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
+                      onError={(e) => {
+                        e.target.src = "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f0?w=300&h=300&fit=crop";
+                      }}
                     />
                     {/* Category Badge */}
                     <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${
@@ -201,13 +228,13 @@ const AstrologyProducts = () => {
                   {/* Content */}
                   <div className="p-5 lg:p-6">
                     <h3 className="text-lg lg:text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
-                      {product.name || product.title}
+                      {product.name || product.title || "Product"}
                     </h3>
                     <p className="text-purple-200/70 text-sm mb-4 line-clamp-2">
-                      {product.description}
+                      {product.description || "Premium astrological product for your spiritual journey"}
                     </p>
                     <Link
-                      to={`/shop/${product.slug || product._id || product.id}`}
+                      to={`/shop/${product.slug || product._id || product.id || "#"}`}
                       className="block w-full py-2.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold text-sm rounded-lg hover:from-purple-500 hover:to-fuchsia-500 transition-all duration-300 shadow-lg shadow-purple-900/30 text-center"
                     >
                       {product.buttonText || "VIEW DETAILS"}
