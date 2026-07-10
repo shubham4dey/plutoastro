@@ -271,14 +271,14 @@ const Header = () => {
                 onClick={handleForm}
                 className={liCSS}
               >
-                {lang[Langkey].LOGIN}
+                SIGN IN
               </span>
             ) : (
               <span
                 onClick={handleSignOut}
                 className={liCSS}
               >
-                {lang[Langkey].SIGNOUT}
+                SIGN OUT
               </span>
             )}
 
@@ -473,7 +473,7 @@ const Header = () => {
               <span
                 onClick={handleForm}
               >
-                {lang[Langkey].LOGIN}
+                SIGN IN
               </span>
             ) : (
               <span
@@ -481,7 +481,7 @@ const Header = () => {
                   handleSignOut
                 }
               >
-                {lang[Langkey].SIGNOUT}
+                SIGN OUT
               </span>
             )}
           </div>

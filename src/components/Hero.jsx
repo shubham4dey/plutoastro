@@ -11,6 +11,7 @@ import AstrologyProducts from "./AstrologyProducts";
 import FAQ from "./FAQ";
 import SpecialtiesBanner from "./SpecialtiesBanner";
 import AppDownload from "./AppDownload";
+import Testimonials from "./Testimonials"; // ✅ Added
 
 import bg from "../image/newbg.jpg";
 import logo from "../image/Logo.png";
@@ -69,7 +70,7 @@ const Hero = () => {
 
         <Explore />
 
-        {/* Specialties & Languages Banner - MOVED HERE (After Explore, Before Astrologers) */}
+        {/* Specialties & Languages Banner */}
         <div className="mt-28 lg:mt-36">
           <SpecialtiesBanner />
         </div>
@@ -104,6 +105,11 @@ const Hero = () => {
           {/* App Download Section */}
           <div className="mt-28 lg:mt-36">
             <AppDownload />
+          </div>
+
+          {/* Testimonials Section - NEW */}
+          <div className="mt-28 lg:mt-36">
+            <Testimonials />
           </div>
 
           {/* FAQ Section - ONLY ON HOME PAGE */}

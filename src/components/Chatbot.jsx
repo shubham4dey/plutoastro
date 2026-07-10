@@ -1,38 +1,48 @@
 import { useDispatch, useSelector } from "react-redux";
 import { CHAT_BOT } from "../utils/constants";
 import openai from "../utils/openai";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { addBot, addForm, addLimit } from "../store/configAppSlice";
 import { toast, Bounce } from "react-toastify";
-import logo from "../image/Logo.png"
+import logo from "../image/Logo.png";
 import lang from "../utils/langConstants";
 
 const Chatbot = () => {
   const input = useRef();
+  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const [apiLimit, setapiLimit] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector((store) => store.user);
-  const form = useSelector((store) => store.configApp.form);
   const dispatch = useDispatch();
 
-  const [result, setresult] = useState(["AstroBot: Hi"]);
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hi" }
+  ]);
+
+  const LangKey = useSelector((store) => store.configApp.lang);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
 
   const handlebot = () => {
     dispatch(addBot());
   };
 
   const handleSearch = async () => {
+    const inputValue = input.current?.value?.trim();
     
+    if (!inputValue) return;
+
     if (!user) {
       toast.error("Please Login to Continue", {
         position: "top-right",
         autoClose: 1200,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
         theme: "dark",
         transition: Bounce,
       });
@@ -40,91 +50,263 @@ const Chatbot = () => {
       dispatch(addForm());
       return;
     }
+
     if (apiLimit > 6) {
       dispatch(addLimit(false));
-      toast.error("Please come tommorow Api limit excedd", {
+      toast.error("Please come tomorrow. API limit exceeded.", {
         position: "top-right",
         autoClose: 1200,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
         theme: "dark",
         transition: Bounce,
       });
       return;
     }
 
-    const gptSearch = CHAT_BOT + input.current.value + `?`; 
-
-    const data = await openai.chat.completions.create({
-      messages: [{ role: "user", content: gptSearch }],
-      model: "gpt-3.5-turbo",
-    });
-    const Responce = data?.choices?.[0]?.message?.content;
-    console.log(data)
-
-    setresult([
-      ...result,
-      "You: " + input.current.value,
-      "AstroBot: " + Responce,
-    ]);
+    setMessages(prev => [...prev, { sender: "user", text: inputValue }]);
     input.current.value = "";
+    setIsLoading(true);
 
-    setapiLimit(apiLimit + 1);
+    try {
+      let systemPrompt = "";
+      if (typeof CHAT_BOT === "string") {
+        systemPrompt = CHAT_BOT;
+      } else if (typeof CHAT_BOT === "object") {
+        systemPrompt = JSON.stringify(CHAT_BOT);
+      }
+
+      const data = await openai.chat.completions.create({
+        messages: [
+          { role: "system", content: systemPrompt || "You are a helpful astrology assistant." },
+          { role: "user", content: inputValue }
+        ],
+        model: "gpt-3.5-turbo",
+      });
+
+      const Response = data?.choices?.[0]?.message?.content;
+      
+      setMessages(prev => [...prev, { 
+        sender: "bot", 
+        text: Response || "Sorry, I couldn't process that." 
+      }]);
+      
+      setapiLimit(apiLimit + 1);
+    } catch (error) {
+      console.error("Chatbot Error:", error);
+      
+      setMessages(prev => [...prev, { 
+        sender: "bot", 
+        text: "Sorry, I'm having trouble right now. Please try again later." 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const LangKey = useSelector(store => store.configApp.lang)
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
+  const messagesLeft = Math.max(0, 7 - apiLimit);
 
   return (
-    <div className="lg:pt-20 fixed w-full top-0 z-20 lg:mb-0 mb:20 pt-[20%] h-screen flex justify-center items-start  px-2 lg:px-16  bg-zinc-950 bg-opacity-85 w-12/12">
-      <div className="lg:w-[45%] w-full rounded-xl overflow-hidden relative h-[80vh] lg:h-[80vh]">
-        <div className="w-full flex flex-row h-[8vh] lg:h-[12vh] justify-between items-center bg-opacity-95 bg-purple-700 py-0.5 lg:py-4 px-4 lg:px-2">
-          
-          <div className="flex justify-start items-center">
-            <img className="xl:w-16 w-10 lg:w-14" src={logo} alt="logo"></img>
-            <span className="lg:text-2xl text-purple-200 font-semibold uppercase xl:text-2xl text-xl">{lang[LangKey].astroBot}</span>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop with blur */}
+      <div 
+        className="absolute inset-0 bg-black/70 backdrop-blur-md"
+        onClick={handlebot}
+      ></div>
+
+      {/* Chat Window - Positioned below header */}
+      <div className="relative w-full max-w-2xl h-[75vh] max-h-[650px] rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/50 border border-purple-600/30 animate-slideUp mt-16">
+        
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-purple-900 to-fuchsia-950"></div>
+
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-purple-700 via-purple-600 to-fuchsia-700 px-6 py-4 flex items-center justify-between border-b border-purple-500/30">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-white/20 rounded-full blur-lg animate-pulse"></div>
+              <img 
+                className="relative w-10 h-10 rounded-full border-2 border-white/30" 
+                src={logo} 
+                alt="logo"
+              />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg">
+                {lang[LangKey]?.astroBot || "Pluto Bot"}
+              </h3>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-purple-200 text-xs">Online</span>
+              </div>
+            </div>
           </div>
 
-
-          <i
-            className="text-xl lg:text-3xl text-purple-300 ri-close-fill cursor-pointer"
+          <button
             onClick={handlebot}
-          ></i>
+            className="w-10 h-10 rounded-full bg-purple-800/50 hover:bg-red-600/80 flex items-center justify-center transition-all duration-300 hover:scale-110 border border-purple-500/30"
+          >
+            <i className="text-xl text-white ri-close-fill"></i>
+          </button>
         </div>
-        <div className="w-full overflow-y-scroll px-3 py-3 flex flex-col justify-start items-start lg:px-4 pb-28 h-[75vh] bg-purple-950 bg-opacity-90 ">
-          {result?.map((result, index) => (
+
+        {/* Messages Area */}
+        <div 
+          ref={chatContainerRef}
+          className="relative h-[calc(100%-140px)] overflow-y-auto px-6 py-6 space-y-4 scrollbar-thin"
+        >
+          {messages.map((msg, index) => (
             <div
               key={index}
-              className="lg:px-3 px-1.5 mb-2 lg:mb-4 lg:tracking-wide tracking-wider rounded-lg lg:rounded-md font-normal lg:font-medium lg:py-1.5 py-1 bg-purple-600  text-white"
+              className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-messageIn`}
             >
-              <span className="text-purple-50 text-xs lg:text-sm">
-                {result}
-              </span>
+              {msg.sender === "bot" && (
+                <div className="flex items-start gap-3 max-w-[80%]">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-fuchsia-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🔮</span>
+                  </div>
+                  <div className="bg-purple-800/60 backdrop-blur-sm rounded-2xl rounded-tl-md px-4 py-3 border border-purple-600/30">
+                    <p className="text-purple-100 text-sm leading-relaxed whitespace-pre-wrap">
+                      {msg.text}
+                    </p>
+                    <div className="flex gap-1 mt-2">
+                      <div className="w-1 h-1 bg-purple-400/50 rounded-full"></div>
+                      <div className="w-1 h-1 bg-purple-400/50 rounded-full"></div>
+                      <div className="w-1 h-1 bg-purple-400/50 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {msg.sender === "user" && (
+                <div className="max-w-[80%]">
+                  <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-2xl rounded-tr-md px-4 py-3 shadow-lg shadow-purple-600/30">
+                    <p className="text-white text-sm leading-relaxed whitespace-pre-wrap">
+                      {msg.text}
+                    </p>
+                    <div className="flex gap-1 mt-2 justify-end">
+                      <div className="w-1 h-1 bg-white/50 rounded-full"></div>
+                      <div className="w-1 h-1 bg-white/50 rounded-full"></div>
+                      <div className="w-1 h-1 bg-white/50 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
+
+          {/* Typing Indicator */}
+          {isLoading && (
+            <div className="flex justify-start animate-fadeIn">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-fuchsia-500 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                  <span className="text-sm">🔮</span>
+                </div>
+                <div className="bg-purple-800/60 backdrop-blur-sm rounded-2xl rounded-tl-md px-4 py-3 border border-purple-600/30">
+                  <p className="text-purple-200 text-sm">AstroBot is typing...</p>
+                  <div className="flex gap-1.5 mt-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
         </div>
-        <div className=" absolute flex justify-center bg-purple-700 items-center px-2 lg:px-4 w-full bottom-0 py-2 bg-opacity-95">
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="w-full relative  flex justify-center items-center"
-          >
+
+        {/* Input Area */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-fuchsia-900/95 backdrop-blur-md border-t border-purple-600/30 px-6 py-4">
+          {/* Messages Left Counter - Only show when 3 or less messages left */}
+          {messagesLeft <= 3 && (
+            <div className="absolute -top-3 right-6 px-3 py-1 bg-purple-700/80 rounded-full border border-purple-500/30 animate-fadeIn">
+              <span className="text-purple-200 text-xs font-medium">
+                {messagesLeft} messages left
+              </span>
+            </div>
+          )}
+
+          <div className="flex gap-3">
             <input
-              className="w-full py-2 placeholder:font-normal text-purple-900 font-medium  outline-none px-5 text-base lg:text-lg rounded-full"
+              className="flex-1 px-5 py-3 bg-purple-900/60 border border-purple-600/30 rounded-full text-white placeholder-purple-300/50 outline-none focus:border-purple-500/60 focus:bg-purple-900/80 transition-all text-sm"
               type="text"
-              placeholder="Ask anything you want"
+              placeholder="Ask anything you want..."
               ref={input}
-            ></input>
+              onKeyPress={handleKeyPress}
+              disabled={isLoading}
+            />
             <button
-              className="px-4 py-1 lg:py-1.5 absolute rounded-e-full right-0 bg-purple-500 "
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-600/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border border-purple-500/30"
               onClick={handleSearch}
+              disabled={isLoading}
             >
-              <i className="text-2xl ri-send-plane-2-fill"></i>
+              <i className="text-xl text-white ri-send-plane-2-fill"></i>
             </button>
-          </form>
+          </div>
         </div>
       </div>
+
+      {/* Custom CSS */}
+      <style>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        .animate-slideUp {
+          animation: slideUp 0.4s ease-out forwards;
+        }
+        
+        @keyframes messageIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-messageIn {
+          animation: messageIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: rgba(147, 51, 234, 0.1);
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: rgba(147, 51, 234, 0.5);
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: rgba(147, 51, 234, 0.7);
+        }
+      `}</style>
     </div>
   );
 };
