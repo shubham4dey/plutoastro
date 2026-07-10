@@ -25,7 +25,6 @@ const AstroKundli = () => {
   const [loading, setLoading] = useState(false);
   const LangKey = useSelector((store) => store.configApp.lang);
 
-  // Date and Time states
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
 
@@ -45,7 +44,6 @@ const AstroKundli = () => {
       gender
     });
 
-    // Check login
     if (!user) {
       toast.error("Please Login to Continue", {
         position: "top-right",
@@ -56,7 +54,6 @@ const AstroKundli = () => {
       return;
     }
 
-    // Validation - Check each field
     if (!nameValue) {
       toast.error("Please enter your name", {
         position: "top-center",
@@ -111,7 +108,6 @@ const AstroKundli = () => {
       return;
     }
 
-    // Combine date and time
     const dateTimeValue = `${birthDate} ${birthTime}`;
     console.log("Combined datetime:", dateTimeValue);
 
@@ -263,7 +259,6 @@ Make the report visually premium and beautifully structured.
       setLoading(false);
     }
 
-    // Clear form
     if (name.current) name.current.value = "";
     if (locality.current) locality.current.value = "";
     if (district.current) district.current.value = "";
@@ -283,6 +278,7 @@ Make the report visually premium and beautifully structured.
 
       <div className="pt-28 lg:pt-36 px-4 lg:px-20 pb-20">
         <div className="max-w-6xl mx-auto">
+          
           {/* Header Section */}
           <div className="text-center mb-12">
             <span className="inline-block px-4 py-2 rounded-full bg-purple-600 bg-opacity-20 border border-purple-500 text-purple-300 text-sm font-medium mb-4">
@@ -291,9 +287,25 @@ Make the report visually premium and beautifully structured.
             <h1 className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-4">
               Get Astro Insights
             </h1>
-            <p className="text-lg text-purple-200 opacity-80 max-w-2xl mx-auto">
+            <p className="text-lg text-purple-200 opacity-80 max-w-2xl mx-auto mb-6">
               Discover your destiny with our AI-powered Kundli analysis.
             </p>
+            
+            {/* Trust Badges */}
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-900/30 rounded-full border border-purple-700/30">
+                <i className="ri-shield-check-line text-green-400"></i>
+                <span className="text-purple-200 text-sm">100% Confidential</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-900/30 rounded-full border border-purple-700/30">
+                <i className="ri-time-line text-blue-400"></i>
+                <span className="text-purple-200 text-sm">Instant Results</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-900/30 rounded-full border border-purple-700/30">
+                <i className="ri-star-line text-yellow-400"></i>
+                <span className="text-purple-200 text-sm">50,000+ Reports</span>
+              </div>
+            </div>
           </div>
 
           {/* Main Form Card */}
@@ -309,9 +321,29 @@ Make the report visually premium and beautifully structured.
                     src={kundli}
                   />
                 </div>
-                <p className="mt-4 text-purple-300 text-sm opacity-80">
+                <p className="mt-4 text-purple-300 text-sm opacity-80 text-center">
                   Ancient Wisdom Meets Modern AI
                 </p>
+                
+                {/* Features List */}
+                <div className="mt-6 w-full space-y-3">
+                  <div className="flex items-start gap-3 text-left">
+                    <i className="ri-check-double-line text-green-400 mt-1"></i>
+                    <span className="text-purple-200 text-sm">Detailed 2000+ word report</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-left">
+                    <i className="ri-check-double-line text-green-400 mt-1"></i>
+                    <span className="text-purple-200 text-sm">Career & Finance insights</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-left">
+                    <i className="ri-check-double-line text-green-400 mt-1"></i>
+                    <span className="text-purple-200 text-sm">Love & Marriage analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-left">
+                    <i className="ri-check-double-line text-green-400 mt-1"></i>
+                    <span className="text-purple-200 text-sm">Vedic remedies included</span>
+                  </div>
+                </div>
               </div>
 
               {/* Right Side - Form */}
@@ -430,7 +462,7 @@ Make the report visually premium and beautifully structured.
                   </div>
 
                   {/* Language */}
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-purple-300 uppercase mb-2">
                       Language
                     </label>
@@ -480,6 +512,106 @@ Make the report visually premium and beautifully structured.
             </div>
           </div>
 
+          {/* What You'll Get Section */}
+          <div className="bg-purple-950 bg-opacity-40 backdrop-blur-sm border border-purple-500 border-opacity-20 rounded-3xl p-6 lg:p-10 mb-8">
+            <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-8">
+              What You'll Get in Your Report
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-user-star-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Personality Blueprint</h3>
+                  <p className="text-purple-200 text-sm">Deep insights into your strengths, weaknesses, and hidden traits</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-briefcase-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Career Guidance</h3>
+                  <p className="text-purple-200 text-sm">Best career paths, business potential, and growth opportunities</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-heart-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Love & Marriage</h3>
+                  <p className="text-purple-200 text-sm">Romantic nature, compatibility traits, and partner qualities</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-money-dollar-circle-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Wealth & Finance</h3>
+                  <p className="text-purple-200 text-sm">Financial destiny, money habits, and investment mindset</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-heart-pulse-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Health & Wellness</h3>
+                  <p className="text-purple-200 text-sm">Health tendencies, mental wellness, and lifestyle advice</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i className="ri-gift-line text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Lucky Elements</h3>
+                  <p className="text-purple-200 text-sm">Lucky numbers, colors, gemstones, and Vedic remedies</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How It Works Section */}
+          <div className="bg-purple-950 bg-opacity-40 backdrop-blur-sm border border-purple-500 border-opacity-20 rounded-3xl p-6 lg:p-10 mb-8">
+            <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-8">
+              How It Works
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30">
+                  <span className="text-white text-3xl font-bold">1</span>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">Enter Your Details</h3>
+                <p className="text-purple-200 text-sm">Fill in your birth date, time, place, and other information</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30">
+                  <span className="text-white text-3xl font-bold">2</span>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">AI Analysis</h3>
+                <p className="text-purple-200 text-sm">Our advanced AI analyzes your birth chart using Vedic astrology</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30">
+                  <span className="text-white text-3xl font-bold">3</span>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">Get Your Report</h3>
+                <p className="text-purple-200 text-sm">Receive a detailed 2000+ word personalized astrology report</p>
+              </div>
+            </div>
+          </div>
+
           {/* Results Section */}
           {result && (
             <div className="bg-purple-950 bg-opacity-60 backdrop-blur-sm border border-purple-500 border-opacity-30 rounded-3xl p-6 lg:p-10">
@@ -497,7 +629,7 @@ Make the report visually premium and beautifully structured.
                 }}
               />
 
-              <div className="mt-8 flex justify-center">
+              <div className="mt-8 flex justify-center gap-4">
                 <button
                   type="button"
                   onClick={() => setresult(null)}
@@ -506,9 +638,43 @@ Make the report visually premium and beautifully structured.
                   <i className="ri-refresh-line mr-2"></i>
                   Generate New
                 </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-6 py-3 bg-purple-600 bg-opacity-30 border border-purple-500 rounded-full text-purple-200 font-medium hover:bg-opacity-50 transition-all"
+                >
+                  <i className="ri-printer-line mr-2"></i>
+                  Print Report
+                </button>
               </div>
             </div>
           )}
+
+          {/* FAQ Section */}
+          <div className="bg-purple-950 bg-opacity-40 backdrop-blur-sm border border-purple-500 border-opacity-20 rounded-3xl p-6 lg:p-10 mt-8">
+            <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-8">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              <div className="p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <h3 className="text-white font-semibold mb-2">How accurate is the AI Kundli report?</h3>
+                <p className="text-purple-200 text-sm">Our AI uses advanced Vedic astrology principles and analyzes your birth chart with precision. The report provides detailed insights based on planetary positions at your birth time.</p>
+              </div>
+              <div className="p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <h3 className="text-white font-semibold mb-2">How long does it take to generate the report?</h3>
+                <p className="text-purple-200 text-sm">The AI generates your comprehensive report in 30-60 seconds. You'll receive a detailed 2000+ word analysis covering all aspects of your life.</p>
+              </div>
+              <div className="p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <h3 className="text-white font-semibold mb-2">Is my personal information safe?</h3>
+                <p className="text-purple-200 text-sm">Absolutely! We use bank-level encryption and never share your data. Your birth details are only used to generate your report and are not stored permanently.</p>
+              </div>
+              <div className="p-4 bg-purple-900/30 rounded-xl border border-purple-700/30">
+                <h3 className="text-white font-semibold mb-2">Can I get the report in other languages?</h3>
+                <p className="text-purple-200 text-sm">Yes! We support multiple languages including English, Hindi, Spanish, French, German, and more. Select your preferred language before generating the report.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

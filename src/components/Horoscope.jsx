@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Chatbot from "./Chatbot";
 import bg from "../image/bg1.jpg";
@@ -8,15 +8,17 @@ import lang from "../utils/langConstants";
 
 const Horoscope = () => {
   const { type, sign } = useParams();
-  const navigate = useNavigate();
   const [horoscopeData, setHoroscopeData] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   const Bot = useSelector((store) => store.configApp.Bot);
   const LangKey = useSelector((store) => store.configApp.lang);
+
+  // Use default values instead of redirect
+  const currentType = type || "daily";
+  const currentSign = sign || "aries";
 
   const horoscopeTypes = [
     { key: "daily", label: "Daily Horoscope", path: "/horoscope/daily", icon: "☀️" },
@@ -538,27 +540,14 @@ const Horoscope = () => {
     return content[typeKey]?.[signKey] || content.daily.aries;
   };
 
-  // Handle redirect if no type or sign
+  // Fetch horoscope data - NO REDIRECT, just use defaults
   useEffect(() => {
-    if (!type || !sign) {
-      setShouldRedirect(true);
-      const newType = type || "daily";
-      const newSign = sign || "aries";
-      navigate(`/horoscope/${newType}/${newSign}`, { replace: true });
-    }
-  }, [type, sign, navigate]);
-
-  // Fetch horoscope data
-  useEffect(() => {
-    if (shouldRedirect) return;
-    if (!type || !sign) return;
-
     const fetchHoroscope = async () => {
       setLoading(true);
       setError(null);
       try {
-        const signKey = sign.toLowerCase();
-        const typeKey = type.toLowerCase();
+        const signKey = currentSign.toLowerCase();
+        const typeKey = currentType.toLowerCase();
         
         const horoscope = getHoroscopeContent(typeKey, signKey);
         
@@ -575,21 +564,8 @@ const Horoscope = () => {
     };
 
     fetchHoroscope();
-  }, [type, sign, shouldRedirect]);
+  }, [currentType, currentSign]);
 
-  if (shouldRedirect || !type || !sign) {
-    return (
-      <div className="relative flex-col justify-center items-center mx-4 lg:mx-24 flex w-12/12 pt-24 lg:pt-32 min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-purple-300 text-lg">Loading horoscope...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const currentType = type;
-  const currentSign = sign;
   const signData = zodiacSigns[currentSign];
 
   return (
