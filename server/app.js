@@ -25,11 +25,13 @@ app.use(
       "https://plutoastro.com",
       "https://www.plutoastro.com",
       "http://localhost:3000",
-      "http://192.168.0.113:3000",
+      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",  // ✅ Vercel preview URL
+      "https://plutoastro-production.up.railway.app",  // ✅ Railway frontend (agar hai)
+      "*",  // ✅ Sabhi origins allow karo (development ke liye)
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
