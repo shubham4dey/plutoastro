@@ -239,5 +239,3 @@ function AIAstro() {
 }
  
 export default AIAstro;
- 
- 

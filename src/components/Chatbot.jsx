@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import { CHAT_BOT } from "../utils/constants";
-import openai from "../utils/openai";
 import React, { useRef, useState, useEffect } from "react";
 import { addBot, addForm, addLimit } from "../store/configAppSlice";
 import { toast, Bounce } from "react-toastify";
@@ -74,13 +73,25 @@ const Chatbot = () => {
         systemPrompt = JSON.stringify(CHAT_BOT);
       }
 
-      const data = await openai.chat.completions.create({
-        messages: [
-          { role: "system", content: systemPrompt || "You are a helpful astrology assistant." },
-          { role: "user", content: inputValue }
-        ],
-        model: "gpt-3.5-turbo",
+      // ✅ CHANGE: Backend API call (Gemini 3.5 Flash)
+      const response = await fetch("http://localhost:5000/api/openai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: systemPrompt || "You are a helpful astrology assistant." },
+            { role: "user", content: inputValue }
+          ]
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get response");
+      }
 
       const Response = data?.choices?.[0]?.message?.content;
       

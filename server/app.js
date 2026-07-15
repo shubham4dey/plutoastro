@@ -10,7 +10,9 @@ const horoscopeRoutes = require("./routes/horoscopeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const aiAstrologerRoutes = require("./routes/aiAstrologerRoutes");
 const astrologerApplicationRoutes = require("./routes/astrologerApplicationRoutes");
-const productRoutes = require("./routes/productRoutes"); // ✅ Added
+const productRoutes = require("./routes/productRoutes"); 
+const newsletterRoutes = require("./routes/newsletterRoutes"); // ✅ 1. NEWSLETTER ROUTE IMPORTED
+
 const app = express();
 
 /* =========================
@@ -205,10 +207,16 @@ app.use(
   astrologerApplicationRoutes
 );
 
-// Products APIs ✅ Added
+// Products APIs 
 app.use(
   "/api/products",
   productRoutes
+);
+
+// ✅ 2. NEWSLETTER API ROUTE REGISTERED
+app.use(
+  "/api/newsletter",
+  newsletterRoutes
 );
 
 /* =========================

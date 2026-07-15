@@ -66,7 +66,9 @@ function AIChat() {
           return;
         }
 
-        const url = `https://plutoastro-api.onrender.com/api/ai-astrologers/${id}`;
+        // ✅ CHANGE 1: Localhost URL for development (Production ke liye neeche wali uncomment karna)
+        const url = `http://localhost:5000/api/ai-astrologers/${id}`;
+        // const url = `https://plutoastro-api.onrender.com/api/ai-astrologers/${id}`;
 
         console.log(
           "FETCH URL =",
@@ -128,26 +130,25 @@ function AIChat() {
       setLoading(true);
 
       try {
+        // ✅ CHANGE 2: Format history for Gemini backend
+        const chatHistory = messages.map((msg) => ({
+          role: msg.sender === "user" ? "user" : "model",
+          content: msg.text,
+        }));
+
+        // ✅ CHANGE 3: Correct Endpoint & Payload for AI Chat
         const response =
           await axios.post(
-            "https://plutoastro-api.onrender.com/api/openai/chat",
+            `http://localhost:5000/api/ai-astrologers/${id}/chat`,
             {
-              messages: [
-                {
-                  role: "user",
-                  content:
-                    userMessage,
-                },
-              ],
+              message: userMessage,
+              history: chatHistory,
             }
           );
 
+        // ✅ CHANGE 4: Extract response from new backend format
         const aiReply =
-          response.data
-            ?.choices?.[0]
-            ?.message
-            ?.content ||
-          response.data?.reply ||
+          response.data?.message ||
           "No response";
 
         setMessages((prev) => [

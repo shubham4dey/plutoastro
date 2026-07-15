@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import {
   Outlet,
   RouterProvider,
   createBrowserRouter,
+  useLocation,
 } from "react-router-dom";
 
 // Main Components
@@ -22,6 +24,7 @@ import About from "./About";
 import Error from "./Error";
 import Footer from "./Footer";
 import TarotReading from "../pages/TarotReading";
+
 // AI Pages
 import AIAstro from "../pages/AIAstro";
 import AIAstroProfile from "../pages/AIAstroProfile";
@@ -36,11 +39,25 @@ import UsersAdmin from "../pages/UsersAdmin";
 import OrdersAdmin from "../pages/OrdersAdmin";
 import BecomeAstrologer from "../pages/BecomeAstrologer";
 
+// ✅ NEW: Astrologer Applications Admin Page
+import AstrologerApplications from "../pages/AstrologerApplications";
+
+// ✅ NEW: Zodiac Page
+import Zodiac from "../pages/Zodiac";
+
+// ✅ NEW: ScrollToTop Component (Fixes page loading from bottom)
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 const appLayout = createBrowserRouter([
   // =========================
-  // ADMIN ROUTES
+  // ADMIN ROUTES (No Header/Footer)
   // =========================
-
   {
     path: "/admin",
     element: <AdminLogin />,
@@ -65,148 +82,62 @@ const appLayout = createBrowserRouter([
     path: "/admin/orders",
     element: <OrdersAdmin />,
   },
+  {
+    path: "/admin/applications",
+    element: <AstrologerApplications />,
+  },
 
   // =========================
-  // MAIN WEBSITE
+  // MAIN WEBSITE (With Header & Footer)
   // =========================
-
   {
     path: "/",
+    // ✅ FIXED LAYOUT: Flex column ensures Header top, Footer bottom always
     element: (
-      <>
+      <div className="flex flex-col min-h-screen">
+        {/* ✅ ScrollToTop added here to force page to top on every route change */}
+        <ScrollToTop />
+        
         <Header />
         <FootIcons />
-        <Outlet />
+        
+        {/* ✅ flex-grow pushes the footer to the bottom */}
+        <main className="flex-grow relative">
+          <Outlet />
+        </main>
+        
         <Footer />
-      </>
+      </div>
     ),
-
     errorElement: <Error />,
-
     children: [
-      {
-        index: true,
-        element: <Hero />,
-      },
-
-      {
-        path: "chat",
-        element: <Chat />,
-      },
-
-      {
-        path: "call",
-        element: <Call />,
-      },
-
-      // =========================
-      // AI ASTROLOGY
-      // =========================
-
-      {
-        path: "ai-astro",
-        element: <AIAstro />,
-      },
-
-      {
-        path: "ai-astro/:id",
-        element: <AIAstroProfile />,
-      },
-
-      {
-        path: "ai-chat",
-        element: <AIChat />,
-      },
-
-      {
-        path: "ai-chat/:id",
-        element: <AIChat />,
-      },
-
-      // =========================
-      // NORMAL ASTROLOGY
-      // =========================
-
-      {
-        path: "astroProfile/:id",
-        element: <AstroProfile />,
-      },
-
-      {
-        path: "following",
-        element: <Following />,
-      },
-
-      {
-        path: "chatbot",
-        element: <Chatbot />,
-      },
-
-      {
-        path: "kundligpt",
-        element: <AstroKundli />,
-      },
-
-      // ✅ UPDATED HOROSCOPE ROUTE
-      {
-        path: "horoscope/:type?/:sign?",
-        element: <Horoscope />,
-      },
-
-      {
-        path: "astrologerschat/:id",
-        element: <AstrologersTalk />,
-      },
-
-      {
-        path: "astrologerscall",
-        element: <AstrologersCallPage />,
-      },
-
-      {
-        path: "tarot",
-        element: <TarotReading />,
-      },
-
-      {
-        path: "zodiac",
-        element: <div>Zodiac Signs Page</div>,
-      },
-
-      {
-        path: "login",
-        element: <LoginForm />,
-      },
-
-      {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "become-astrologer",
-        element: <BecomeAstrologer />,
-      },
-
-      {
-        path: "error",
-        element: <Error />,
-      },
-
-      // 404
-      {
-        path: "*",
-        element: <Error />,
-      },
+      { index: true, element: <Hero /> },
+      { path: "chat", element: <Chat /> },
+      { path: "call", element: <Call /> },
+      { path: "ai-astro", element: <AIAstro /> },
+      { path: "ai-astro/:id", element: <AIAstroProfile /> },
+      { path: "ai-chat", element: <AIChat /> },
+      { path: "ai-chat/:id", element: <AIChat /> },
+      { path: "astroProfile/:id", element: <AstroProfile /> },
+      { path: "following", element: <Following /> },
+      { path: "chatbot", element: <Chatbot /> },
+      { path: "kundligpt", element: <AstroKundli /> },
+      { path: "horoscope/:type?/:sign?", element: <Horoscope /> },
+      { path: "astrologerschat/:id", element: <AstrologersTalk /> },
+      { path: "astrologerscall", element: <AstrologersCallPage /> },
+      { path: "tarot", element: <TarotReading /> },
+      { path: "zodiac", element: <Zodiac /> },
+      { path: "login", element: <LoginForm /> },
+      { path: "about", element: <About /> },
+      { path: "become-astrologer", element: <BecomeAstrologer /> },
+      { path: "error", element: <Error /> },
+      { path: "*", element: <Error /> },
     ],
   },
 ]);
 
 function Body() {
-  return (
-    <RouterProvider
-      router={appLayout}
-    />
-  );
+  return <RouterProvider router={appLayout} />;
 }
 
 export default Body;

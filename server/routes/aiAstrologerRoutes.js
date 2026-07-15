@@ -1,10 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const router = express.Router();
 
 const AIAstrologer = require("../models/AIAstrologer");
 const upload = require("../middleware/upload");
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /* =========================
    GET ALL ACTIVE
@@ -422,5 +426,75 @@ router.patch(
     }
   }
 );
+/* ==========================================
+   ✅ FINAL: AI CHAT ROUTE (Gemini 3.5 Flash)
+   ========================================== */
+router.post("/:id/chat", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { message, history = [] } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid AI Astrologer ID" });
+    }
+
+    if (!message) {
+      return res.status(400).json({ success: false, message: "Message is required" });
+    }
+
+    const astrologer = await AIAstrologer.findById(id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: "AI Astrologer not found" });
+    }
+
+    if (!astrologer.isActive) {
+      return res.status(403).json({ success: false, message: "This AI Astrologer is currently inactive" });
+    }
+
+    console.log(`🔮 Generating AI response for: ${astrologer.name} (Using Gemini 3.5 Flash)`);
+
+    // ✅ Gemini 3.5 Flash - Most Intelligent Model
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash",
+      systemInstruction: astrologer.prompt || "You are an expert Vedic Astrologer. Provide detailed, empathetic, and practical guidance.",
+      generationConfig: {
+        maxOutputTokens: 1000,
+        temperature: 0.7,
+      },
+    });
+
+    // Format history (First message MUST be 'user')
+    let formattedHistory = history
+      .filter(msg => msg.content && msg.content.trim() !== "")
+      .map((msg) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }));
+
+    if (formattedHistory.length > 0 && formattedHistory[0].role === "model") {
+      formattedHistory = formattedHistory.slice(1);
+    }
+
+    const chat = model.startChat({ history: formattedHistory });
+    const result = await chat.sendMessage(message);
+    const responseText = result.response.text();
+
+    console.log("✅ Gemini 3.5 Flash Response Generated");
+
+    res.status(200).json({
+      success: true,
+      message: responseText,
+      astrologerName: astrologer.name,
+    });
+
+  } catch (error) {
+    console.error("❌ AI Astrologer Chat Error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate AI response",
+      error: error.message,
+    });
+  }
+});
 
 module.exports = router;

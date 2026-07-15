@@ -4,11 +4,12 @@
   "private": true,
   "proxy": "https://plutoastro-api.onrender.com",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@reduxjs/toolkit": "^2.1.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.18.0",
+    "axios": "^1.18.1",
     "aztro-js": "^0.1.5",
     "firebase": "^10.8.0",
     "framer-motion": "^12.41.0",
