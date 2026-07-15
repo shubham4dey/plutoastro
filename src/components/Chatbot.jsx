@@ -74,7 +74,7 @@ const Chatbot = () => {
       }
 
       // ✅ CHANGE: Backend API call (Gemini 3.5 Flash)
-      const response = await fetch("http://localhost:5000/api/openai/chat", {
+      const response = await fetch("http://plutoastro-production.up.railway.app/api/openai/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

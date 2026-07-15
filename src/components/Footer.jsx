@@ -27,7 +27,7 @@ const Footer = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/newsletter/subscribe",
+        "http://plutoastro-production.up.railway.app/api/newsletter/subscribe",
         { email }
       );
 
