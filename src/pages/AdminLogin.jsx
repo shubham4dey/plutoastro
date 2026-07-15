@@ -16,7 +16,7 @@ function AdminLogin() {
   const handleLogin = async () => {
     try {
       const res = await fetch(
-        "https://plutoastro-api.onrender.com/api/admin/login",
+        "https://https://plutoastro-production.up.railway.app/api/admin/login",
         {
           method: "POST",
           headers: {

@@ -34,7 +34,7 @@ function AIAstrologers() {
       try {
         const response =
           await fetch(
-            "https://plutoastro-api.onrender.com/api/ai-astrologers"
+            "https://https://plutoastro-production.up.railway.app/api/ai-astrologers"
           );
 
         if (!response.ok) {

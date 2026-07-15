@@ -18,7 +18,7 @@ const AstrologersGrid = () => {
       
       console.log("🔄 Fetching astrologers...");
       
-      const response = await fetch("https://plutoastro-api.onrender.com/api/astrologers", {
+      const response = await fetch("https://https://plutoastro-production.up.railway.app/api/astrologers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +148,7 @@ const AstrologersGrid = () => {
     astrologer.image
       ? astrologer.image.startsWith("http")
         ? astrologer.image
-        : `https://plutoastro-api.onrender.com${astrologer.image}`
+        : `https://https://plutoastro-production.up.railway.app${astrologer.image}`
       : "https://via.placeholder.com/150"
   }
   alt={astrologer.name}

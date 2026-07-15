@@ -151,7 +151,7 @@ const Following = () => {
                               alt={astrologer.name}
                               src={
                                 astrologer.image
-                                  ? `https://plutoastro-api.onrender.com${astrologer.image}`
+                                  ? `https://https://plutoastro-production.up.railway.app${astrologer.image}`
                                   : PROFILE_IMG
                               }
                             />
