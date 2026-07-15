@@ -16,25 +16,23 @@ const newsletterRoutes = require("./routes/newsletterRoutes"); // ✅ 1. NEWSLET
 const app = express();
 
 /* =========================
-   CORS
+   CORS (FIXED)
 ========================= */
-
 app.use(
   cors({
     origin: [
       "https://plutoastro.com",
       "https://www.plutoastro.com",
       "http://localhost:3000",
-      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",  // ✅ Vercel preview URL
-      "https://plutoastro-production.up.railway.app",  // ✅ Railway frontend (agar hai)
-      "*",  // ✅ Sabhi origins allow karo (development ke liye)
+      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",
+      "https://plutoastro-production.up.railway.app"
+      // "*" HATA DIYA GAYA HAI (credentials: true ke saath ye kaam nahi karta)
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
-
 /* =========================
    BODY PARSER
 ========================= */
