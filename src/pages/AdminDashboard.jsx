@@ -35,7 +35,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
-        "https://https://plutoastro-production.up.railway.app/api/admin/dashboard",
+        "https://https://plutoastro-backend.onrender.com/api/admin/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,

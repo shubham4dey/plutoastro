@@ -2,7 +2,7 @@
   "name": "astro-gpt",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://https://plutoastro-production.up.railway.app",
+  "proxy": "https://https://plutoastro-backend.onrender.com",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@reduxjs/toolkit": "^2.1.0",

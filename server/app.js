@@ -25,7 +25,7 @@ app.use(
       "https://www.plutoastro.com",
       "http://localhost:3000",
       "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",
-      "https://plutoastro-production.up.railway.app"
+      "https://plutoastro-backend.onrender.com"
       // "*" HATA DIYA GAYA HAI (credentials: true ke saath ye kaam nahi karta)
     ],
     credentials: true,

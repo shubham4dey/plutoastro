@@ -8,7 +8,7 @@ const useAstroProfile = (id) => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://https://plutoastro-production.up.railway.app/api/astrologers/${id}`
+        `https://https://plutoastro-backend.onrender.com/api/astrologers/${id}`
       );
 
       const json = await response.json();

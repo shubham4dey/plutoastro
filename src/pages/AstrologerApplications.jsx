@@ -13,7 +13,7 @@ const AstrologerApplications = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://plutoastro-production.up.railway.app/api/astrologer-applications/admin/pending"
+        "https://plutoastro-backend.onrender.com/api/astrologer-applications/admin/pending"
       );
       setApplications(response.data);
     } catch (error) {
@@ -34,7 +34,7 @@ const AstrologerApplications = () => {
     
     try {
       const response = await axios.patch(
-        `https://plutoastro-production.up.railway.app/api/astrologer-applications/approve/${id}`
+        `https://plutoastro-backend.onrender.com/api/astrologer-applications/approve/${id}`
       );
       toast.success(response.data.message);
       fetchApplications(); // Refresh list
@@ -49,7 +49,7 @@ const AstrologerApplications = () => {
     
     try {
       const response = await axios.patch(
-        `https://plutoastro-production.up.railway.app/api/astrologer-applications/reject/${id}`
+        `https://plutoastro-backend.onrender.com/api/astrologer-applications/reject/${id}`
       );
       toast.success(response.data.message);
       fetchApplications(); // Refresh list
