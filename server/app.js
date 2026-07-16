@@ -11,12 +11,13 @@ const authRoutes = require("./routes/authRoutes");
 const aiAstrologerRoutes = require("./routes/aiAstrologerRoutes");
 const astrologerApplicationRoutes = require("./routes/astrologerApplicationRoutes");
 const productRoutes = require("./routes/productRoutes"); 
-const newsletterRoutes = require("./routes/newsletterRoutes"); // ✅ 1. NEWSLETTER ROUTE IMPORTED
+const newsletterRoutes = require("./routes/newsletterRoutes");
 
 const app = express();
 
 /* =========================
-   CORS (FIXED)
+   CORS (PRODUCTION READY)
+   Note: Sirf Frontend URLs yahan hote hain, Backend URL nahi.
 ========================= */
 app.use(
   cors({
@@ -24,267 +25,116 @@ app.use(
       "https://plutoastro.com",
       "https://www.plutoastro.com",
       "http://localhost:3000",
-      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",
-      "https://plutoastro-backend.onrender.com"
-      // "*" HATA DIYA GAYA HAI (credentials: true ke saath ye kaam nahi karta)
+      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
+
 /* =========================
    BODY PARSER
 ========================= */
-
 app.use(express.json());
-
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+app.use(express.urlencoded({ extended: true }));
 
 /* =========================
    UPLOADS STATIC FOLDER
+   (Note: Render par local uploads temporary hote hain. Future mein Cloudinary use karna best rahega)
 ========================= */
+const uploadsPath = path.resolve(__dirname, "uploads");
 
-const uploadsPath = path.resolve(
-  __dirname,
-  "uploads"
-);
-
-// Create uploads folder automatically
 if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, {
-    recursive: true,
-  });
+  fs.mkdirSync(uploadsPath, { recursive: true });
 }
 
-console.log(
-  "📁 Uploads Path:",
-  uploadsPath
-);
+console.log("📁 Uploads Path:", uploadsPath);
+console.log("📁 Upload Folder Exists:", fs.existsSync(uploadsPath));
 
-console.log(
-  "📁 Upload Folder Exists:",
-  fs.existsSync(uploadsPath)
-);
-
-/* =========================
-   DEBUG UPLOAD REQUESTS
-========================= */
+app.use("/uploads", (req, res, next) => {
+  const filePath = path.join(uploadsPath, req.path);
+  console.log("📸 Upload Request:", req.originalUrl);
+  console.log("📄 Requested File:", filePath);
+  console.log("✅ File Exists:", fs.existsSync(filePath));
+  next();
+});
 
 app.use(
   "/uploads",
-  (req, res, next) => {
-    const filePath = path.join(
-      uploadsPath,
-      req.path
-    );
-
-    console.log(
-      "📸 Upload Request:",
-      req.originalUrl
-    );
-
-    console.log(
-      "📄 Requested File:",
-      filePath
-    );
-
-    console.log(
-      "✅ File Exists:",
-      fs.existsSync(filePath)
-    );
-
-    next();
-  }
-);
-
-/* =========================
-   SERVE STATIC IMAGES
-========================= */
-
-app.use(
-  "/uploads",
-  express.static(
-    uploadsPath,
-    {
-      index: false,
-      extensions: [
-        "png",
-        "jpg",
-        "jpeg",
-        "gif",
-        "webp",
-        "jfif",
-      ],
-    }
-  )
+  express.static(uploadsPath, {
+    index: false,
+    extensions: ["png", "jpg", "jpeg", "gif", "webp", "jfif"],
+  })
 );
 
 /* =========================
    TEST ROUTES
 ========================= */
+app.get("/test-upload", (req, res) => {
+  res.json({
+    success: true,
+    uploadsPath,
+    folderExists: fs.existsSync(uploadsPath),
+  });
+});
 
-app.get(
-  "/test-upload",
-  (req, res) => {
-    res.json({
-      success: true,
-      uploadsPath,
-      folderExists:
-        fs.existsSync(
-          uploadsPath
-        ),
-    });
-  }
-);
-
-app.get(
-  "/test-file/:filename",
-  (req, res) => {
-    const filePath =
-      path.join(
-        uploadsPath,
-        req.params.filename
-      );
-
-    res.json({
-      success: true,
-      file:
-        req.params.filename,
-      exists:
-        fs.existsSync(
-          filePath
-        ),
-      path: filePath,
-    });
-  }
-);
+app.get("/test-file/:filename", (req, res) => {
+  const filePath = path.join(uploadsPath, req.params.filename);
+  res.json({
+    success: true,
+    file: req.params.filename,
+    exists: fs.existsSync(filePath),
+    path: filePath,
+  });
+});
 
 /* =========================
    API ROUTES
 ========================= */
-
-// Gemini / OpenAI
-app.use(openaiRoutes);
-
-// Admin APIs
-app.use(
-  "/api/admin",
-  adminRoutes
-);
-
-// Human Astrologers APIs
-app.use(
-  "/api/astrologers",
-  astrologerRoutes
-);
-
-// Horoscope APIs
-app.use(
-  "/api/horoscope",
-  horoscopeRoutes
-);
-
-// Authentication APIs
-app.use(
-  "/api/auth",
-  authRoutes
-);
-
-// AI Astrologers APIs
-app.use(
-  "/api/ai-astrologers",
-  aiAstrologerRoutes
-);
-
-// Astrologer Applications APIs
-app.use(
-  "/api/astrologer-applications",
-  astrologerApplicationRoutes
-);
-
-// Products APIs 
-app.use(
-  "/api/products",
-  productRoutes
-);
-
-// ✅ 2. NEWSLETTER API ROUTE REGISTERED
-app.use(
-  "/api/newsletter",
-  newsletterRoutes
-);
+app.use(openaiRoutes); 
+app.use("/api/admin", adminRoutes);
+app.use("/api/astrologers", astrologerRoutes);
+app.use("/api/horoscope", horoscopeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/ai-astrologers", aiAstrologerRoutes);
+app.use("/api/astrologer-applications", astrologerApplicationRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 
 /* =========================
    ROOT ROUTE
 ========================= */
-
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message:
-      "🚀 PlutoAstro API Running",
-    uploads:
-      "/uploads/<filename>",
+    message: "🚀 PlutoAstro API Running Successfully on Render",
+    uploads: "/uploads/<filename>",
   });
 });
 
 /* =========================
    404 HANDLER
 ========================= */
-
-app.use(
-  (req, res) => {
-    console.log(
-      "❌ Route Not Found:",
-      req.originalUrl
-    );
-
-    res.status(404).json({
-      success: false,
-      message:
-        "Route Not Found",
-      route:
-        req.originalUrl,
-    });
-  }
-);
+app.use((req, res) => {
+  console.log("❌ Route Not Found:", req.originalUrl);
+  res.status(404).json({
+    success: false,
+    message: "Route Not Found",
+    route: req.originalUrl,
+  });
+});
 
 /* =========================
    GLOBAL ERROR HANDLER
 ========================= */
-
-app.use(
-  (
-    err,
-    req,
-    res,
-    next
-  ) => {
-    console.error(
-      "🔥 Server Error:",
-      err
-    );
-
-    res.status(
-      err.status || 500
-    ).json({
-      success: false,
-      message:
-        err.message ||
-        "Internal Server Error",
-      stack:
-        process.env
-          .NODE_ENV ===
-        "development"
-          ? err.stack
-          : undefined,
-    });
-  }
-);
+app.use((err, req, res, next) => {
+  console.error("🔥 Server Error:", err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
 
 module.exports = app;
