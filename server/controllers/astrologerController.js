@@ -58,11 +58,11 @@ const getAstrologerById = async (req, res) => {
   }
 };
 
-// CREATE Astrologer
+// ✅ CREATE Astrologer (Updated for Cloudinary)
 const createAstrologer = async (req, res) => {
   try {
     console.log("Request body:", req.body);
-    console.log("Request file:", req.file);
+    console.log("Request file:", req.file); // Cloudinary response yahan aayega
 
     const { name, experience, pricePerMinute, rating, status } = req.body;
 
@@ -79,7 +79,8 @@ const createAstrologer = async (req, res) => {
       pricePerMinute: pricePerMinute || 10,
       rating: rating || 5,
       status: status || "online",
-      image: req.file ? `/uploads/${req.file.filename}` : "",
+      // 🌟 MAGIC CHANGE: req.file.path mein Cloudinary ka permanent URL hoga!
+      image: req.file ? req.file.path : (req.body.image || ""), 
     });
 
     await astrologer.save();
@@ -98,7 +99,7 @@ const createAstrologer = async (req, res) => {
   }
 };
 
-// UPDATE Astrologer
+// ✅ UPDATE Astrologer (Updated for Cloudinary)
 const updateAstrologer = async (req, res) => {
   try {
     const { name, experience, pricePerMinute, rating, status } = req.body;
@@ -111,8 +112,9 @@ const updateAstrologer = async (req, res) => {
       status,
     };
 
+    // 🌟 MAGIC CHANGE: Agar nayi image upload hui, toh Cloudinary URL save karo
     if (req.file) {
-      updateData.image = `/uploads/${req.file.filename}`;
+      updateData.image = req.file.path; 
     }
 
     const astrologer = await Astrologer.findByIdAndUpdate(

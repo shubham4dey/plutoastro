@@ -39,9 +39,15 @@ exports.getAIAstrologerById =
 exports.createAIAstrologer =
   async (req, res) => {
     try {
+      // ✅ CHANGE: Cloudinary URL use karo agar file upload hui hai
+      const astrologerData = { ...req.body };
+      if (req.file) {
+        astrologerData.image = req.file.path;
+      }
+
       const astrologer =
         await AIAstrologer.create(
-          req.body
+          astrologerData
         );
 
       res.status(201).json(
@@ -57,10 +63,17 @@ exports.createAIAstrologer =
 exports.updateAIAstrologer =
   async (req, res) => {
     try {
+      const updateData = { ...req.body };
+      
+      // ✅ CHANGE: Cloudinary URL use karo agar nayi file upload hui hai
+      if (req.file) {
+        updateData.image = req.file.path;
+      }
+
       const astrologer =
         await AIAstrologer.findByIdAndUpdate(
           req.params.id,
-          req.body,
+          updateData,
           {
             new: true,
           }

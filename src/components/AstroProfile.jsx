@@ -14,7 +14,7 @@ import AstroProfileBottom from "./AstroProfileBottom";
 
 const AstroProfile = () => {
   const [follow, setfollow] = useState(false);
-  const navigate = useNavigate(); // ← Add this
+  const navigate = useNavigate();
 
   const { id } = useParams();
   useAstroProfile(id);
@@ -135,11 +135,23 @@ const AstroProfile = () => {
                 
                 {/* Profile Image Container */}
                 <div className="relative rounded-full overflow-hidden border-4 border-purple-400 border-opacity-50 shadow-2xl">
+                  
+                  {/* ✅ UPDATED IMAGE SRC LOGIC FOR CLOUDINARY */}
                   <img
                     className="w-full h-auto"
-                    src={data?.image ? `https://plutoastro-backend.onrender.com${data.image}` : PROFILE_IMG}
+                    src={
+                      data?.image
+                        ? data.image.startsWith("http")
+                          ? data.image // Cloudinary URL direct use hoga
+                          : `https://plutoastro-backend.onrender.com${data.image}` // Purane path ke liye fallback
+                        : PROFILE_IMG
+                    }
                     alt={data?.name}
+                    onError={(e) => {
+                      e.target.src = PROFILE_IMG; // Agar image load na ho toh default image dikhaye
+                    }}
                   />
+                  
                   {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-purple-900 via-transparent to-transparent opacity-30"></div>
                 </div>

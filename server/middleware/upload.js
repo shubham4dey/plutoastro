@@ -1,67 +1,26 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary"); // ✅ Cloudinary config import kiya
 
 /* =========================
-   UPLOAD DIRECTORY
+   CLOUDINARY STORAGE CONFIG
 ========================= */
-
-const uploadPath = path.resolve(
-  __dirname,
-  "..",
-  "uploads"
-);
-
-// Automatically create uploads folder
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, {
-    recursive: true,
-  });
-
-  console.log(
-    "✅ Upload folder created:",
-    uploadPath
-  );
-}
-
-console.log(
-  "📁 Upload Directory:",
-  uploadPath
-);
-
-/* =========================
-   STORAGE CONFIG
-========================= */
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-
-  filename: (req, file, cb) => {
-    const extension =
-      path.extname(file.originalname) ||
-      ".png";
-
-    const uniqueName =
-      Date.now() +
-      "-" +
-      Math.round(Math.random() * 1e9) +
-      extension.toLowerCase();
-
-    cb(null, uniqueName);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "plutoastro_uploads", // Cloudinary par is naam ka folder banega
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "jfif"],
+    public_id: (req, file) => {
+      // Unique naam generate karega (purane logic jaisa hi)
+      return Date.now() + "-" + Math.round(Math.random() * 1e9);
+    },
   },
 });
 
 /* =========================
-   FILE FILTER
+   FILE FILTER (Early rejection ke liye)
 ========================= */
-
-const fileFilter = (
-  req,
-  file,
-  cb
-) => {
+const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -71,17 +30,11 @@ const fileFilter = (
     "image/jfif",
   ];
 
-  if (
-    allowedTypes.includes(
-      file.mimetype
-    )
-  ) {
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
-      new Error(
-        "Only JPG, JPEG, PNG, WEBP, GIF and JFIF images are allowed."
-      ),
+      new Error("Only JPG, JPEG, PNG, WEBP, GIF and JFIF images are allowed."),
       false
     );
   }
@@ -90,13 +43,11 @@ const fileFilter = (
 /* =========================
    MULTER CONFIG
 ========================= */
-
 const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize:
-      10 * 1024 * 1024, // 10 MB
+    fileSize: 10 * 1024 * 1024, // 10 MB limit waisi hi rakhi hai
   },
 });
 
