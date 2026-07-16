@@ -4,6 +4,7 @@ import React, {
   useState,
 } from "react";
 
+import bg from "../image/bg1.jpg";
 import {
   useNavigate,
   useParams,
@@ -80,8 +81,15 @@ function AIAstroProfile() {
       : "/Logo.png";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#05000d] text-white pt-32 pb-20">
-
+    <div className="relative min-h-screen overflow-hidden text-white pt-32 pb-20">
+       {/* Background Image */}
+    <img
+      src={bg}
+      alt="Background"
+      className="fixed inset-0 w-full h-full object-cover brightness-50 -z-20"
+    />
+<div className="fixed inset-0 bg-black/40 -z-10"></div>
+  
       {/* AURORA BACKGROUND */}
 
       <div className="absolute inset-0 overflow-hidden">

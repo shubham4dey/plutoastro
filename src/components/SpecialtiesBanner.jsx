@@ -40,7 +40,7 @@ const SpecialtiesBanner = () => {
   ];
 
   return (
-    <section className="relative py-20 lg:py-28 overflow-hidden">
+    <section className="relative py-12 lg:py-28 overflow-hidden">
       {/* Premium Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-950/20 via-transparent to-fuchsia-950/20"></div>
       
@@ -56,37 +56,37 @@ const SpecialtiesBanner = () => {
       <div className="relative max-w-7xl mx-auto px-4 lg:px-8">
         
         {/* Premium Heading with Glow */}
-        <div className="text-center mb-16 lg:mb-20">
-          <div className="inline-flex items-center gap-4 mb-4 px-8 py-3 rounded-full bg-gradient-to-r from-purple-900/40 to-fuchsia-900/40 backdrop-blur-md border border-purple-500/30 shadow-lg shadow-purple-900/20">
-            <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
-            <h3 className="text-2xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-fuchsia-300 to-purple-300">
+        <div className="text-center mb-10 lg:mb-20">
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 lg:gap-4 mb-4 px-4 lg:px-8 py-2 lg:py-3 rounded-full bg-gradient-to-r from-purple-900/40 to-fuchsia-900/40 backdrop-blur-md border border-purple-500/30 shadow-lg shadow-purple-900/20">
+            <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-purple-400 rounded-full animate-pulse"></span>
+            <h3 className="text-lg lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-fuchsia-300 to-purple-300">
               16 Languages
             </h3>
-            <span className="text-fuchsia-500 text-2xl">✦</span>
-            <h3 className="text-2xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-fuchsia-300 to-purple-300">
+            <span className="text-fuchsia-500 text-lg lg:text-2xl">✦</span>
+            <h3 className="text-lg lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-fuchsia-300 to-purple-300">
               40+ Specialties
             </h3>
-            <span className="w-2 h-2 bg-fuchsia-400 rounded-full animate-pulse"></span>
+            <span className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-fuchsia-400 rounded-full animate-pulse"></span>
           </div>
-          <div className="w-48 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto"></div>
+          <div className="w-32 lg:w-48 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto"></div>
         </div>
 
         {/* Specialties Marquee - Top Row with Glass Effect */}
-        <div className="relative mb-16 group">
+        <div className="relative mb-8 lg:mb-16 group">
           {/* Glass Container */}
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-950/30 via-purple-900/20 to-fuchsia-950/30 rounded-2xl backdrop-blur-sm border border-purple-700/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-950/30 via-purple-900/20 to-fuchsia-950/30 rounded-xl lg:rounded-2xl backdrop-blur-sm border border-purple-700/20"></div>
           
-          <div className="relative flex overflow-hidden py-4">
+          <div className="relative flex overflow-hidden py-3 lg:py-4">
             <div className="flex animate-marquee-left whitespace-nowrap">
               {[...specialties, ...specialties, ...specialties].map((specialty, index) => (
                 <div
                   key={index}
-                  className="flex items-center mx-8 group/specialty cursor-pointer"
+                  className="flex items-center mx-4 lg:mx-8 group/specialty cursor-pointer"
                 >
-                  <span className="text-purple-200/90 text-lg lg:text-2xl font-medium group-hover/specialty:text-white group-hover/specialty:scale-110 transition-all duration-300 drop-shadow-lg">
+                  <span className="text-purple-200/90 text-sm lg:text-2xl font-medium group-hover/specialty:text-white group-hover/specialty:scale-110 transition-all duration-300 drop-shadow-lg whitespace-nowrap">
                     {specialty}
                   </span>
-                  <span className="mx-8 text-fuchsia-500/60 text-3xl group-hover/specialty:text-fuchsia-400 transition-colors duration-300">
+                  <span className="mx-4 lg:mx-8 text-fuchsia-500/60 text-xl lg:text-3xl group-hover/specialty:text-fuchsia-400 transition-colors duration-300">
                     ✦
                   </span>
                 </div>
@@ -98,19 +98,19 @@ const SpecialtiesBanner = () => {
         {/* Languages Marquee - Bottom Row with Glass Effect */}
         <div className="relative group">
           {/* Glass Container */}
-          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-950/30 via-fuchsia-900/20 to-purple-950/30 rounded-2xl backdrop-blur-sm border border-fuchsia-700/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-950/30 via-fuchsia-900/20 to-purple-950/30 rounded-xl lg:rounded-2xl backdrop-blur-sm border border-fuchsia-700/20"></div>
           
-          <div className="relative flex overflow-hidden py-4">
+          <div className="relative flex overflow-hidden py-3 lg:py-4">
             <div className="flex animate-marquee-right whitespace-nowrap">
               {[...languages, ...languages, ...languages].map((lang, index) => (
                 <div
                   key={index}
-                  className="flex items-center mx-8 group/lang cursor-pointer"
+                  className="flex items-center mx-4 lg:mx-8 group/lang cursor-pointer"
                 >
-                  <span className="text-fuchsia-300/90 text-lg lg:text-2xl font-medium group-hover/lang:text-white group-hover/lang:scale-110 transition-all duration-300 drop-shadow-lg">
+                  <span className="text-fuchsia-300/90 text-sm lg:text-2xl font-medium group-hover/lang:text-white group-hover/lang:scale-110 transition-all duration-300 drop-shadow-lg whitespace-nowrap">
                     {lang.script}
                   </span>
-                  <span className="mx-8 text-purple-500/60 text-2xl group-hover/lang:text-purple-400 transition-colors duration-300">
+                  <span className="mx-4 lg:mx-8 text-purple-500/60 text-lg lg:text-2xl group-hover/lang:text-purple-400 transition-colors duration-300">
                     •
                   </span>
                 </div>
@@ -120,7 +120,7 @@ const SpecialtiesBanner = () => {
         </div>
 
         {/* Bottom Glow Line */}
-        <div className="mt-16 w-full h-px bg-gradient-to-r from-transparent via-fuchsia-500/30 to-transparent"></div>
+        <div className="mt-8 lg:mt-16 w-full h-px bg-gradient-to-r from-transparent via-fuchsia-500/30 to-transparent"></div>
       </div>
 
       {/* Custom CSS for Marquee Animation */}
@@ -154,6 +154,17 @@ const SpecialtiesBanner = () => {
         .animate-marquee-left:hover,
         .animate-marquee-right:hover {
           animation-play-state: paused;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+          .animate-marquee-left {
+            animation: marquee-left 20s linear infinite;
+          }
+          
+          .animate-marquee-right {
+            animation: marquee-right 25s linear infinite;
+          }
         }
       `}</style>
     </section>

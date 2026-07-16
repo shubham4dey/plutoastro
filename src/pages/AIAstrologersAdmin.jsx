@@ -76,11 +76,7 @@ function AIAstrologersAdmin() {
       isActive: astro.isActive,
     });
 
-    setPreview(
-      astro.image
-        ? `https://plutoastro-backend.onrender.com${astro.image}`
-        : ""
-    );
+    setPreview(astro.image || "");
 
     setImage(null);
 

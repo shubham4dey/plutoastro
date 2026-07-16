@@ -1,13 +1,44 @@
 const Astrologer = require("../models/Astrologer");
 
-// Get all astrologers
+const parseArrayField = (value) => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+};
+
+const getUploadedImageUrl = (file) => {
+  if (!file) {
+    return "";
+  }
+
+  return file.path || file.secure_url || file.url || "";
+};
+
 const getAstrologers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
+    const page = parseInt(req.query.page, 10) || 1;
     const limit = 10;
     const search = req.query.search || "";
 
-    let query = {};
+    const query = {};
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
@@ -34,7 +65,6 @@ const getAstrologers = async (req, res) => {
   }
 };
 
-// Get single astrologer
 const getAstrologerById = async (req, res) => {
   try {
     const astrologer = await Astrologer.findById(req.params.id);
@@ -58,32 +88,35 @@ const getAstrologerById = async (req, res) => {
   }
 };
 
-// ✅ CREATE Astrologer (Updated for Cloudinary)
 const createAstrologer = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("Request file:", req.file); // Cloudinary response yahan aayega
+    const {
+      name,
+      experience,
+      pricePerMinute,
+      rating,
+      status,
+      skills,
+      languages,
+    } = req.body;
 
-    const { name, experience, pricePerMinute, rating, status } = req.body;
-
-    if (!name) {
+    if (!name || name.trim() === "") {
       return res.status(400).json({
         success: false,
         message: "Name is required",
       });
     }
 
-    const astrologer = new Astrologer({
-      name,
-      experience: experience || 0,
-      pricePerMinute: pricePerMinute || 10,
-      rating: rating || 5,
+    const astrologer = await Astrologer.create({
+      name: name.trim(),
+      experience: Number(experience) || 0,
+      pricePerMinute: Number(pricePerMinute) || 10,
+      rating: Number(rating) || 5,
       status: status || "online",
-      // 🌟 MAGIC CHANGE: req.file.path mein Cloudinary ka permanent URL hoga!
-      image: req.file ? req.file.path : (req.body.image || ""), 
+      skills: parseArrayField(skills) || [],
+      languages: parseArrayField(languages) || [],
+      image: getUploadedImageUrl(req.file) || req.body.image || "",
     });
-
-    await astrologer.save();
 
     res.status(201).json({
       success: true,
@@ -91,7 +124,7 @@ const createAstrologer = async (req, res) => {
       astrologer,
     });
   } catch (error) {
-    console.error("Create error:", error);
+    console.error("Create astrologer error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -99,22 +132,66 @@ const createAstrologer = async (req, res) => {
   }
 };
 
-// ✅ UPDATE Astrologer (Updated for Cloudinary)
 const updateAstrologer = async (req, res) => {
   try {
-    const { name, experience, pricePerMinute, rating, status } = req.body;
-
-    const updateData = {
+    const {
       name,
       experience,
       pricePerMinute,
       rating,
       status,
-    };
+      skills,
+      languages,
+    } = req.body;
 
-    // 🌟 MAGIC CHANGE: Agar nayi image upload hui, toh Cloudinary URL save karo
-    if (req.file) {
-      updateData.image = req.file.path; 
+    const updateData = {};
+
+    if (name !== undefined) {
+      if (name.trim() === "") {
+        return res.status(400).json({
+          success: false,
+          message: "Name cannot be empty",
+        });
+      }
+      updateData.name = name.trim();
+    }
+
+    if (experience !== undefined) {
+      updateData.experience = Number(experience);
+    }
+
+    if (pricePerMinute !== undefined) {
+      updateData.pricePerMinute = Number(pricePerMinute);
+    }
+
+    if (rating !== undefined) {
+      updateData.rating = Number(rating);
+    }
+
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+
+    const parsedSkills = parseArrayField(skills);
+    if (parsedSkills !== undefined) {
+      updateData.skills = parsedSkills;
+    }
+
+    const parsedLanguages = parseArrayField(languages);
+    if (parsedLanguages !== undefined) {
+      updateData.languages = parsedLanguages;
+    }
+
+    const uploadedImageUrl = getUploadedImageUrl(req.file);
+    if (uploadedImageUrl) {
+      updateData.image = uploadedImageUrl;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No data to update",
+      });
     }
 
     const astrologer = await Astrologer.findByIdAndUpdate(
@@ -136,7 +213,7 @@ const updateAstrologer = async (req, res) => {
       astrologer,
     });
   } catch (error) {
-    console.error("Update error:", error);
+    console.error("Update astrologer error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -144,7 +221,6 @@ const updateAstrologer = async (req, res) => {
   }
 };
 
-// DELETE Astrologer
 const deleteAstrologer = async (req, res) => {
   try {
     const astrologer = await Astrologer.findByIdAndDelete(req.params.id);

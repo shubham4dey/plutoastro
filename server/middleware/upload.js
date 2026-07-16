@@ -1,26 +1,36 @@
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../config/cloudinary"); // ✅ Cloudinary config import kiya
+const cloudinary = require("../config/cloudinary");
 
-/* =========================
-   CLOUDINARY STORAGE CONFIG
-========================= */
+const hasCloudinaryConfig = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+);
+
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
-    folder: "plutoastro_uploads", // Cloudinary par is naam ka folder banega
+    folder: "plutoastro_uploads",
     allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "jfif"],
-    public_id: (req, file) => {
-      // Unique naam generate karega (purane logic jaisa hi)
-      return Date.now() + "-" + Math.round(Math.random() * 1e9);
+    resource_type: "image",
+    public_id: () => {
+      return `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     },
   },
 });
 
-/* =========================
-   FILE FILTER (Early rejection ke liye)
-========================= */
 const fileFilter = (req, file, cb) => {
+  if (!hasCloudinaryConfig) {
+    cb(
+      new Error(
+        "Cloudinary configuration is missing. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET."
+      ),
+      false
+    );
+    return;
+  }
+
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -32,22 +42,20 @@ const fileFilter = (req, file, cb) => {
 
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
-  } else {
-    cb(
-      new Error("Only JPG, JPEG, PNG, WEBP, GIF and JFIF images are allowed."),
-      false
-    );
+    return;
   }
+
+  cb(
+    new Error("Only JPG, JPEG, PNG, WEBP, GIF and JFIF images are allowed."),
+    false
+  );
 };
 
-/* =========================
-   MULTER CONFIG
-========================= */
 const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10 MB limit waisi hi rakhi hai
+    fileSize: 10 * 1024 * 1024,
   },
 });
 

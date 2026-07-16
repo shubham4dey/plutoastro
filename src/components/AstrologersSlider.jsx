@@ -93,7 +93,8 @@ function AstrologersSlider() {
           });
         } else {
           slider.scrollBy({
-            left: 280,
+            // CHANGE 1: Mobile pe pura card width scroll karega, desktop pe 280
+            left: window.innerWidth < 768 ? slider.clientWidth : 280,
             behavior: "smooth",
           });
         }
@@ -182,6 +183,7 @@ function AstrologersSlider() {
       {/* Cards */}
       <div
         ref={sliderRef}
+        className="astro-slider" // CHANGE 2: Class add kiya style override ke liye
         style={{
           display: "flex",
           gap: "25px",
@@ -197,6 +199,7 @@ function AstrologersSlider() {
           (astro) => (
             <div
               key={astro.id}
+              className="astro-card" // CHANGE 3: Class add kiya style override ke liye
               onClick={() =>
                 navigate(
                   `/astroProfile/${astro.id}`
@@ -364,6 +367,19 @@ function AstrologersSlider() {
           )
         )}
       </div>
+
+      {/* CHANGE 4: Sirf mobile ke liye CSS override, desktop pe kuch nahi badlega */}
+      <style>{`
+        @media (max-width: 768px) {
+          .astro-slider {
+            scroll-snap-type: x mandatory !important;
+          }
+          .astro-card {
+            min-width: 85vw !important;
+            scroll-snap-align: center !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

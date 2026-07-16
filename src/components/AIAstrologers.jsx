@@ -61,7 +61,7 @@ function AIAstrologers() {
     fetchAiAstrologers();
   }, []);
 
-  // Auto Slider
+  // Auto Slider (CHANGE 1: Mobile pe pure card width scroll karega)
   useEffect(() => {
     const slider =
       sliderRef.current;
@@ -74,6 +74,9 @@ function AIAstrologers() {
 
     const interval =
       setInterval(() => {
+        const isMobile = window.innerWidth < 640;
+        const scrollAmount = isMobile ? slider.clientWidth : 260;
+
         if (
           slider.scrollLeft +
             slider.clientWidth >=
@@ -85,7 +88,7 @@ function AIAstrologers() {
           });
         } else {
           slider.scrollBy({
-            left: 260,
+            left: scrollAmount,
             behavior: "smooth",
           });
         }
@@ -250,11 +253,13 @@ function AIAstrologers() {
             ref={sliderRef}
             className="
               flex
-              gap-10
+              gap-4 sm:gap-10
               overflow-x-auto
               pb-4
               scrollbar-hide
               scroll-smooth
+              snap-x
+              snap-mandatory
             "
           >
             {aiAstrologers.map(
@@ -272,7 +277,8 @@ function AIAstrologers() {
                     )
                   }
                   className="
-                    min-w-[200px]
+                    min-w-[85vw] sm:min-w-[200px]
+                    snap-center
                     flex-shrink-0
                     text-center
                     cursor-pointer

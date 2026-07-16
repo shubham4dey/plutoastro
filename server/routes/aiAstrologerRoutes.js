@@ -129,9 +129,12 @@ router.post(
 
       let image = "";
 
-      // ✅ CHANGE 1: Sirf ye line change ki hai Cloudinary ke liye
       if (req.file) {
-        image = req.file.path; 
+        image = `${req.protocol}://${req.get(
+          "host"
+        )}/uploads/${
+          req.file.filename
+        }`;
       }
 
       const astrologer =
@@ -283,9 +286,13 @@ router.put(
           "true";
       }
 
-      // ✅ CHANGE 2: Sirf ye line change ki hai Cloudinary ke liye
       if (req.file) {
-        astrologer.image = req.file.path;
+        astrologer.image =
+          `${req.protocol}://${req.get(
+            "host"
+          )}/uploads/${
+            req.file.filename
+          }`;
       }
 
       await astrologer.save();
@@ -419,7 +426,6 @@ router.patch(
     }
   }
 );
-
 /* ==========================================
    ✅ FINAL: AI CHAT ROUTE (Gemini 3.5 Flash)
    ========================================== */
@@ -447,7 +453,7 @@ router.post("/:id/chat", async (req, res) => {
 
     console.log(`🔮 Generating AI response for: ${astrologer.name} (Using Gemini 3.5 Flash)`);
 
-    // ✅ Gemini 3.5 Flash - Jaisa tumne diya tha, waisa hi rakha hai
+    // ✅ Gemini 3.5 Flash - Most Intelligent Model
     const model = genAI.getGenerativeModel({
       model: "gemini-3.5-flash",
       systemInstruction: astrologer.prompt || "You are an expert Vedic Astrologer. Provide detailed, empathetic, and practical guidance.",

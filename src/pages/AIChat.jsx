@@ -5,6 +5,7 @@ import React, {
 } from "react";
 
 import axios from "axios";
+import bg from "../image/bg1.jpg";
 
 import {
   useParams,
@@ -68,7 +69,7 @@ function AIChat() {
 
         // ✅ CHANGE 1: Localhost URL for development (Production ke liye neeche wali uncomment karna)
         const url = `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`;
-        // const url = `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`;
+        // const url = `https://https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`;
 
         console.log(
           "FETCH URL =",
@@ -219,22 +220,36 @@ function AIChat() {
     );
   }
 
-  return (
-    <div
-      className="
+return (
+  <div
+    className="
+      relative
       min-h-screen
-      bg-[#090015]
+      overflow-hidden
+      text-white
       px-4
       pb-8
       pt-40
     "
-    >
+  >
+
+     {/* Background Image */}
+    <img
+      src={bg}
+      alt="Background"
+      className="fixed inset-0 w-full h-full object-cover brightness-50 -z-20"
+    />
+
+    {/* Dark Overlay */}
+    <div className="fixed inset-0 bg-black/40 -z-10"></div>
       <div
-        className="
-        max-w-5xl
-        mx-auto
-      "
-      >
+  className="
+    relative
+    z-10
+    max-w-5xl
+    mx-auto
+  "
+>
         <div
           className="
           flex
