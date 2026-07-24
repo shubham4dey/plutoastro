@@ -13,11 +13,13 @@ const astrologerApplicationRoutes = require("./routes/astrologerApplicationRoute
 const productRoutes = require("./routes/productRoutes"); 
 const newsletterRoutes = require("./routes/newsletterRoutes");
 
+// ✅ 1. YEH LINE ADD KI HAI
+const astrologerDashboardRoutes = require("./routes/astrologerDashboardRoutes");
+
 const app = express();
 
 /* =========================
    CORS (PRODUCTION READY)
-   Note: Sirf Frontend URLs yahan hote hain, Backend URL nahi.
 ========================= */
 app.use(
   cors({
@@ -41,7 +43,6 @@ app.use(express.urlencoded({ extended: true }));
 
 /* =========================
    UPLOADS STATIC FOLDER
-   (Note: Render par local uploads temporary hote hain. Future mein Cloudinary use karna best rahega)
 ========================= */
 const uploadsPath = path.resolve(__dirname, "uploads");
 
@@ -72,21 +73,12 @@ app.use(
    TEST ROUTES
 ========================= */
 app.get("/test-upload", (req, res) => {
-  res.json({
-    success: true,
-    uploadsPath,
-    folderExists: fs.existsSync(uploadsPath),
-  });
+  res.json({ success: true, uploadsPath, folderExists: fs.existsSync(uploadsPath) });
 });
 
 app.get("/test-file/:filename", (req, res) => {
   const filePath = path.join(uploadsPath, req.params.filename);
-  res.json({
-    success: true,
-    file: req.params.filename,
-    exists: fs.existsSync(filePath),
-    path: filePath,
-  });
+  res.json({ success: true, file: req.params.filename, exists: fs.existsSync(filePath), path: filePath });
 });
 
 /* =========================
@@ -101,6 +93,9 @@ app.use("/api/ai-astrologers", aiAstrologerRoutes);
 app.use("/api/astrologer-applications", astrologerApplicationRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/newsletter", newsletterRoutes);
+
+// ✅ 2. YEH LINE ADD KI HAI (Astrologer Login/Dashboard ke liye)
+app.use("/api/astrologer-dashboard", astrologerDashboardRoutes);
 
 /* =========================
    ROOT ROUTE
@@ -118,11 +113,7 @@ app.get("/", (req, res) => {
 ========================= */
 app.use((req, res) => {
   console.log("❌ Route Not Found:", req.originalUrl);
-  res.status(404).json({
-    success: false,
-    message: "Route Not Found",
-    route: req.originalUrl,
-  });
+  res.status(404).json({ success: false, message: "Route Not Found", route: req.originalUrl });
 });
 
 /* =========================

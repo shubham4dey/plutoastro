@@ -204,7 +204,7 @@ const Footer = () => {
               Legal & Privacy
             </span>
             <ul className="space-y-3">
-              <li><Link to="/privacy" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Privacy Policy</Link></li>
+              <li><Link to="/privacy-policy" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Privacy Policy</Link></li>
               <li><Link to="/terms" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Terms of Service</Link></li>
               <li><Link to="/cookie-policy" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Cookie Policy</Link></li>
               <li><Link to="/gdpr" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>GDPR Compliance</Link></li>

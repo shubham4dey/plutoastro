@@ -9,21 +9,22 @@ import { useNavigate } from "react-router-dom";
 
 const AstrologersTalk = () => {
   const astroProfile = useSelector((store) => store.astro.astroProfile);
-
-  const { data } = astroProfile;
-  const info = data;
+  const { data } = astroProfile || {}; // ✅ FIX: Agar astroProfile null ho toh crash nahi hoga
+  const info = data || {}; // ✅ FIX: info ko hamesha object ensure kiya
+  
   const input = useRef();
-  const [result, setresult] = useState([info?.name + ": Hi"]);
+  
+  // ✅ FIX 1: "undefined: Hi" ko rokne ke liye fallback "Astrologer" lagaya
+  const [result, setresult] = useState([(info?.name || "Astrologer") + ": Hi"]);
   const [apiLimit, setapiLimit] = useState(1);
 
   const user = useSelector((store) => store.user);
   const form = useSelector((store) => store.configApp.form);
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
   const handlebot = () => {
-    navigate("/astroProfile/" + info?.name);
+    navigate("/astroProfile/" + (info?.name || "astrologer"));
   };
 
   const handleSearch = async () => {
@@ -45,7 +46,7 @@ const AstrologersTalk = () => {
     }
     if (apiLimit > 4) {
       dispatch(addLimit(false));
-      toast.error("Please come tommorow Api limit exceded", {
+      toast.error("Please come tomorrow, API limit exceeded", {
         position: "top-right",
         autoClose: 1200,
         hideProgressBar: false,
@@ -61,14 +62,10 @@ const AstrologersTalk = () => {
 
     const gptSearch =
       TALK_PROMPT +
-      "name=" +
-      info?.name +
-      "skills=" +
-      info?.skills +
-      "experience =" +
-      info?.exp +
-      "user input =" +
-      input.current.value;
+      "name=" + (info?.name || "Astrologer") +
+      "skills=" + (info?.skills || "Astrology") +
+      "experience=" + (info?.exp || "10 years") +
+      "user input=" + input.current.value;
 
     const data = await openai.chat.completions.create({
       messages: [{ role: "user", content: gptSearch }],
@@ -76,75 +73,92 @@ const AstrologersTalk = () => {
     });
     const Responce = data?.choices?.[0]?.message?.content;
 
+    // ✅ FIX: Yahan bhi fallback lagaya taaki response ke saath "undefined" na aaye
     setresult([
       ...result,
       "You: " + input.current.value,
-      info?.name + ": " + Responce,
+      (info?.name || "Astrologer") + ": " + (Responce || "Sorry, I couldn't process that."),
     ]);
     input.current.value = "";
-
     setapiLimit(apiLimit + 1);
   };
 
   return (
-    <div className="lg:pt-20 fixed w-full top-0 z-20 lg:mb-0 mb:20 pt-[20%] h-screen flex justify-center items-start  px-2 lg:px-16   w-12/12">
+    // ✅ FIX 3: Responsive layout fix (pt-[20%] hata kar safe padding di, h-screen ki jagah h-[100dvh] for mobile browsers)
+    <div className="fixed inset-0 z-50 flex flex-col justify-center items-center px-4 lg:px-16 bg-gray-900 overflow-hidden">
+      
+      {/* Background Image with safe scaling */}
       <img
         alt="bg"
-        className="h-screen w-full md:scale-100 scale-x-[3] brightness-50 fixed top-0 left-0 -z-40"
+        className="absolute inset-0 w-full h-full object-cover brightness-50 -z-10"
         src={bg}
-      ></img>
+      />
 
-      <div className="lg:w-[50%] w-full rounded-xl overflow-hidden relative h-[75vh] lg:h-[80vh]">
-        <div className="w-full flex flex-row justify-between items-center bg-opacity-95 bg-purple-700 py-3 lg:py-4 px-4 lg:px-10">
-          <div className="flex flex-row lg:gap-4 gap-2 justify-center items-center">
-            <div className="relative ">
-              <div className="w-16 h-16 rounded-full bg-purple-800 bg-opacity-85"></div>
+      {/* Main Chat Container */}
+      <div className="w-full max-w-2xl rounded-xl overflow-hidden relative flex flex-col h-[85vh] lg:h-[80vh] bg-purple-950/80 backdrop-blur-sm border border-purple-800/50 shadow-2xl">
+        
+        {/* Header */}
+        <div className="w-full flex flex-row justify-between items-center bg-purple-800/90 py-3 px-4 lg:px-6 shrink-0">
+          <div className="flex flex-row gap-3 justify-center items-center">
+            <div className="relative w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-purple-800 overflow-hidden border-2 border-purple-400">
               <img
-                className="lg:w-16 absolute xl:left-[2px] bottom-0"
-                src={PROFILE_IMG + info?.picId}
+                className="w-full h-full object-cover"
+                src={PROFILE_IMG + (info?.picId || "")}
                 alt="profile"
-              ></img>
+                onError={(e) => { e.target.src = "https://via.placeholder.com/50"; }} // ✅ Fallback image
+              />
             </div>
-            <span className="lg:text-2xl text-xl text-purple-200 font-semibold tracking-wide">
-              {info?.name}
+            <span className="text-lg lg:text-2xl text-purple-100 font-semibold tracking-wide">
+              {info?.name || "Astrologer"}
             </span>
           </div>
           <i
-            className="text-xl lg:text-3xl text-purple-300 ri-close-fill cursor-pointer"
+            className="text-2xl lg:text-3xl text-purple-300 ri-close-fill cursor-pointer hover:text-white transition"
             onClick={handlebot}
           ></i>
         </div>
-        <div className="w-full overflow-y-scroll px-4 py-4 flex flex-col justify-start items-start lg:px-10 pb-28 h-[75vh] bg-purple-950 bg-opacity-90 ">
-          {result?.map((result, index) => (
-            <div
-              key={index}
-              className="lg:px-4 px-2 mb-2 lg:mb-4 lg:tracking-wide tracking-wider rounded-lg lg:rounded-md font-normal lg:font-medium lg:py-2 py-1.5 bg-purple-600  text-white"
-            >
-              <span className="text-purple-50 text-sm lg:text-base">
-                {result}
-              </span>
-            </div>
-          ))}
+
+        {/* Messages Area - ✅ FIX: flex-1 use kiya taaki height automatically adjust ho */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3 scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-transparent">
+          {result?.map((msg, index) => {
+            const isUser = msg.startsWith("You:");
+            return (
+              <div
+                key={index}
+                className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm lg:text-base leading-relaxed shadow-md ${
+                  isUser 
+                    ? "bg-purple-600 text-white self-end rounded-br-none" 
+                    : "bg-gray-800/80 text-purple-100 self-start rounded-bl-none border border-purple-700/50"
+                }`}
+              >
+                <span>{msg}</span>
+              </div>
+            );
+          })}
         </div>
-        <div className=" absolute flex justify-center bg-purple-700 items-center px-4 lg:px-10 w-full bottom-0 py-4 bg-opacity-95">
+
+        {/* Input Area */}
+        <div className="shrink-0 bg-purple-900/90 px-4 py-3 lg:px-6 lg:py-4 border-t border-purple-800">
           <form
-            onSubmit={(e) => e.preventDefault()}
-            className="w-full relative  flex justify-center items-center"
+            onSubmit={(e) => { e.preventDefault(); handleSearch(); }} // ✅ FIX: Enter key se bhi submit hoga
+            className="w-full relative flex justify-center items-center"
           >
             <input
-              className="w-full py-2  text-purple-700 font-medium  outline-none px-3 text-base lg:text-lg rounded-xl"
+              className="w-full py-3 text-purple-900 font-medium outline-none px-4 text-base lg:text-lg rounded-xl pr-12 bg-purple-100 focus:ring-2 focus:ring-purple-500 transition"
               type="text"
-              placeholder="Enter Horoscope"
+              // ✅ FIX 2: Placeholder change kar diya
+              placeholder="Type your message here..."
               ref={input}
-            ></input>
+            />
             <button
-              className="px-4 py-1 lg:py-1.5 absolute rounded-e-xl right-0 bg-purple-500 "
-              onClick={handleSearch}
+              type="submit"
+              className="px-4 py-3 absolute right-1 rounded-xl bg-purple-600 hover:bg-purple-500 text-white transition shadow-lg"
             >
-              <i className="text-2xl ri-send-plane-2-fill"></i>
+              <i className="text-xl ri-send-plane-2-fill"></i>
             </button>
           </form>
         </div>
+
       </div>
     </div>
   );

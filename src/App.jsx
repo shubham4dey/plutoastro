@@ -6,10 +6,8 @@ function App() {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    // Check if user has already seen the popup
     const hasSeenPopup = localStorage.getItem("hasSeenPromoPopup");
     
-    // 2 second baad popup dikhao
     const timer = setTimeout(() => {
       if (!hasSeenPopup) {
         setShowPopup(true);
