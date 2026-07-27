@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 
+// ✅ FIXED: Define Base URL here for easy maintenance
+const BASE_URL = "https://plutoastro-backend.onrender.com";
+
 function AstrologersAdmin() {
   const [astrologers, setAstrologers] = useState([]);
   const [search, setSearch] = useState("");
@@ -69,8 +72,9 @@ function AstrologersAdmin() {
     try {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
+      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
-        `https://plutoastro-production.up.railway.app/api/admin/astrologers?page=${page}&search=${search}`,
+        `${BASE_URL}/api/admin/astrologers?page=${page}&search=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -183,7 +187,8 @@ function AstrologersAdmin() {
         form.append("image", image);
       }
 
-      const res = await fetch("https://plutoastro-production.up.railway.app/api/admin/astrologer", {
+      // ✅ FIXED: Using BASE_URL
+      const res = await fetch(`${BASE_URL}/api/admin/astrologer`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -231,8 +236,9 @@ function AstrologersAdmin() {
         form.append("image", image);
       }
 
+      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
-        `https://plutoastro-production.up.railway.app/api/admin/astrologer/${editingId}`,
+        `${BASE_URL}/api/admin/astrologer/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -266,8 +272,9 @@ function AstrologersAdmin() {
 
     try {
       const token = localStorage.getItem("adminToken");
+      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
-        `https://plutoastro-production.up.railway.app/api/admin/astrologer/${id}`,
+        `${BASE_URL}/api/admin/astrologer/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -291,8 +298,9 @@ function AstrologersAdmin() {
   const changeStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("adminToken");
+      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
-        `https://plutoastro-production.up.railway.app/api/admin/astrologer/${id}`,
+        `${BASE_URL}/api/admin/astrologer/${id}`,
         {
           method: "PUT",
           headers: {
@@ -326,7 +334,8 @@ function AstrologersAdmin() {
       skills: astro.skills || [],
       languages: astro.languages || [],
     });
-    setPreview(astro.image ? `https://plutoastro-production.up.railway.app${astro.image}` : "");
+    // ✅ FIXED: Using BASE_URL for image preview
+    setPreview(astro.image ? `${BASE_URL}${astro.image}` : "");
     setShowModal(true);
   };
 
@@ -500,8 +509,9 @@ function AstrologersAdmin() {
                     <td style={td}>
                       <img
                         src={
+                          // ✅ FIXED: Using BASE_URL for table image
                           astro.image
-                            ? `https://plutoastro-production.up.railway.app${astro.image}`
+                            ? `${BASE_URL}${astro.image}`
                             : "https://via.placeholder.com/50"
                         }
                         alt=""

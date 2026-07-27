@@ -24,6 +24,8 @@ import About from "./About";
 import Error from "./Error";
 import Footer from "./Footer";
 import TarotReading from "../pages/TarotReading";
+
+
  
 // AI Pages
 import AIAstro from "../pages/AIAstro";
@@ -120,6 +122,9 @@ const appLayout = createBrowserRouter([
 <FootIcons />
         {/* ✅ flex-grow pushes the footer to the bottom */}
 <main className="flex-grow relative">
+  
+
+
 <Outlet />
 </main>
 <Footer />

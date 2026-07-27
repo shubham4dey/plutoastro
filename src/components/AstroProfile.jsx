@@ -137,7 +137,7 @@ const AstroProfile = () => {
                 <div className="relative rounded-full overflow-hidden border-4 border-purple-400 border-opacity-50 shadow-2xl">
                   <img
                     className="w-full h-auto"
-                    src={data?.image ? `https://plutoastro-production.up.railway.app${data.image}` : PROFILE_IMG}
+                    src={data?.image ? `https://plutoastro-backend.onrender.com${data.image}` : PROFILE_IMG}
                     alt={data?.name}
                   />
                   {/* Overlay Gradient */}
