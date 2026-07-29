@@ -31,7 +31,7 @@ const AstrologerLogin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/astrologer-dashboard/login", {
+      const response = await fetch("https://plutoastro-backend.onrender.com/api/astrologer-dashboard/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginEmail, password: loginPassword })
@@ -71,7 +71,7 @@ const AstrologerLogin = () => {
       formData.append("price", signupData.price);
       formData.append("about", signupData.about);
 
-      const response = await fetch("http://localhost:5000/api/astrologer-applications/apply", {
+      const response = await fetch("https://plutoastro-backend.onrender.com/api/astrologer-applications/apply", {
         method: "POST",
         body: formData
       });
