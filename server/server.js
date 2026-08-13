@@ -5,7 +5,7 @@ require("dotenv").config();
 const http = require("http");
 
 const { Server } = require("socket.io");
- 
+
 const app = require("./app");
 
 const connectDB = require("./config/db");
@@ -22,21 +22,43 @@ const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
  
+/* ==========================================
+
+   ✅ CENTRALIZED CORS LIST
+
+   Yahan sab allowed domains — ek jagah
+
+========================================== */
+ 
+const ALLOWED_ORIGINS = [
+
+  "http://localhost:3000",
+
+  "http://localhost:5173",
+
+  "https://plutoastro.com",
+
+  "https://www.plutoastro.com",
+
+  // Vercel preview deployments (koi bhi preview URL chale)
+
+  /https:\/\/.*\.vercel\.app$/,
+
+  /https:\/\/plutoastro.*\.vercel\.app$/,
+
+];
+ 
+/* ==========================================
+
+   ✅ SOCKET.IO SERVER
+
+========================================== */
+ 
 const io = new Server(server, {
 
   cors: {
 
-    origin: [
-
-      "http://localhost:3000",
-
-      "https://plutoastro.com",
-
-      "https://www.plutoastro.com",
-
-      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app",
-
-    ],
+    origin: ALLOWED_ORIGINS,
 
     credentials: true,
 
@@ -48,6 +70,12 @@ const io = new Server(server, {
  
 app.set("io", io);
  
+/* ==========================================
+
+   HELPERS
+
+========================================== */
+ 
 const capitalize = (str) => {
 
   if (!str) return str;
@@ -56,9 +84,17 @@ const capitalize = (str) => {
 
 };
  
+/* ==========================================
+
+   SOCKET EVENT HANDLERS
+
+========================================== */
+ 
 io.on("connection", (socket) => {
 
   console.log("🟢 Socket Connected:", socket.id);
+ 
+  /* ---------- CHAT EVENTS ---------- */
  
   socket.on("join_chat", ({ roomId }) => {
 
@@ -99,7 +135,7 @@ io.on("connection", (socket) => {
       }
  
       const session = await ChatSession.findOne({ roomId: chat.roomId });
- 
+
       if (!session) {
 
         console.log("❌ Chat Session Not Found for room:", chat.roomId);
@@ -117,7 +153,7 @@ io.on("connection", (socket) => {
       }
  
       const senderType = capitalize(chat.senderType);
- 
+
       if (senderType !== "User" && senderType !== "Astrologer") {
 
         console.log("❌ Invalid senderType:", chat.senderType);
@@ -137,7 +173,7 @@ io.on("connection", (socket) => {
       let receiverId;
 
       let receiverType;
- 
+
       if (senderType === "User") {
 
         receiverId = session.astrologerId;
@@ -197,14 +233,16 @@ io.on("connection", (socket) => {
       console.error("❌ SEND MESSAGE ERROR");
 
       console.error(err);
- 
+
       socket.emit("message_error", {
 
         success: false,
 
         message: "Failed to send message",
 
-        error: process.env.NODE_ENV === "development" ? err.message : undefined,
+        error:
+
+          process.env.NODE_ENV === "development" ? err.message : undefined,
 
       });
 
@@ -279,9 +317,9 @@ io.on("connection", (socket) => {
         }
 
       );
- 
+
       console.log(`✅ Marked ${result.modifiedCount} messages as seen`);
- 
+
       socket.to(data.roomId).emit("seen", {
 
         roomId: data.roomId,
@@ -319,7 +357,7 @@ io.on("connection", (socket) => {
         { new: true }
 
       );
- 
+
       if (updatedSession) {
 
         console.log(`✅ Chat ended for room: ${data.roomId}`);
@@ -390,7 +428,7 @@ io.on("connection", (socket) => {
 
   });
  
-  // ✅ NEW: Astrologer joined chat → user ko notify karo
+  // Astrologer joined chat → user ko notify karo
 
   socket.on("astrologer_joined_chat", (data) => {
 
@@ -399,6 +437,8 @@ io.on("connection", (socket) => {
     socket.to(data.roomId).emit("astrologer_joined", { roomId: data.roomId });
 
   });
+ 
+  /* ---------- CALL EVENTS ---------- */
  
   socket.on("join_astrologer_room", async ({ astrologerId }) => {
 
@@ -415,13 +455,13 @@ io.on("connection", (socket) => {
         status: "ringing",
 
       });
- 
+
       if (pendingCalls.length > 0) {
 
         console.log(`🔔 Found ${pendingCalls.length} pending calls`);
 
       }
- 
+
       pendingCalls.forEach((s) => {
 
         socket.emit("incoming_call", {
@@ -546,6 +586,8 @@ io.on("connection", (socket) => {
 
   });
  
+  /* ---------- DISCONNECT ---------- */
+ 
   socket.on("disconnect", () => {
 
     console.log("🔴 Socket Disconnected:", socket.id);
@@ -554,9 +596,17 @@ io.on("connection", (socket) => {
 
 });
  
+/* ==========================================
+
+   START SERVER
+
+========================================== */
+ 
 server.listen(PORT, () => {
 
   console.log(`🚀 Server Running On Port ${PORT} with Socket.io`);
+
+  console.log(`✅ Allowed Origins:`, ALLOWED_ORIGINS.length, "domains");
 
 });
  

@@ -34,33 +34,65 @@ const chatRoutes = require("./routes/chatRoutes");
 
 const astrologerDashboardRoutes = require("./routes/astrologerDashboardRoutes");
 
-// ✅ NEW: Call Routes
-
 const callRoutes = require("./routes/callRoutes");
  
 const app = express();
  
 /* =========================
 
-   CORS (PRODUCTION READY)
+   ✅ CORS (PRODUCTION READY)
+
+   Sab allowed domains ek jagah + Vercel wildcard
 
 ========================= */
+ 
+const ALLOWED_ORIGINS = [
 
+  "http://localhost:3000",
+
+  "http://localhost:5173",
+
+  "https://plutoastro.com",
+
+  "https://www.plutoastro.com",
+
+  // ✅ Koi bhi Vercel preview/production URL auto-allowed
+
+  /https:\/\/.*\.vercel\.app$/,
+
+];
+ 
 app.use(
 
   cors({
 
-    origin: [
+    origin: function (origin, callback) {
 
-      "https://plutoastro.com",
+      // Postman / mobile apps / server-to-server (origin undefined) allow
 
-      "https://www.plutoastro.com",
+      if (!origin) return callback(null, true);
+ 
+      const allowed = ALLOWED_ORIGINS.some((entry) => {
 
-      "http://localhost:3000",
+        if (entry instanceof RegExp) return entry.test(origin);
 
-      "https://plutoastro-h2aqh5da6-shubham4deys-projects.vercel.app"
+        return entry === origin;
 
-    ],
+      });
+ 
+      if (allowed) {
+
+        callback(null, true);
+
+      } else {
+
+        console.log("❌ CORS blocked origin:", origin);
+
+        callback(new Error("Not allowed by CORS"));
+
+      }
+
+    },
 
     credentials: true,
 
@@ -77,7 +109,7 @@ app.use(
    BODY PARSER
 
 ========================= */
-
+ 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
@@ -87,7 +119,7 @@ app.use(express.urlencoded({ extended: true }));
    UPLOADS STATIC FOLDER
 
 ========================= */
-
+ 
 const uploadsPath = path.resolve(__dirname, "uploads");
  
 if (!fs.existsSync(uploadsPath)) {
@@ -133,10 +165,18 @@ app.use(
    TEST ROUTES
 
 ========================= */
-
+ 
 app.get("/test-upload", (req, res) => {
 
-  res.json({ success: true, uploadsPath, folderExists: fs.existsSync(uploadsPath) });
+  res.json({
+
+    success: true,
+
+    uploadsPath,
+
+    folderExists: fs.existsSync(uploadsPath),
+
+  });
 
 });
  
@@ -144,7 +184,17 @@ app.get("/test-file/:filename", (req, res) => {
 
   const filePath = path.join(uploadsPath, req.params.filename);
 
-  res.json({ success: true, file: req.params.filename, exists: fs.existsSync(filePath), path: filePath });
+  res.json({
+
+    success: true,
+
+    file: req.params.filename,
+
+    exists: fs.existsSync(filePath),
+
+    path: filePath,
+
+  });
 
 });
  
@@ -153,7 +203,7 @@ app.get("/test-file/:filename", (req, res) => {
    API ROUTES
 
 ========================= */
-
+ 
 app.use(openaiRoutes);
 
 app.use("/api/admin", adminRoutes);
@@ -178,10 +228,8 @@ app.use("/api/chat-session", chatSessionRoutes);
 
 app.use("/api/chat", chatRoutes);
 
-// ✅ NEW: Call Routes
-
 app.use("/api/call", callRoutes);
-
+ 
 app.use("/api/wallet", (req, res, next) => {
 
   console.log("✅ Wallet Route Hit");
@@ -189,9 +237,9 @@ app.use("/api/wallet", (req, res, next) => {
   next();
 
 });
- 
-app.use("/api/wallet", walletRoutes);
 
+app.use("/api/wallet", walletRoutes);
+ 
 app.use("/api/astrologer-dashboard", astrologerDashboardRoutes);
  
 /* =========================
@@ -199,7 +247,7 @@ app.use("/api/astrologer-dashboard", astrologerDashboardRoutes);
    ROOT ROUTE
 
 ========================= */
-
+ 
 app.get("/", (req, res) => {
 
   res.status(200).json({
@@ -219,12 +267,16 @@ app.get("/", (req, res) => {
    404 HANDLER
 
 ========================= */
-
+ 
 app.use((req, res) => {
 
   console.log("❌ Route Not Found:", req.originalUrl);
 
-  res.status(404).json({ success: false, message: "Route Not Found", route: req.originalUrl });
+  res
+
+    .status(404)
+
+    .json({ success: false, message: "Route Not Found", route: req.originalUrl });
 
 });
  
@@ -233,7 +285,7 @@ app.use((req, res) => {
    GLOBAL ERROR HANDLER
 
 ========================= */
-
+ 
 app.use((err, req, res, next) => {
 
   console.error("🔥 Server Error:", err);
