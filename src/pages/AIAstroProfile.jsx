@@ -31,7 +31,7 @@ function AIAstroProfile() {
 
         const response =
           await fetch(
-            `http://localhost:5000/api/ai-astrologers/${id}`
+            `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`
           );
 
         const data =
@@ -77,7 +77,7 @@ function AIAstroProfile() {
     astro?.image?.startsWith("http")
       ? astro.image
       : astro?.image
-      ? `http://localhost:5000${astro.image}`
+      ? `https://plutoastro-backend.onrender.com${astro.image}`
       : "/Logo.png";
 
   return (

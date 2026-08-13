@@ -12,7 +12,7 @@ import bg from "../image/bg1.jpg";
 
 import { rechargeWithRazorpay } from "../utils/razorpay"; // ✅ NEW
  
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
  
 const Wallet = () => {
 

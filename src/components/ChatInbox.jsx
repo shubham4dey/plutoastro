@@ -14,7 +14,7 @@ import PreChatForm from "./PreChatForm";
 
 import { rechargeWithRazorpay } from "../utils/razorpay";
  
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
 
 const socket = io(API, { autoConnect: false, transports: ["websocket"] });
  

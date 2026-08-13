@@ -8,7 +8,7 @@ import axios from "axios";
 
 import { toast } from "react-toastify";
  
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
  
 const socket = io(API, {
 

@@ -68,8 +68,8 @@ function AIChat() {
         }
 
         // ✅ CHANGE 1: Localhost URL for development (Production ke liye neeche wali uncomment karna)
-        const url = `http://localhost:5000/api/ai-astrologers/${id}`;
-        // const url = `http://localhost:5000/api/ai-astrologers/${id}`;
+        const url = `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`;
+        // const url = `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}`;
 
         console.log(
           "FETCH URL =",
@@ -140,7 +140,7 @@ function AIChat() {
         // ✅ CHANGE 3: Correct Endpoint & Payload for AI Chat
         const response =
           await axios.post(
-            `http://localhost:5000/api/ai-astrologers/${id}/chat`,
+            `https://plutoastro-backend.onrender.com/api/ai-astrologers/${id}/chat`,
             {
               message: userMessage,
               history: chatHistory,

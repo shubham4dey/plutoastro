@@ -1,6 +1,6 @@
 import axios from "axios";
  
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
 
 const RZP_KEY = process.env.REACT_APP_RAZORPAY_KEY_ID;
  

@@ -26,7 +26,7 @@ const LoginForm = () => {
   // ✅ Helper function to save user to MongoDB
   const saveUserToMongo = async (user) => {
     try {
-      await axios.post("http://localhost:5000/api/auth/save-user", {
+      await axios.post("https://plutoastro-backend.onrender.com/api/auth/save-user", {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || "User",

@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { addAstroProfile } from "../store/AstroSlice";
 
 const API =
-  process.env.REACT_APP_API_URL || "http://localhost:5000";
+  process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
 
 const useAstroProfile = (id) => {
   const dispatch = useDispatch();

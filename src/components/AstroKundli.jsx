@@ -155,7 +155,7 @@ Make the report visually premium and beautifully structured with proper contrast
     try {
       console.log("Calling Backend API for Kundli...");
 
-      const response = await fetch("http://localhost:5000/api/openai/kundli", {
+      const response = await fetch("https://plutoastro-backend.onrender.com/api/openai/kundli", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -32,7 +32,7 @@ import { io } from "socket.io-client";
 
 import { rechargeWithRazorpay } from "../utils/razorpay"; // ✅ NEW: Razorpay import
  
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
 
 const socket = io(API, { transports: ["websocket"] });
  
@@ -572,7 +572,7 @@ const AstroProfile = () => {
 
                     className="w-full h-auto"
 
-                    src={data?.image ? `http://localhost:5000${data.image}` : PROFILE_IMG}
+                    src={data?.image ? `https://plutoastro-backend.onrender.com${data.image}` : PROFILE_IMG}
 
                     alt={data?.name}
 
