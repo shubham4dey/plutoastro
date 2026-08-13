@@ -1,6 +1,8 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const { getAllTransactions } = require("../controllers/adminController");
+
 
 const {
   registerAdmin,
@@ -96,5 +98,7 @@ router.put("/orders/:id", auth, updateOrder);
 
 // Delete Order
 router.delete("/orders/:id", auth, deleteOrder);
+
+router.get("/transactions", getAllTransactions);
 
 module.exports = router;

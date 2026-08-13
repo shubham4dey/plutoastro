@@ -15,7 +15,7 @@ const AstrologyProducts = () => {
       console.log("🔍 Fetching products from API...");
       
       const response = await fetch(
-        "https://plutoastro-backend.onrender.com/api/products"
+        "http://localhost:5000/api/products"
       );
       
       console.log(" Response status:", response.status);

@@ -74,7 +74,7 @@ const Chatbot = () => {
       }
 
       // ✅ FIXED: Render Backend API URL
-      const response = await fetch("https://plutoastro-backend.onrender.com/api/openai/chat", {
+      const response = await fetch("http://localhost:5000/api/openai/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

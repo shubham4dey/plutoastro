@@ -26,7 +26,7 @@ const handleHoroscope = async (req, res) => {
 
     // ✅ Gemini 3.5 Flash Model
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash",
+      model: "gemini-3-flash-preview",
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 0.7,
@@ -91,7 +91,7 @@ Make predictions specific to ${sign} sign and ${period} period. Be detailed, pos
     
     return res.json({
       success: true,
-      source: "Gemini-3.5-Flash",
+      source: "gemini-3-flash-preview",
       data: formattedData
     });
 

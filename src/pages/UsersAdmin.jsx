@@ -30,7 +30,7 @@ const UsersAdmin = () => {
       }
 
       const response = await fetch(
-        `https://plutoastro-backend.onrender.com/api/admin/users?page=${currentPage}&limit=${usersPerPage}&search=${searchTerm}`,
+        `http://localhost:5000/api/admin/users?page=${currentPage}&limit=${usersPerPage}&search=${searchTerm}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -93,7 +93,7 @@ const UsersAdmin = () => {
       setDeletingId(userId);
       
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://plutoastro-backend.onrender.com/api/admin/users/${userId}`, {
+      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

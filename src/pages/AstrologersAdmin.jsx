@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 
 // ✅ FIXED: Define Base URL here for easy maintenance
-const BASE_URL = "https://plutoastro-backend.onrender.com";
+const BASE_URL = "http://localhost:5000";
 
 function AstrologersAdmin() {
   const [astrologers, setAstrologers] = useState([]);

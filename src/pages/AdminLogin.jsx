@@ -16,7 +16,7 @@ function AdminLogin() {
   const handleLogin = async () => {
     try {
       const res = await fetch(
-        "https://plutoastro-backend.onrender.com/api/admin/login",
+        "http://localhost:5000/api/admin/login",
         {
           method: "POST",
           headers: {
@@ -61,7 +61,7 @@ function AdminLogin() {
           "center",
         alignItems: "center",
         background:
-          "linear-gradient(135deg,#050010,#180028,#32004b)",
+          "linear-gradient(135deg,#050000,#180028,#32004b)",
       }}
     >
       {/* AURORA GLOW */}
