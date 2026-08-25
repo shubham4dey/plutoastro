@@ -563,7 +563,7 @@ router.post("/:id/chat", async (req, res) => {
 
     // ✅ 2. CORRECT MODEL NAME: "gemini-3.5-flash" exist nahi karta. Use "gemini-2.0-flash" or "gemini-1.5-flash"
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash", // ✅ VALID MODEL (Agar error aaye toh "gemini-1.5-flash" use karein)
+      model: "gemini-3.5-flash", // ✅ VALID MODEL (Agar error aaye toh "gemini-1.5-flash" use karein)
       
       systemInstruction: astrologer.prompt || `You are Astro Kiara, an expert Vedic Astrologer for PlutoAstro.com.
 
