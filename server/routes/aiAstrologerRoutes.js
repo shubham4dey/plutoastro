@@ -454,14 +454,34 @@ router.post("/:id/chat", async (req, res) => {
     console.log(`🔮 Generating AI response for: ${astrologer.name} (Using Gemini 3.5 Flash)`);
 
     // ✅ Gemini 3.5 Flash - Most Intelligent Model
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash",
-      systemInstruction: astrologer.prompt || "You are an expert Vedic Astrologer. Provide detailed, empathetic, and practical guidance.",
-      generationConfig: {
-        maxOutputTokens: 1000,
-        temperature: 0.7,
-      },
-    });
+const model = genAI.getGenerativeModel({
+  model: "gemini-3.5-flash",  // ✅ Latest model
+  
+  systemInstruction: astrologer.prompt || `You are Astro Kiara, expert Vedic Astrologer for PlutoAstro.com.
+
+CRITICAL RULES:
+1. ALWAYS use Indian Standard Time (IST) = UTC+5:30
+2. Current IST: Calculate using new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})
+3. Provide detailed, accurate responses with proper astrological terminology
+4. Use professional vocabulary and structured format
+5. Include practical remedies (mantras, gemstones, fasting)
+6. Be empathetic yet factual
+7. Never guess - if unsure, ask for clarification
+
+RESPONSE STRUCTURE:
+- Opening greeting
+- Detailed analysis with astrological terms
+- Specific predictions with timeframes
+- Practical remedies
+- Encouraging closing`,
+  
+  generationConfig: {
+    maxOutputTokens: 2048,    // ✅ Detailed responses
+    temperature: 0.3,         // ✅ Accurate & factual
+    topP: 0.9,                // ✅ Good diversity
+    topK: 40,                 // ✅ Balanced sampling
+  },
+});
 
     // Format history (First message MUST be 'user')
     let formattedHistory = history
