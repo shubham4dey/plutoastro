@@ -663,7 +663,23 @@ router.post("/:id/chat", async (req, res) => {
 ASTROLOGY RULES:
 - Provide detailed, empathetic, and practical guidance.
 - Use proper Vedic astrological terminology.
-- Always base your time-sensitive predictions on the provided time context.`,
+- Always base your time-sensitive predictions on the provided time context.
+
+CONVERSATION MEMORY RULES
+
+Read the complete conversation history before every reply.
+
+Treat the conversation history as permanent memory.
+
+Never ask again for Date of Birth if already shared.
+
+Never ask again for Birth Place if already shared.
+
+Never ask again for Birth Time if already shared.
+
+Once onboarding is completed, never restart it unless the user wants to change their birth details.
+
+`,
       
       generationConfig: {
         maxOutputTokens: 2048,    // ✅ Detailed responses
@@ -686,20 +702,55 @@ ASTROLOGY RULES:
     }
 
     // ✅ 3. INJECT CONTEXT DIRECTLY INTO THE PROMPT
+// const contextPrompt = `
+// Current User
+
+// Name:
+// ${userName || "Unknown"}
+
+// Date of Birth:
+// ${userDOB || "Missing"}
+
+// Birth Place:
+// ${userBirthPlace || "Missing"}
+
+// Birth Time:
+// ${userBirthTime || "Missing"}
+
+// Current Location:
+// ${location}
+
+// Current Time:
+// ${currentTime}
+
+// Timezone:
+// ${timezone}
+
+// Question:
+// ${message}
+
+// Rules
+
+// If DOB missing
+// Ask only DOB
+
+// If DOB exists but Birth Place missing
+// Ask Birth Place
+
+// If Birth Place exists but Birth Time missing
+// Ask Birth Time
+
+// If everything exists
+// Answer like a real astrologer.
+
+// Never ask information twice.
+
+// Never use markdown.
+
+// Return plain text only.
+// `;
 const contextPrompt = `
-Current User
-
-Name:
-${userName || "Unknown"}
-
-Date of Birth:
-${userDOB || "Missing"}
-
-Birth Place:
-${userBirthPlace || "Missing"}
-
-Birth Time:
-${userBirthTime || "Missing"}
+CURRENT CONTEXT
 
 Current Location:
 ${location}
@@ -710,26 +761,44 @@ ${currentTime}
 Timezone:
 ${timezone}
 
-Question:
+Conversation History:
+
+${history
+  .map(item => `${item.role.toUpperCase()}: ${item.content}`)
+  .join("\n")}
+
+Current User Message:
+
 ${message}
 
-Rules
+VERY IMPORTANT INSTRUCTIONS
 
-If DOB missing
-Ask only DOB
+Read the COMPLETE conversation history before replying.
 
-If DOB exists but Birth Place missing
-Ask Birth Place
+The conversation history is your memory.
 
-If Birth Place exists but Birth Time missing
-Ask Birth Time
+If the user has already shared their Date of Birth, Birth Place or Birth Time anywhere in the conversation history, NEVER ask for them again.
 
-If everything exists
-Answer like a real astrologer.
+Only ask for the NEXT missing birth detail.
 
-Never ask information twice.
+If all birth details are already available, continue the conversation normally like an experienced Vedic astrologer.
 
-Never use markdown.
+If the user asks:
+"What is my DOB"
+repeat the DOB from the conversation history.
+
+If the user asks today's date or current time,
+answer using the Current Time above.
+
+Never restart the introduction.
+
+Never restart onboarding.
+
+Never introduce yourself again after the first message.
+
+Never mention that you are an AI.
+
+Never use markdown, *, # or emojis.
 
 Return plain text only.
 `;
