@@ -587,7 +587,20 @@ router.post("/:id/chat", async (req, res) => {
   try {
     const { id } = req.params;
     // ✅ Location/Time fields ko optional rakha hai (Fallback to IST if not provided)
-    const { message, history = [], userLocation, userLocalTime, userTimezone } = req.body;
+    const {
+    message,
+    history = [],
+    userLocation,
+    userLocalTime,
+    userTimezone,
+
+    userName,
+    userDOB,
+    userBirthPlace,
+    userBirthTime,
+
+    isFirstMessage = false
+} = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid AI Astrologer ID" });
@@ -624,6 +637,16 @@ router.post("/:id/chat", async (req, res) => {
     const location = userLocation || "Kolkata, India (IST)";
     const timezone = userTimezone || "Asia/Kolkata";
 
+
+    if (isFirstMessage) {
+  return res.status(200).json({
+    success: true,
+    astrologerName: astrologer.name,
+    message:
+      "Namaste. I am Astro Kiara from PlutoAstro. I specialize in authentic Vedic Astrology. Please tell me what you would like to know today.",
+  });
+}
+
     // ✅ 2. CORRECT MODEL NAME: "gemini-3.5-flash" exist nahi karta. Use "gemini-2.0-flash" or "gemini-1.5-flash"
     const model = genAI.getGenerativeModel({
       model: "gemini-3.5-flash", // ✅ VALID MODEL (Agar error aaye toh "gemini-1.5-flash" use karein)
@@ -644,9 +667,9 @@ ASTROLOGY RULES:
       
       generationConfig: {
         maxOutputTokens: 2048,    // ✅ Detailed responses
-        temperature: 0.2,         // ✅ LOW temperature = Factual, NO hallucination
-        topP: 0.9,
-        topK: 40,
+        temperature: 0.1,         // ✅ LOW temperature = Factual, NO hallucination
+        topP: 0.8,
+        topK: 20,
       },
     });
 
@@ -663,21 +686,64 @@ ASTROLOGY RULES:
     }
 
     // ✅ 3. INJECT CONTEXT DIRECTLY INTO THE PROMPT
-    const contextPrompt = `
-🌍 USER CONTEXT:
-- Current Location: ${location}
-- Current Timezone: ${timezone}
-- Exact Current Local Time: ${currentTime}
+const contextPrompt = `
+Current User
 
-💬 USER QUERY: "${message}"
+Name:
+${userName || "Unknown"}
 
-INSTRUCTIONS: 
-Answer the user's query accurately. If they asked for time or date, give the EXACT numbers from the USER CONTEXT above immediately. Do not make excuses about being an AI without a clock.
+Date of Birth:
+${userDOB || "Missing"}
+
+Birth Place:
+${userBirthPlace || "Missing"}
+
+Birth Time:
+${userBirthTime || "Missing"}
+
+Current Location:
+${location}
+
+Current Time:
+${currentTime}
+
+Timezone:
+${timezone}
+
+Question:
+${message}
+
+Rules
+
+If DOB missing
+Ask only DOB
+
+If DOB exists but Birth Place missing
+Ask Birth Place
+
+If Birth Place exists but Birth Time missing
+Ask Birth Time
+
+If everything exists
+Answer like a real astrologer.
+
+Never ask information twice.
+
+Never use markdown.
+
+Return plain text only.
 `;
 
     const chat = model.startChat({ history: formattedHistory });
     const result = await chat.sendMessage(contextPrompt);
-    const responseText = result.response.text();
+   let responseText=result.response.text();
+
+responseText=responseText
+.replace(/\*/g,"")
+.replace(/#/g,"")
+.replace(/`/g,"")
+.replace(/_/g,"")
+.trim();
 
     console.log("✅ AI Response Generated Successfully");
 
