@@ -426,13 +426,23 @@ router.patch(
     }
   }
 );
+
 /* ==========================================
-   ✅ FINAL: AI CHAT ROUTE (Gemini 3.5 Flash)
+   ✅ FINAL: CLEAN AI CHAT ROUTE (No Markdown, Compact & Accurate)
    ========================================== */
 // router.post("/:id/chat", async (req, res) => {
 //   try {
 //     const { id } = req.params;
-//     const { message, history = [] } = req.body;
+//     const { 
+//       message, 
+//       history = [], 
+//       userLocation, 
+//       userLocalTime, 
+//       userTimezone,
+//       userName,
+//       userDOB,
+//       userBirthPlace 
+//     } = req.body;
 
 //     if (!mongoose.Types.ObjectId.isValid(id)) {
 //       return res.status(400).json({ success: false, message: "Invalid AI Astrologer ID" });
@@ -451,37 +461,81 @@ router.patch(
 //       return res.status(403).json({ success: false, message: "This AI Astrologer is currently inactive" });
 //     }
 
-//     console.log(`🔮 Generating AI response for: ${astrologer.name} (Using Gemini 3.5 Flash)`);
+//     console.log(`🔮 Generating AI response for: ${astrologer.name}`);
 
-//     // ✅ Gemini 3.5 Flash - Most Intelligent Model
-// const model = genAI.getGenerativeModel({
-//   model: "gemini-3.5-flash",  // ✅ Latest model
-  
-//   systemInstruction: astrologer.prompt || `You are Astro Kiara, expert Vedic Astrologer for PlutoAstro.com.
+//     // ✅ 1. FALLBACK TIME LOGIC: Agar frontend se time nahi aaya, toh IST (Kolkata) use karega
+//     const fallbackIST = new Date().toLocaleString('en-IN', { 
+//       timeZone: 'Asia/Kolkata', 
+//       weekday: 'long', 
+//       year: 'numeric', 
+//       month: 'long', 
+//       day: 'numeric', 
+//       hour: '2-digit', 
+//       minute: '2-digit', 
+//       hour12: true 
+//     });
+
+//     const currentTime = userLocalTime || fallbackIST;
+//     const location = userLocation || "Kolkata, India (IST)";
+//     const timezone = userTimezone || "Asia/Kolkata";
+
+//     // ✅ 2. CORRECT MODEL NAME: gemini-1.5-flash is 100% stable and fast
+//     const model = genAI.getGenerativeModel({
+//       model: "gemini-3.5-flash", 
+      
+//       systemInstruction: astrologer.prompt || `You are Astro Kiara, a warm and professional Vedic astrologer for PlutoAstro.com.
 
 // CRITICAL RULES:
-// 1. ALWAYS use Indian Standard Time (IST) = UTC+5:30
-// 2. Current IST: Calculate using new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})
-// 3. Provide detailed, accurate responses with proper astrological terminology
-// 4. Use professional vocabulary and structured format
-// 5. Include practical remedies (mantras, gemstones, fasting)
-// 6. Be empathetic yet factual
-// 7. Never guess - if unsure, ask for clarification
+// 1. ALWAYS provide exact time/date when asked using the context provided.
+// 2. NEVER use markdown symbols like #, *, **, _, or backticks. Write in clean, plain text only.
+// 3. Keep responses compact (100-250 words max). Be direct and to the point.
+// 4. Be 100% accurate with facts, especially time and dates.
+// 5. If collecting user info, ask one question at a time politely.
+// 6. Use simple, professional, and empathetic language.
 
-// RESPONSE STRUCTURE:
-// - Opening greeting
-// - Detailed analysis with astrological terms
-// - Specific predictions with timeframes
-// - Practical remedies
+// FORMATTING RULES:
+// - No asterisks for bold/italic.
+// - No hashtags for headings.
+// - No special symbols.
+// - Use simple line breaks and dashes (-) for lists if needed.
+// - Keep paragraphs short.
+
+// RESPONSE STYLE:
+// - Warm greeting
+// - Direct answer
+// - Brief astrological insight
+// - Practical remedy if applicable
 // - Encouraging closing`,
-  
-//   generationConfig: {
-//     maxOutputTokens: 2048,    // ✅ Detailed responses
-//     temperature: 0.3,         // ✅ Accurate & factual
-//     topP: 0.9,                // ✅ Good diversity
-//     topK: 40,                 // ✅ Balanced sampling
-//   },
-// });
+      
+//       generationConfig: {
+//         maxOutputTokens: 1024,    // Compact responses
+//         temperature: 0.2,         // LOW temperature = Factual, NO hallucination
+//         topP: 0.9,
+//         topK: 40,
+//       },
+//     });
+
+//     // Build user context
+//     let userInfo = "";
+//     if (userName || userDOB || userBirthPlace) {
+//       userInfo = `
+// User Details:
+// - Name: ${userName || "Not provided"}
+// - Date of Birth: ${userDOB || "Not provided"}
+// - Birth Place: ${userBirthPlace || "Not provided"}
+// `;
+//     }
+
+//     // ✅ 3. INJECT CONTEXT DIRECTLY INTO THE PROMPT
+//     const contextPrompt = `
+// CURRENT CONTEXT:
+// - Time: ${currentTime}
+// - Location: ${location}
+// - Timezone: ${timezone}
+// ${userInfo}
+// User Query: "${message}"
+
+// Provide a clean, accurate, and compact response without ANY markdown symbols.`;
 
 //     // Format history (First message MUST be 'user')
 //     let formattedHistory = history
@@ -496,10 +550,20 @@ router.patch(
 //     }
 
 //     const chat = model.startChat({ history: formattedHistory });
-//     const result = await chat.sendMessage(message);
-//     const responseText = result.response.text();
+//     const result = await chat.sendMessage(contextPrompt);
+//     let responseText = result.response.text();
 
-//     console.log("✅ Gemini 3.5 Flash Response Generated");
+//     // ✅ 4. CLEAN ANY REMAINING MARKDOWN SYMBOLS (Double safety)
+//     responseText = responseText
+//       .replace(/\*\*/g, '')
+//       .replace(/\*/g, '')
+//       .replace(/##/g, '')
+//       .replace(/#/g, '')
+//       .replace(/__/g, '')
+//       .replace(/`/g, '')
+//       .trim();
+
+//     console.log("✅ AI Response Generated Successfully");
 
 //     res.status(200).json({
 //       success: true,
@@ -516,7 +580,6 @@ router.patch(
 //     });
 //   }
 // });
-
 /* ==========================================
    ✅ FINAL: AI CHAT ROUTE (Fixed & Optimized)
    ========================================== */
@@ -563,7 +626,7 @@ router.post("/:id/chat", async (req, res) => {
 
     // ✅ 2. CORRECT MODEL NAME: "gemini-3.5-flash" exist nahi karta. Use "gemini-2.0-flash" or "gemini-1.5-flash"
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash", // ✅ VALID MODEL (Agar error aaye toh "gemini-1.5-flash" use karein)
+      model: "gemini-2.0-flash", // ✅ VALID MODEL (Agar error aaye toh "gemini-1.5-flash" use karein)
       
       systemInstruction: astrologer.prompt || `You are Astro Kiara, an expert Vedic Astrologer for PlutoAstro.com.
 
@@ -633,5 +696,4 @@ Answer the user's query accurately. If they asked for time or date, give the EXA
     });
   }
 });
-
 module.exports = router;

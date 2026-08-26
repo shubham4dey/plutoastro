@@ -26,7 +26,7 @@ const handleHoroscope = async (req, res) => {
 
     // ✅ Gemini 3.5 Flash Model
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.5-flash",
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 0.7,

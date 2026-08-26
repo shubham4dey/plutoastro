@@ -42,7 +42,7 @@ const aiAstrologerSchema = new mongoose.Schema(
     // AI model name
     model: {
       type: String,
-      default: "gemini-2.5-flash",
+      default: "gemini-3.5-flash",
     },
 
     // Optional greeting message
