@@ -34,8 +34,8 @@ return ( <div
  >
 {/* LEFT */} <div className="w-3/12 h-full py-2 flex flex-col justify-start items-center"> <div className="relative">
 <img
-src={info?.image || "/Logo.png"}
-alt={info?.name || "profile"}
+src={`https://plutoastro-backend.onrender.com`/info?.image || "/Logo.png"}
+alt={`https://plutoastro-backend.onrender.com`/info?.name || "profile"}
 className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
 onError={(e) => {
 e.target.src = "/Logo.png";
