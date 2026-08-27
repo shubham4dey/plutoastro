@@ -2,12 +2,22 @@ import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
 
+const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "https://plutoastro-backend.onrender.com";
 const CallCard = ({ info }) => {
   const Langkey = useSelector((store) => store.configApp.lang);
 
   if (!info) {
     return <ShimmerList />;
   }
+  const imageSrc = info?.image
+  ? info.image.startsWith("http")
+    ? info.image
+    : `${BASE_URL}${info.image}`
+  : "/Logo.png";
+
 
   return (
     <div className="flex justify-start overflow-hidden shadow-sm shadow-zinc-700 hover:bg-purple-800 transition-all hover:bg-opacity-55 w-full bg-purple-950 bg-opacity-55 rounded-xl gap-4 px-2 py-2 items-start h-full flex-row">
@@ -17,10 +27,13 @@ const CallCard = ({ info }) => {
           <div className="w-20 h-20 rounded-full bg-purple-800 bg-opacity-85"></div>
 
           <img
-            className="lg:w-20 absolute xl:left-[2px] bottom-0"
-            src={info?.image}
-            alt="profile"
-          />
+src={imageSrc}
+alt={info?.name || "profile"}
+className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
+onError={(e) => {
+e.target.src = "/Logo.png";
+}}
+/>
         </div>
 
         <div>
