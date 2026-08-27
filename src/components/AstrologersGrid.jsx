@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+// ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
+const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "https://plutoastro-backend.onrender.com";
+
 const AstrologersGrid = () => {
   const [astrologers, setAstrologers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +24,7 @@ const AstrologersGrid = () => {
       
       console.log("🔄 Fetching astrologers...");
       
-      const response = await fetch("https://plutoastro-backend.onrender.com/api/astrologers", {
+      const response = await fetch(`${BASE_URL}/api/astrologers`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +154,7 @@ const AstrologersGrid = () => {
     astrologer.image
       ? astrologer.image.startsWith("http")
         ? astrologer.image
-        : `https://plutoastro-backend.onrender.com${astrologer.image}`
+        : `${BASE_URL}${astrologer.image}`
       : "https://via.placeholder.com/150"
   }
   alt={astrologer.name}

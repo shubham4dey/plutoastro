@@ -572,7 +572,7 @@ const AstroProfile = () => {
 
                     className="w-full h-auto"
 
-                    src={data?.image ? `https://plutoastro-backend.onrender.com${data.image}` : PROFILE_IMG}
+                    src={data?.image ? `${API}${data.image}` : PROFILE_IMG}
 
                     alt={data?.name}
 

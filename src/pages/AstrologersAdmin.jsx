@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 
-// ✅ FIXED: Define Base URL here for easy maintenance
-const BASE_URL = "https://plutoastro-backend.onrender.com";
+// ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
+const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "https://plutoastro-backend.onrender.com";
 
 function AstrologersAdmin() {
   const [astrologers, setAstrologers] = useState([]);
@@ -72,7 +75,6 @@ function AstrologersAdmin() {
     try {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
-      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
         `${BASE_URL}/api/admin/astrologers?page=${page}&search=${search}`,
         {
@@ -187,7 +189,6 @@ function AstrologersAdmin() {
         form.append("image", image);
       }
 
-      // ✅ FIXED: Using BASE_URL
       const res = await fetch(`${BASE_URL}/api/admin/astrologer`, {
         method: "POST",
         headers: {
@@ -236,7 +237,6 @@ function AstrologersAdmin() {
         form.append("image", image);
       }
 
-      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
         `${BASE_URL}/api/admin/astrologer/${editingId}`,
         {
@@ -272,7 +272,6 @@ function AstrologersAdmin() {
 
     try {
       const token = localStorage.getItem("adminToken");
-      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
         `${BASE_URL}/api/admin/astrologer/${id}`,
         {
@@ -298,7 +297,6 @@ function AstrologersAdmin() {
   const changeStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("adminToken");
-      // ✅ FIXED: Using BASE_URL
       const res = await fetch(
         `${BASE_URL}/api/admin/astrologer/${id}`,
         {
@@ -334,7 +332,6 @@ function AstrologersAdmin() {
       skills: astro.skills || [],
       languages: astro.languages || [],
     });
-    // ✅ FIXED: Using BASE_URL for image preview
     setPreview(astro.image ? `${BASE_URL}${astro.image}` : "");
     setShowModal(true);
   };
@@ -509,7 +506,6 @@ function AstrologersAdmin() {
                     <td style={td}>
                       <img
                         src={
-                          // ✅ FIXED: Using BASE_URL for table image
                           astro.image
                             ? `${BASE_URL}${astro.image}`
                             : "https://via.placeholder.com/50"

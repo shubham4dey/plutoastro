@@ -1,36 +1,25 @@
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../config/cloudinary");
+const path = require("path");
+const fs = require("fs");
 
-const hasCloudinaryConfig = Boolean(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
-);
+// Local uploads folder: server/uploads
+const uploadsDir = path.join(__dirname, "../uploads");
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "plutoastro_uploads",
-    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "jfif"],
-    resource_type: "image",
-    public_id: () => {
-      return `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    },
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "astrologer-" + uniqueSuffix + path.extname(file.originalname));
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  if (!hasCloudinaryConfig) {
-    cb(
-      new Error(
-        "Cloudinary configuration is missing. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET."
-      ),
-      false
-    );
-    return;
-  }
-
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -55,7 +44,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024, // 10MB
   },
 });
 
