@@ -2,41 +2,47 @@ import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
 
+// ✅ FIXED: Environment-aware BASE_URL
 const BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:5000"
     : "https://plutoastro-backend.onrender.com";
+
 const CallCard = ({ info }) => {
-  const Langkey = useSelector((store) => store.configApp.lang);
+  // ✅ FIXED: Safe language key with fallback to prevent crashes
+  const Langkey = useSelector((store) => store.configApp?.lang) || "en";
+  const currentLang = lang[Langkey] || lang["en"] || {};
 
   if (!info) {
     return <ShimmerList />;
   }
-  const imageSrc = info?.image
-  ? info.image.startsWith("http")
-    ? info.image
-    : `${BASE_URL}${info.image}`
-  : "/Logo.png";
 
+  // ✅ FIXED: Safe image URL building (handles relative paths, strings, and missing images)
+  const imageSrc =
+    info?.image && typeof info.image === "string"
+      ? info.image.startsWith("http")
+        ? info.image
+        : `${BASE_URL}${info.image}`
+      : "/Logo.png";
 
   return (
-    <div className="flex justify-start overflow-hidden shadow-sm shadow-zinc-700 hover:bg-purple-800 transition-all hover:bg-opacity-55 w-full bg-purple-950 bg-opacity-55 rounded-xl gap-4 px-2 py-2 items-start h-full flex-row">
+    <div className="flex flex-row justify-start items-start gap-4 w-full h-full px-2 py-2 bg-purple-950/55 rounded-xl shadow-sm shadow-zinc-700 hover:bg-purple-800/55 transition-all duration-300 overflow-hidden">
       
+      {/* LEFT */}
       <div className="w-3/12 h-full py-2 flex flex-col justify-start items-center">
         <div className="relative">
-          <div className="w-20 h-20 rounded-full bg-purple-800 bg-opacity-85"></div>
-
+          {/* ✅ FIXED: Proper circular image rendering with fallback */}
           <img
-src={imageSrc}
-alt={info?.name || "profile"}
-className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
-onError={(e) => {
-e.target.src = "/Logo.png";
-}}
-/>
+            src={imageSrc}
+            alt={info?.name || "profile"}
+            className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
+            onError={(e) => {
+              e.target.src = "/Logo.png";
+            }}
+          />
         </div>
 
-        <div>
+        <div className="mt-2">
           {info?.rating > 4.9 ? (
             <>
               <i className="ri-star-s-fill text-yellow-400"></i>
@@ -55,47 +61,49 @@ e.target.src = "/Logo.png";
           )}
         </div>
 
-        <span className="text-xs text-purple-100 font-semibold">
-          {lang[Langkey].orders}
+        <span className="text-xs text-purple-100 font-semibold mt-1">
+          {info?.orders || 0} {currentLang.orders || "Orders"}
         </span>
       </div>
 
+      {/* CENTER */}
       <div className="w-6/12 py-2 h-full flex flex-col gap-1 justify-start items-start">
-        <span className="text-purple-200 font-semibold">
+        <span className="text-purple-200 font-semibold text-base">
           {info?.name}
         </span>
 
+        {/* ✅ FIXED: Safe array join to prevent ".join is not a function" crash */}
         <span className="text-sm text-purple-100 font-semibold">
-          {info?.skills?.join(", ")}
+          {Array.isArray(info?.skills) ? info.skills.join(", ") : ""}
         </span>
 
         <span className="text-sm text-purple-100 font-semibold">
-          {info?.languages?.join(", ")}
+          {Array.isArray(info?.languages) ? info.languages.join(", ") : ""}
         </span>
 
         <span className="text-sm text-purple-100 font-semibold">
-          {lang[Langkey].exp} : {info?.experience} {lang[Langkey].years}
+          {currentLang.exp || "Exp"} : {info?.experience || 0} {currentLang.years || "Years"}
         </span>
 
-        <span className="text-sm text-purple-100">
+        <span className="text-sm text-purple-100 mt-1">
           <span className="text-base pr-1 font-semibold text-purple-100">
-            ₹{info?.pricePerMinute}
+            ₹{info?.pricePerMinute || 0}
           </span>
-          /{lang[Langkey].min}
+          /{currentLang.min || "min"}
         </span>
       </div>
 
-      <div className="w-2/12 h-full flex flex-col gap-20 justify-between items-end">
-        <div className="flex flex-row">
+      {/* RIGHT */}
+      {/* ✅ FIXED: Changed w-2/12 to w-3/12 so that 3 + 6 + 3 = 12 (Perfect Grid) */}
+      <div className="w-3/12 h-full flex flex-col justify-between items-end">
+        <div>
           {info?.verified && (
-            <span>
-              <i className="lg:text-2xl md:text-xl opacity-70 text-lg text-[#9400D3] ri-verified-badge-fill"></i>
-            </span>
+            <i className="lg:text-2xl md:text-xl text-lg text-[#9400D3] ri-verified-badge-fill opacity-70"></i>
           )}
         </div>
 
         <div>
-          <button className="px-5 py-1 hover:bg-purple-500 hover:text-white rounded-md text-sm border text-purple-400 border-zinc-400">
+          <button className="px-5 py-1.5 hover:bg-purple-500 hover:text-white rounded-md text-sm border border-zinc-400 text-purple-400 transition-all duration-200">
             Call
           </button>
         </div>
