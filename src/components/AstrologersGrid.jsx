@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 // ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
 const BASE_URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:5000"
+    ? "https://plutoastro-backend.onrender.com"
     : "https://plutoastro-backend.onrender.com";
 
 const AstrologersGrid = () => {
