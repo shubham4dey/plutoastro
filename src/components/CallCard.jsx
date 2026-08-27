@@ -2,14 +2,12 @@ import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
 
-// ✅ FIXED: Environment-aware BASE_URL
 const BASE_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:5000"
     : "https://plutoastro-backend.onrender.com";
 
 const CallCard = ({ info }) => {
-  // ✅ FIXED: Safe language key with fallback to prevent crashes
   const Langkey = useSelector((store) => store.configApp?.lang) || "en";
   const currentLang = lang[Langkey] || lang["en"] || {};
 
@@ -17,7 +15,6 @@ const CallCard = ({ info }) => {
     return <ShimmerList />;
   }
 
-  // ✅ FIXED: Safe image URL building (handles relative paths, strings, and missing images)
   const imageSrc =
     info?.image && typeof info.image === "string"
       ? info.image.startsWith("http")
@@ -29,20 +26,25 @@ const CallCard = ({ info }) => {
     <div className="flex flex-row justify-start items-start gap-4 w-full h-full px-2 py-2 bg-purple-950/55 rounded-xl shadow-sm shadow-zinc-700 hover:bg-purple-800/55 transition-all duration-300 overflow-hidden">
       
       {/* LEFT */}
-      <div className="w-3/12 h-full py-2 flex flex-col justify-start items-center">
-        <div className="relative">
-          {/* ✅ FIXED: Proper circular image rendering with fallback */}
+      <div className="w-3/12 h-full py-2 flex flex-col justify-start items-center gap-2">
+        {/* ✅ FIXED: Proper image container with overlay */}
+        <div className="relative w-20 h-20">
+          {/* Purple placeholder circle */}
+          <div className="w-20 h-20 rounded-full bg-purple-800"></div>
+          
+          {/* Actual image - properly overlaid */}
           <img
             src={imageSrc}
             alt={info?.name || "profile"}
-            className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
+            className="absolute top-0 left-0 w-20 h-20 rounded-full object-cover border-2 border-purple-400"
             onError={(e) => {
-              e.target.src = "/Logo.png";
+              e.target.style.display = "none";
             }}
           />
         </div>
 
-        <div className="mt-2">
+        {/* Stars */}
+        <div>
           {info?.rating > 4.9 ? (
             <>
               <i className="ri-star-s-fill text-yellow-400"></i>
@@ -61,7 +63,7 @@ const CallCard = ({ info }) => {
           )}
         </div>
 
-        <span className="text-xs text-purple-100 font-semibold mt-1">
+        <span className="text-xs text-purple-100 font-semibold">
           {info?.orders || 0} {currentLang.orders || "Orders"}
         </span>
       </div>
@@ -72,7 +74,6 @@ const CallCard = ({ info }) => {
           {info?.name}
         </span>
 
-        {/* ✅ FIXED: Safe array join to prevent ".join is not a function" crash */}
         <span className="text-sm text-purple-100 font-semibold">
           {Array.isArray(info?.skills) ? info.skills.join(", ") : ""}
         </span>
@@ -94,7 +95,6 @@ const CallCard = ({ info }) => {
       </div>
 
       {/* RIGHT */}
-      {/* ✅ FIXED: Changed w-2/12 to w-3/12 so that 3 + 6 + 3 = 12 (Perfect Grid) */}
       <div className="w-3/12 h-full flex flex-col justify-between items-end">
         <div>
           {info?.verified && (
