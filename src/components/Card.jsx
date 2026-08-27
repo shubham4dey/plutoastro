@@ -2,6 +2,12 @@ import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
 
+// ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
+const BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "https://plutoastro-backend.onrender.com";
+
 const Card = ({ info }) => {
 const Langkey = useSelector(
 (store) => store.configApp.lang
@@ -10,6 +16,13 @@ const Langkey = useSelector(
 if (!info) {
 return <ShimmerList />;
 }
+
+// ✅ FIXED: build full image URL from relative path
+const imageSrc = info?.image
+  ? info.image.startsWith("http")
+    ? info.image
+    : `${BASE_URL}${info.image}`
+  : "/Logo.png";
 
 return ( <div
    className="
@@ -34,8 +47,8 @@ return ( <div
  >
 {/* LEFT */} <div className="w-3/12 h-full py-2 flex flex-col justify-start items-center"> <div className="relative">
 <img
-src={`https://plutoastro-backend.onrender.com`/info?.image || "/Logo.png"}
-alt={`https://plutoastro-backend.onrender.com`/info?.name || "profile"}
+src={imageSrc}
+alt={info?.name || "profile"}
 className="w-20 h-20 rounded-full object-cover border-2 border-purple-500 bg-purple-800"
 onError={(e) => {
 e.target.src = "/Logo.png";
