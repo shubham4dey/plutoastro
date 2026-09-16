@@ -1,0 +1,1 @@
+MOBILE_REGION: "e)}>\r\n\r\n            CALCULATORS\r\n\r\n          </Link>\r\n\r\n          <Link to=\"/about\" onClick={() => setMobileMenu(false)}>\r\n\r\n            {lang[Langkey].ABOUT}\r\n          </Link>\r\n\r"

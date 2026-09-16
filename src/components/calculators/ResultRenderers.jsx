@@ -7,6 +7,7 @@
 
 import React from "react";
 import { HeroBadge, FactGrid, CosmicList, ResultSection } from "./ResultCard";
+import TransitWheel from "./TransitWheel";
 
 /* ---------- shared birth meta ---------- */
 const formatOffset = (minutes) => {
@@ -19,7 +20,7 @@ const formatOffset = (minutes) => {
   return `UTC${sign}${hours}:${mins}`;
 };
 
-const BirthMeta = ({ input }) => {
+const BirthMeta = ({ input, birthLabel }) => {
   if (!input) return null;
   const place = [input.city || input.region, input.country].filter(Boolean).join(", ");
   const offsetLabel = formatOffset(input.utcOffsetMinutes);
@@ -30,7 +31,7 @@ const BirthMeta = ({ input }) => {
   const local = `${input.date} ${input.time}`;
   return (
     <div className="text-xs text-purple-300/60 space-y-0.5">
-      <p>🌍 <span className="text-purple-200/80">Birth place:</span> {place || input.place || "—"}</p>
+      <p>🌍 <span className="text-purple-200/80">{birthLabel ? birthLabel + " place:" : "Birth place:"}</span> {place || input.place || "—"}</p>
       <p>⏰ <span className="text-purple-200/80">Local time:</span> {local}</p>
       <p>🌐 <span className="text-purple-200/80">Time zone:</span> {tz}</p>
       {input.latitude != null && input.longitude != null && (
@@ -454,6 +455,258 @@ export const FriendshipResult = ({ result }) => {
           {Object.values(people).map((p) => (<BirthMeta key={p.label} input={p.birth} />))}
         </div>
       </ResultSection>
+    </div>
+  );
+};
+
+/* ---------- Planetary Transits / Transit Chart ---------- */
+export const TransitResult = ({ result }) => {
+  if (!result) return null;
+  const {
+    tropicalWheel = [],
+    retrogradeBodies = [],
+    signChanges = [],
+    upcomingTransits = [],
+    summary,
+    time,
+    input,
+    meta,
+  } = result;
+
+  const retroCount = retrogradeBodies.length;
+  const changeCount = signChanges.length;
+  const upcomingCount = upcomingTransits.length;
+
+  const planetSymbols = {
+    Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
+    Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇",
+    Rahu: "☊", Ketu: "☋",
+  };
+
+  const formatDeg = (deg) => {
+    const d = Math.floor(deg);
+    const m = Math.floor((deg % 1) * 60);
+    const s = Math.round(((deg % 1) * 60 % 1) * 60);
+    return d + "°" + m.toString().padStart(2, "0") + "'" + s.toString().padStart(2, "0") + '"';
+  };
+
+  const pad2 = (n) => String(n ?? "").padStart(2, "0");
+  const fmtWall = (w) => {
+    if (w == null) return "—";
+    if (typeof w === "string") return w;
+    const d = w.date || (w.year != null ? w.year + "-" + pad2(w.month) + "-" + pad2(w.day) : "—");
+    const t = w.time || (w.hour != null ? pad2(w.hour) + ":" + pad2(w.minute) : "");
+    return (d + " " + t).trim();
+  };
+  const fmtUtc = (u) => {
+    if (u == null) return "—";
+    if (typeof u === "string") return u;
+    if (u.year == null) return "—";
+    return u.year + "-" + pad2(u.month) + "-" + pad2(u.day) + " " + pad2(u.hour) + ":" + pad2(u.minute) + " UTC";
+  };
+
+  const timeFacts = [
+    { label: "Local time", value: fmtWall(time && time.local) + (time && time.abbreviation ? " " + time.abbreviation : "") },
+    { label: "UTC", value: fmtUtc(time && time.utc) },
+    { label: "Time zone", value: (time && time.timeZone) || "—" },
+    { label: "UTC offset", value: (time && time.offsetLabel) || "—" },
+    { label: "Julian day (UT)", value: time && time.julianDayUT != null ? String(time.julianDayUT) : "—" },
+    { label: "DST active", value: time && time.isDst ? "Yes" : "No" },
+  ];
+
+  const summaryFacts = [
+    { label: "Planets", value: String(tropicalWheel.length) },
+    { label: "Retrograde now", value: retroCount > 0 ? String(retroCount) : "None" },
+    { label: "Sign changes soon", value: changeCount > 0 ? String(changeCount) : "None" },
+    { label: "Upcoming transits", value: String(upcomingCount) },
+  ];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <HeroBadge
+        icon="🪐"
+        label="Live Transit Positions"
+        value={tropicalWheel.length + " planets"}
+        sub={summary}
+      />
+
+      <div className="flex flex-col items-center gap-3">
+        <TransitWheel
+          wheel={tropicalWheel}
+          retrogradeCount={retroCount}
+          signChangeCount={changeCount}
+        />
+        <p className="text-center text-[11px] text-purple-300/50 max-w-md leading-relaxed">
+          Tropical zodiac wheel showing where each planet sits right now for your
+          selected moment, place and time zone. Larger circles = retrograde (Rx).
+          {changeCount > 0 && (
+            <span className="block text-amber-300/80 mt-1">
+              ⚠ {changeCount} planet{changeCount > 1 ? "s are" : " is"} due to
+              change sign soon — see below for timing.
+            </span>
+          )}
+        </p>
+      </div>
+
+      <FactGrid facts={summaryFacts} />
+
+      <ResultSection title="Current Planetary Positions">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-purple-100/80">
+            <thead>
+              <tr className="border-b border-purple-500/30">
+                <th className="text-left py-2 text-purple-300">Planet</th>
+                <th className="text-center py-2 text-purple-300">Sign</th>
+                <th className="text-center py-2 text-purple-300">Deg in Sign</th>
+                <th className="text-center py-2 text-purple-300">Longitude</th>
+                <th className="text-center py-2 text-purple-300">Motion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tropicalWheel.map((p) => (
+                <tr key={p.body} className="border-b border-purple-500/10">
+                  <td className="py-1.5 font-semibold">
+                    {p.symbol || planetSymbols[p.label] || p.body} {p.label}
+                  </td>
+                  <td className="text-center py-1.5">
+                    {p.sign ? p.sign.symbol + " " + p.sign.name : "—"}
+                  </td>
+                  <td className="text-center py-1.5 font-mono">
+                    {formatDeg(p.degreesInSign)}
+                  </td>
+                  <td className="text-center py-1.5 font-mono">
+                    {p.longitude.toFixed(2)}°
+                  </td>
+                  <td className="text-center py-1.5">
+                    {p.isRetrograde ? (
+                      <span className="text-rose-300 font-bold">Retrograde</span>
+                    ) : (
+                      <span className="text-emerald-300">Direct</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </ResultSection>
+
+      {retroCount > 0 && (
+        <ResultSection title="Retrograde Planets">
+          <CosmicList
+            items={retrogradeBodies.map((p) =>
+              (p.symbol || planetSymbols[p.label] || "") + " " + p.label +
+              " in " + (p.sign ? p.sign.name : "?") +
+              " — moving backwards, urging review and inner work."
+            )}
+            marker="◐"
+          />
+        </ResultSection>
+      )}
+
+      {changeCount > 0 ? (
+        <ResultSection title="Upcoming Sign Changes">
+          <div className="space-y-2">
+            {signChanges.map((sc, idx) => (
+              <div
+                key={sc.body + "-" + idx}
+                className="rounded-lg border border-amber-500/20 bg-amber-950/20 px-3 py-2"
+              >
+                <p className="text-sm font-semibold text-amber-200/90">
+                  {sc.symbol || planetSymbols[sc.label] || ""} {sc.label} —{" "}
+                  {sc.direction === "entering" ? "entering" : "leaving"} {sc.toSign} {sc.toSymbol}
+                  {sc.dayOffset === 0
+                    ? " today"
+                    : sc.dayOffset > 0
+                      ? " in " + sc.dayOffset + (sc.dayOffset > 1 ? "s" : "")
+                      : " was " + Math.abs(sc.dayOffset) + " day" + (Math.abs(sc.dayOffset) > 1 ? "s" : "")}
+                </p>
+                <p className="text-[11px] text-purple-300/70 mt-0.5">
+                  {sc.direction === "entering"
+                    ? "From " + sc.fromSign + sc.fromSymbol + " into " + sc.toSign + sc.toSymbol
+                    : "From " + sc.toSign + sc.toSymbol + " into " + sc.fromSign + sc.fromSymbol}
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      ) : (
+        <ResultSection title="Upcoming Sign Changes">
+          <p className="text-sm text-purple-200/70">
+            No major sign changes expected in the near future.
+          </p>
+        </ResultSection>
+      )}
+
+      {upcomingCount > 0 ? (
+        <ResultSection title="Upcoming Transits (Next 30 Days)">
+          <div className="space-y-2.5">
+            {upcomingTransits.map((t, idx) => (
+              <div
+                key={"transit-" + idx}
+                className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 px-4 py-3"
+              >
+                <div className="flex justify-between items-start gap-2">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-fuchsia-200">
+                      {t.transitSymbol || planetSymbols[t.transitLabel] || ""} {t.transitLabel} {t.aspect} {t.natalLabel} {t.natalSymbol || ""}
+                    </p>
+                    <p className="text-[11px] text-purple-300/70 mt-0.5">
+                      {t.transitSign
+                        ? t.transitSign.symbol + " " + t.transitSign.name + " " + formatDeg((t.transitLongitude % 30 + 30) % 30)
+                        : ""}
+                      {" → "}
+                      {t.natalSign
+                        ? t.natalSign.symbol + " " + t.natalSign.name + " " + formatDeg((t.natalLongitude % 30 + 30) % 30)
+                        : ""}
+                    </p>
+                  </div>
+                  <div className="text-right text-[11px]">
+                    <span className="inline-block rounded-full border border-fuchsia-500/30 bg-fuchsia-900/30 px-2 py-0.5 text-xs font-bold text-fuchsia-200">
+                      {t.withinNextDays === 0 ? "Exact!" : "~" + t.withinNextDays + "d"}
+                    </span>
+                    <p className="text-purple-300/50 mt-0.5">orb: {t.orb.toFixed(2)}°</p>
+                  </div>
+                </div>
+                {t.interpretation && (
+                  <p className="text-xs text-purple-100/70 mt-1 leading-relaxed">
+                    {t.interpretation}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      ) : (
+        <ResultSection title="Upcoming Transits (Next 30 Days)">
+          <p className="text-sm text-purple-200/70">
+            No major transits to your natal planets occur in the next 30 days.
+          </p>
+        </ResultSection>
+      )}
+
+      <ResultSection title="Time & Location Details">
+        <FactGrid facts={timeFacts} />
+      </ResultSection>
+
+      <ResultSection title="Your Birth Details">
+        <BirthMeta input={input} />
+      </ResultSection>
+
+      {meta && (
+        <div className="mt-4 pt-4 border-t border-purple-500/20">
+          <p className="text-[10px] text-purple-300/40 leading-relaxed">
+            Computed by the Swiss Ephemeris engine on the PlutoAstro server at{" "}
+            {new Date(meta.generatedAt).toLocaleString()}.{" "}
+            {meta.engine && typeof meta.engine === "string"
+              ? meta.engine
+              : meta.engine && meta.engine.name
+                ? meta.engine.name + " v" + (meta.engine.version || "?")
+                : ""}
+            . Nothing you entered is stored.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

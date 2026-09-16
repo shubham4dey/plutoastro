@@ -71,16 +71,24 @@ const search = async ({ q, count, date, time }) => {
     query: q,
     results: results.map((entry) => {
       const timezone = entry.timezone || null;
+      const city = entry.name || null;
+      const region = entry.admin1 || null;
+      const country = entry.country || null;
+      const label = [city, region, country].filter(Boolean).join(", ") || city || q;
       return {
         id: numberOr(entry.id, null),
-        city: entry.name || null,
-        region: entry.admin1 || null,
-        country: entry.country || null,
+        city,
+        region,
+        country,
         countryCode: entry.country_code || null,
         latitude: numberOr(entry.latitude, null),
         longitude: numberOr(entry.longitude, null),
         population: numberOr(entry.population, 0),
+        // Both keys: backend uses `timezone`, frontend LocationInput reads `timeZone`.
         timezone,
+        timeZone: timezone,
+        label,
+        place: label,
         elevation: numberOr(entry.elevation, null),
       };
     }),
@@ -93,4 +101,56 @@ const status = () => ({
   ready: true,
 });
 
-module.exports = { search, status };
+/* Score geocoding candidates: prefer populated places + exact name matches. */
+const scoreCandidate = (entry, query) => {
+  const q = String(query || "").trim().toLowerCase();
+  const name = String(entry.city || entry.name || "").trim().toLowerCase();
+  let score = 0;
+  if (q && name === q) score += 1000;
+  else if (q && name.startsWith(q)) score += 500;
+  else if (q && name.includes(q)) score += 100;
+  score += Math.min(Number(entry.population) || 0, 10000000) / 100000;
+  return score;
+};
+
+/* Pick the best candidate entry for a free-text place query. */
+const pickBest = (results, query) => {
+  if (!Array.isArray(results) || !results.length) return null;
+  let best = null;
+  let bestScore = -Infinity;
+  for (const entry of results) {
+    const score = scoreCandidate(entry, query);
+    if (score > bestScore) {
+      bestScore = score;
+      best = entry;
+    }
+  }
+  return best;
+};
+
+/**
+ * Resolve a free-text birth place to coordinates + IANA timezone.
+ * Used as the automatic fallback so BASIC details alone are enough:
+ * Name + Sex + DOB + Time + Birth Place -> geocode -> lat/lon/timezone
+ * -> Swiss Ephemeris. Advanced (manual lat/lon/tz) values, when
+ * supplied, always win over this automatic result.
+ */
+const resolveFirst = async (query) => {
+  const q = typeof query === "string" ? query.trim() : "";
+  if (q.length < 2) return null;
+  const { results } = await search({ q, count: 8 });
+  const best = pickBest(results, q);
+  if (!best) return null;
+  return {
+    city: best.city || null,
+    region: best.region || null,
+    country: best.country || null,
+    countryCode: best.countryCode || null,
+    latitude: best.latitude,
+    longitude: best.longitude,
+    timeZone: best.timeZone || best.timezone || null,
+    place: best.place || best.label || q,
+  };
+};
+
+module.exports = { search, status, resolveFirst, pickBest };

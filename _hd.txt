@@ -1,0 +1,23 @@
+245| 
+246|               TAROT
+247| </Link>
+248|  
+249|             <Link to="/zodiac" className={liCSS}>
+250| 
+251|               ZODIAC
+252| </Link>
+253|  
+254|             <Link to="/calculators" className={liCSS}>
+255| 
+256|               CALCULATORS
+257| 
+258|             </Link>
+259| 
+260|             <Link to="/about" className={liCSS}>
+261| 
+262|               {lang[Langkey].ABOUT}
+263| </Link>
+264|  
+265|             <Link
+266| 
+267|               to="/become-astrologer"

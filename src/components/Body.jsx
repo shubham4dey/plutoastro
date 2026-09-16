@@ -10,6 +10,8 @@ import {
 
   createBrowserRouter,
 
+  Navigate,
+
   useLocation,
 
 } from "react-router-dom";
@@ -102,6 +104,10 @@ import Zodiac from "../pages/Zodiac";
 // PlutoAstro — Calculators
 import CalculatorsHome from "../pages/calculators/CalculatorsHome";
 import CalculatorPage from "../pages/calculators/CalculatorPage";
+
+// PlutoAstro — Planetary Changes (top-level feature, NOT a calculator)
+import PlanetaryChanges from "../pages/PlanetaryChanges";
+import BirthDetails from "../pages/BirthDetails";
 
 import AstrologerLogin from "../pages/AstrologerLogin";
 
@@ -494,9 +500,39 @@ const appLayout = createBrowserRouter([
 
       {
 
+        path: "calculators/planetary-transits",
+
+        element: <Navigate to="/planetary-changes" replace />,
+
+      },
+
+      {
+
         path: "calculators/:slug",
 
         element: <CalculatorPage />,
+
+      },
+
+      /* =========================
+
+          PLANETARY CHANGES (PlutoAstro — top-level, NOT a calculator)
+
+      ========================= */
+
+      {
+
+        path: "planetary-changes",
+
+        element: <PlanetaryChanges />,
+
+      },
+
+      {
+
+        path: "birth-details",
+
+        element: <BirthDetails />,
 
       },
 

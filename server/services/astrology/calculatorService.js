@@ -17,6 +17,7 @@ const kutaService = require("./kutaService");
 const synastry = require("./synastry");
 const interpretations = require("./interpretationService");
 const timezoneService = require("./timezoneService");
+const transitService = require("./transitService");
 const { SIGNS } = require("./constants");
 const { round } = require("./utils");
 
@@ -36,7 +37,13 @@ const chartInput = (person) => ({
   city: person.city,
   region: person.region,
   country: person.country,
-  place: person.place,
+  place: person.resolvedPlace || person.place,
+  dstCorrection: person.dstCorrection,
+  chartStyle: person.chartStyle,
+  kpHoraryNumber: person.kpHoraryNumber,
+  sex: person.sex,
+  gender: person.gender,
+  name: person.name,
 });
 
 /** Echo of the birth details actually used — nothing extra, nothing invented */
@@ -636,6 +643,15 @@ const friendshipCompatibility = (value) => {
   };
 };
 
+/* =========================
+   PLANETARY TRANSITS / TRANSIT CHART
+   ========================= */
+
+const transitChart = (value) => {
+  const result = transitService.computeTransits(chartInput(value));
+  return result;
+};
+
 module.exports = {
   numerology,
   moonSign,
@@ -646,6 +662,7 @@ module.exports = {
   nakshatra,
   loveCompatibility,
   friendshipCompatibility,
+  transitChart,
 };
 
 

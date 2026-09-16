@@ -25,4 +25,7 @@ router.post("/nakshatra", controller.nakshatra);
 router.post("/love-compatibility", controller.loveCompatibility);
 router.post("/friendship-compatibility", controller.friendshipCompatibility);
 
+/* Transit chart */
+router.post("/planetary-transits", controller.transitChart);
+
 module.exports = router;

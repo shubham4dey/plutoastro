@@ -1,0 +1,2 @@
+src\\components\\calculators\\LocationInput.jsx:15:const LocationInput = ({ value, onChange, error, label = "Birth Place", idPrefix = "loc" }) => {
+src\\components\\calculators\\LocationInput.jsx:177:export default LocationInput;

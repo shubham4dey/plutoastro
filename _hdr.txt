@@ -1,0 +1,57 @@
+11:import { useDispatch, useSelector } from "react-redux";
+13:import { addUser, removeUser } from "../store/userSlice";
+15:import { clearFollow } from "../store/followSlice";
+25:} from "../store/configAppSlice";
+31:import { toast, Bounce } from "react-toastify";
+33:import "react-toastify/dist/ReactToastify.css";
+43:  const user = useSelector((store) => store.user);
+45:  const form = useSelector((store) => store.configApp.form);
+47:  const Langkey = useSelector((store) => store.configApp.lang);
+81:        toast.success("Logged out successfully.", {
+83:          position: "top-center",
+85:          autoClose: 1000,
+157:          top-0
+165:          bg-gradient-to-b
+171:          to-transparent
+181:<Link to="/">
+186:              alt="PlutoAstro"
+188:              className="h-10 md:h-12 lg:h-14 2xl:h-16 w-auto shrink-0 object-contain"
+193:          {/* Desktop Menu */}
+195:<Link to="/" className={liCSS}>
+203:              to="/chat"
+210:<span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+217:            <Link to="/call" className={liCSS}>
+225:              to="/ai-astro"
+232:<span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+239:            <Link to="/horoscope" className={liCSS}>
+244:            <Link to="/tarot" className={liCSS}>
+249:            <Link to="/zodiac" className={liCSS}>
+254:            <Link to="/calculators" className={liCSS}>
+260:            <Link to="/about" className={liCSS}>
+267:              to="/become-astrologer"
+277:                bg-gradient-to-r
+281:                to-purple-700
+301:            <Link to="/kundligpt" className={liCSS}>
+343:            {/* ✅ NEW: Profile Dropdown (desktop) */}
+353:                className="hidden lg:block px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:scale-105 transition-all cursor-pointer"
+362:<button
+369:</button>
+400:<Link to="/" onClick={() => setMobileMenu(false)}>
+407:              to="/chat"
+416:<span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+423:            <Link to="/call" onClick={() => setMobileMenu(false)}>
+430:              to="/ai-astro"
+439:<span className="absolute -top-1 -right-3 flex h-2.5 w-2.5">
+446:            <Link to="/horoscope" onClick={() => setMobileMenu(false)}>
+451:            <Link to="/tarot" onClick={() => setMobileMenu(false)}>
+456:            <Link to="/zodiac" onClick={() => setMobileMenu(false)}>
+461:            <Link to="/calculators" onClick={() => setMobileMenu(false)}>
+467:            <Link to="/about" onClick={() => setMobileMenu(false)}>
+472:            <Link to="/become-astrologer" onClick={() => setMobileMenu(false)}>
+477:            <Link to="/kundligpt" onClick={() => setMobileMenu(false)}>
+490:                  to="/wallet"
+502:                  to="/messages"
+514:                  to="/following"
+524:                <button
+532:</button>
+550:<div className="z-[1000] absolute top-0 w-full">

@@ -1,0 +1,22 @@
+456|             <Link to="/zodiac" onClick={() => setMobileMenu(false)}>
+457| 
+458|               ZODIAC SIGNS
+459| </Link>
+460|  
+461|             <Link to="/calculators" onClick={() => setMobileMenu(false)}>
+462| 
+463|               CALCULATORS
+464| 
+465|             </Link>
+466| 
+467|             <Link to="/about" onClick={() => setMobileMenu(false)}>
+468| 
+469|               {lang[Langkey].ABOUT}
+470| </Link>
+471|  
+472|             <Link to="/become-astrologer" onClick={() => setMobileMenu(false)}>
+473| 
+474|               Become Astrologer
+475| </Link>
+476|  
+477|             <Link to="/kundligpt" onClick={() => setMobileMenu(false)}>

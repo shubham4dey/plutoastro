@@ -126,6 +126,22 @@ export const CALCULATORS = [
       "Friendship chemistry between two people: communication compatibility from Mercury and Moon contacts, shared strengths, and the differences to expect.",
     accent: "from-cyan-500 to-purple-700",
   },
+  {
+    slug: "planetary-transits",
+    name: "Planetary Transits Chart",
+    short: "Transits",
+    icon: "🪐",
+    kind: "birth",
+    endpoint: "/api/calculators/planetary-transits",
+    tagline: "Live planetary positions, retrogrades, sign changes & upcoming transits",
+    about:
+      "A premium 12-sign circular transit wheel computed from the Swiss Ephemeris for your selected date, time and time zone — shows real planetary positions, degrees, retrograde/direct status, sign changes and upcoming transits to your natal planets. Designed for users in India, UK, USA and worldwide, with full IANA time zone and DST support.",
+    accent: "from-indigo-500 to-fuchsia-700",
+    // Hidden from the Calculators listing/nav: Planetary Changes is now a
+    // separate top-level navbar feature at /planetary-changes. The backend
+    // endpoint stays live for that page; only the frontend listing hides it.
+    hidden: true,
+  },
 ];
 
 export const calculatorBySlug = (slug) =>
@@ -133,3 +149,9 @@ export const calculatorBySlug = (slug) =>
 
 export const calculatorTitle = (calc) =>
   calc ? `${calc.name} — PlutoAstro` : "Calculators — PlutoAstro";
+
+// Calculators shown on the /calculators listing page. Planetary Transits is
+// hidden here because Planetary Changes is a separate top-level navbar
+// feature (route /planetary-changes) — but it stays registered above so the
+// backend engine + direct lookups keep working unchanged.
+export const LISTED_CALCULATORS = CALCULATORS.filter((calc) => !calc.hidden);

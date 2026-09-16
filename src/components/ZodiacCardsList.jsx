@@ -13,7 +13,11 @@ import Capricorn from "../image/Sign/sign10.svg";
 import Aquarius from "../image/Sign/sign11.svg";
 import Pisces from "../image/Sign/sign12.svg";
 import { Link } from "react-router-dom";
-import kundli from "../image/kundli rishi.webp";
+
+// ✅ CHANGE 1: Monk image ko Golden Mandala se replace karo
+// Apni image ka naam yahan adjust karo (maine 'golden-mandala.webp' rakha hai)
+import mandala from "../image/golden-mandala.webp"; 
+
 import load from "../image/loading.png";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
@@ -25,10 +29,12 @@ const ZodiacCardsList = () => {
 
   return (
     <div className="flex flex-col w-full lg:mt-0 lg:mb-10 2xl:mb-16 justify-center items-center h-full relative">
+      
+      {/* ✅ CHANGE 2: Yahan image source change kiya */}
       <img
-        alt="cycle"
+        alt="zodiac-mandala"
         className="hidden lg:block absolute 2xl:w-96 lg:w-80 opacity-95"
-        src={kundli}
+        src={mandala}
       />
 
       <img
@@ -48,31 +54,30 @@ const ZodiacCardsList = () => {
         </Link>
       </div>
 
-   {/* ROW 2 */}
-<div className="flex justify-evenly lg:gap-32 items-center py-2 lg:py-3 w-full flex-wrap">
-  <Link
-    className={`${cardClass} lg:mr-8`}
-    to="/horoscope/Taurus"
-  >
-    <ZodiacCard
-      name={lang[LangKey].Taurus}
-      value="Apr 20 - May 20"
-      img={Taurus}
-    />
-  </Link>
+      {/* ROW 2 */}
+      <div className="flex justify-evenly lg:gap-32 items-center py-2 lg:py-3 w-full flex-wrap">
+        <Link
+          className={`${cardClass} lg:mr-8`}
+          to="/horoscope/Taurus"
+        >
+          <ZodiacCard
+            name={lang[LangKey].Taurus}
+            value="Apr 20 - May 20"
+            img={Taurus}
+          />
+        </Link>
 
-  <Link
-    className={`${cardClass} lg:ml-8`}
-    to="/horoscope/Gemini"
-  >
-    <ZodiacCard
-      name={lang[LangKey].Gemini}
-      value="May 21 - Jun 20"
-      img={Gemini}
-    />
-  </Link>
-</div>
-      
+        <Link
+          className={`${cardClass} lg:ml-8`}
+          to="/horoscope/Gemini"
+        >
+          <ZodiacCard
+            name={lang[LangKey].Gemini}
+            value="May 21 - Jun 20"
+            img={Gemini}
+          />
+        </Link>
+      </div>
 
       {/* ROW 3 */}
       <div className="flex justify-between items-center py-2 lg:py-3 w-full flex-wrap lg:px-12">
@@ -96,30 +101,31 @@ const ZodiacCardsList = () => {
         </Link>
       </div>
 
-     {/* ROW 5 */}
-<div className="flex justify-evenly lg:gap-32 items-center py-2 lg:py-3 w-full flex-wrap">
-  <Link
-    className={`${cardClass} lg:mr-8`}
-    to="/horoscope/Scorpio"
-  >
-    <ZodiacCard
-      name={lang[LangKey].Scorpio}
-      value="Oct 23 - Nov 21"
-      img={Scorpio}
-    />
-  </Link>
+      {/* ROW 5 */}
+      <div className="flex justify-evenly lg:gap-32 items-center py-2 lg:py-3 w-full flex-wrap">
+        <Link
+          className={`${cardClass} lg:mr-8`}
+          to="/horoscope/Scorpio"
+        >
+          <ZodiacCard
+            name={lang[LangKey].Scorpio}
+            value="Oct 23 - Nov 21"
+            img={Scorpio}
+          />
+        </Link>
 
-  <Link
-    className={`${cardClass} lg:ml-8`}
-    to="/horoscope/Pisces"
-  >
-    <ZodiacCard
-      name={lang[LangKey].Pisces}
-      value="Feb 19 - Mar 20"
-      img={Pisces}
-    />
-  </Link>
-</div>
+        <Link
+          className={`${cardClass} lg:ml-8`}
+          to="/horoscope/Pisces"
+        >
+          <ZodiacCard
+            name={lang[LangKey].Pisces}
+            value="Feb 19 - Mar 20"
+            img={Pisces}
+          />
+        </Link>
+      </div>
+
       {/* ROW 6 */}
       <div className="flex justify-center gap-4 lg:gap-10 items-center py-2 lg:py-3 w-full flex-wrap">
         <Link className={cardClass} to="/horoscope/Capricorn">

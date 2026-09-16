@@ -146,12 +146,12 @@ const LocationInput = ({ value, onChange, error, label = "Birth Place", idPrefix
       </button>
       {manual && (
         <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg border border-purple-500/20 bg-purple-900/10 p-3">
-          <ManualField id={`${idPrefix}-lat`} label="Latitude *" value={value?.latitude ?? ""} placeholder="28.6139" onChange={(v) => onChange(merge(value, { latitude: v }))} />
-          <ManualField id={`${idPrefix}-lng`} label="Longitude *" value={value?.longitude ?? ""} placeholder="77.209" onChange={(v) => onChange(merge(value, { longitude: v }))} />
+          <ManualField id={`${idPrefix}-lat`} label="Latitude (optional override)" value={value?.latitude ?? ""} placeholder="auto" onChange={(v) => onChange(merge(value, { latitude: v }))} />
+          <ManualField id={`${idPrefix}-lng`} label="Longitude (optional override)" value={value?.longitude ?? ""} placeholder="auto" onChange={(v) => onChange(merge(value, { longitude: v }))} />
           <ManualField id={`${idPrefix}-city`} label="City" value={value?.city ?? ""} placeholder="Delhi" onChange={(v) => onChange(merge(value, { city: v, place: composePlace(v, value?.country) }))} />
           <ManualField id={`${idPrefix}-country`} label="Country" value={value?.country ?? ""} placeholder="India" onChange={(v) => onChange(merge(value, { country: v, place: composePlace(value?.city, v) }))} />
-          <ManualField id={`${idPrefix}-tz`} label="IANA Time Zone *" value={value?.timeZone ?? ""} placeholder="Asia/Kolkata" onChange={(v) => onChange(merge(value, { timeZone: v }))} />
-          <ManualField id={`${idPrefix}-utc`} label="UTC Offset (minutes) — optional" value={value?.utcOffsetMinutes ?? ""} placeholder="330" onChange={(v) => onChange(merge(value, { utcOffsetMinutes: v === "" ? null : Number(v) }))} />
+          <ManualField id={`${idPrefix}-tz`} label="IANA Time Zone (optional override)" value={value?.timeZone ?? ""} placeholder="auto" onChange={(v) => onChange(merge(value, { timeZone: v }))} />
+          <ManualField id={`${idPrefix}-utc`} label="UTC Offset (minutes) — optional" value={value?.utcOffsetMinutes ?? ""} placeholder="auto" onChange={(v) => onChange(merge(value, { utcOffsetMinutes: v === "" ? null : Number(v) }))} />
         </div>
       )}
     </div>

@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { addForm } from "../store/configAppSlice";
 import Chatbot from "./Chatbot";
 import bg from "../image/bg1.jpg";
-import kundli from "../image/kundli rishi.webp";
+// CHANGE: Monk image ko crystal ball se replace karo
+import crystalBall from "../image/crystal-ball.webp"; // <-- Yahan apni image ka naam do
 
 const AstroKundli = () => {
   const user = useSelector((store) => store.user);
@@ -18,7 +19,6 @@ const AstroKundli = () => {
   const district = useRef();
 
   const [gender, setGender] = useState("");
-  // const [SelectedLanguage, setSelectedLanguage] = useState("English");
   const [SelectedLanguage, setSelectedLanguage] = useState("en");
   const [result, setresult] = useState();
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,6 @@ const AstroKundli = () => {
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
 
-  // Auto-scroll to results when report is generated
   useEffect(() => {
     if (result && resultsRef.current) {
       setTimeout(() => {
@@ -116,13 +115,13 @@ Birth Place: ${localityValue}
 District: ${districtValue}
 
 GENERATE THESE SECTIONS:
-<h2>🌟 Personalized Introduction</h2>
+<h2> Personalized Introduction</h2>
 Warm welcome using user's name.
-<h2>♋ Zodiac Sign Analysis</h2>
+<h2> Zodiac Sign Analysis</h2>
 Detailed zodiac explanation.
 <h2>🧠 Personality Blueprint</h2>
 Strengths, Weaknesses, Hidden Traits, Emotional Nature.
-<h2>💼 Career & Professional Life</h2>
+<h2> Career & Professional Life</h2>
 Best careers, Business potential, Leadership ability, Growth opportunities.
 <h2>🎓 Education Analysis</h2>
 Learning style, Academic strengths.
@@ -142,7 +141,7 @@ Explain significance.
 Benefits and precautions.
 <h2>🪐 Planetary Energy Reading</h2>
 Explain planetary influences.
-<h2>🙏 Powerful Vedic Remedies</h2>
+<h2> Powerful Vedic Remedies</h2>
 Give practical remedies.
 <h2>📅 2026 Outlook</h2>
 Career, Finance, Relationships, Health.
@@ -188,7 +187,6 @@ Make the report visually premium and beautifully structured with proper contrast
       setLoading(false);
     }
 
-    // Clear form
     if (name.current) name.current.value = "";
     if (locality.current) locality.current.value = "";
     if (district.current) district.current.value = "";
@@ -239,7 +237,8 @@ Make the report visually premium and beautifully structured with proper contrast
               <div className="lg:w-1/3 w-full flex flex-col items-center justify-center">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-                  <img className="relative w-64 lg:w-80 z-10 drop-shadow-2xl" alt="kundli" src={kundli} />
+                  {/* CHANGE: Crystal ball image yahan */}
+                  <img className="relative w-64 lg:w-80 z-10 drop-shadow-2xl" alt="crystal-ball" src={crystalBall} />
                 </div>
                 <p className="mt-4 text-purple-300 text-sm opacity-80 text-center">Ancient Wisdom Meets Modern AI</p>
                 <div className="mt-6 w-full space-y-3">
@@ -337,7 +336,6 @@ Make the report visually premium and beautifully structured with proper contrast
                 <div className="w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mt-4 rounded-full"></div>
               </div>
 
-              {/* Report Container with proper styling */}
               <div
                 className="result-container bg-white rounded-2xl p-8 lg:p-12 text-gray-800"
                 style={{

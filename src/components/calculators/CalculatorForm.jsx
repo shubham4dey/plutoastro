@@ -68,30 +68,85 @@ const locationValid = (p) =>
   Number.isFinite(Number(p.longitude)) &&
   ((p.timeZone && p.timeZone.trim()) || Number.isFinite(Number(p.utcOffsetMinutes)));
 
-const validateBirth = (p, label, errors) => {
+const hasPlaceText = (p) =>
+  !!(p.place && typeof p.place === "string" && p.place.trim().length >= 2);
+
+const validateBirth = (p, label, errors, isTransit = false) => {
   const prefix = label ? `${label} ` : "";
-  if (!p.date) errors[`${prefix}date`] = "Date of birth is required.";
-  if (!p.time) errors[`${prefix}time`] = "Time of birth is required.";
-  if (!locationValid(p)) {
-    errors[`${prefix}location`] =
-      "Select your birth city from the suggestions, or enter latitude, longitude and time zone manually.";
+  if (!p.date) {
+    errors[`${prefix}date`] = isTransit
+      ? "Please choose the date whose sky you want to read."
+      : "Date of birth is required.";
+  }
+  if (!p.time) {
+    errors[`${prefix}time`] = isTransit
+      ? "Please enter the local time to read the transits for."
+      : "Time of birth is required.";
+  }
+  if (isTransit) {
+    // For transits, a resolved place is enough — the backend geocodes /
+    // timezones from the place text. Coordinates/timezone are OPTIONAL
+    // overrides and are never required here.
+    if (!hasPlaceText(p) && !locationValid(p)) {
+      errors[`${prefix}location`] =
+        "Select the place from the suggestions, or enter latitude, longitude and time zone manually.";
+    }
+  } else {
+    if (!locationValid(p)) {
+      errors[`${prefix}location`] =
+        "Select your birth city from the suggestions, or enter latitude, longitude and time zone manually.";
+    }
   }
 };
 
-const birthPayload = (p, extra = {}) => ({
-  date: p.date,
-  time: p.time,
-  latitude: Number(p.latitude),
-  longitude: Number(p.longitude),
-  city: p.city || undefined,
-  region: p.region || undefined,
-  country: p.country || undefined,
-  timeZone: p.timeZone || undefined,
-  utcOffsetMinutes: p.utcOffsetMinutes === "" || p.utcOffsetMinutes === null ? undefined : Number(p.utcOffsetMinutes),
-  name: p.name || undefined,
-  gender: p.gender || undefined,
-  ...extra,
-});
+const birthPayload = (p, extra = {}, isTransit = false) => {
+  const lat = p.latitude === "" || p.latitude == null ? undefined : Number(p.latitude);
+  const lng = p.longitude === "" || p.longitude == null ? undefined : Number(p.longitude);
+  const offset =
+    p.utcOffsetMinutes === "" || p.utcOffsetMinutes == null ? undefined : Number(p.utcOffsetMinutes);
+  const payload = {
+    date: p.date,
+    time: p.time,
+    latitude: lat,
+    longitude: lng,
+    city: p.city || undefined,
+    region: p.region || undefined,
+    country: p.country || undefined,
+    place: p.place || undefined,
+    timeZone: p.timeZone || undefined,
+    utcOffsetMinutes: offset,
+    name: p.name || undefined,
+    gender: p.gender || undefined,
+    ...extra,
+  };
+  // For transits, the backend auto-resolves from the place text. Advanced
+  // astrology settings (ayanamsa, house system, chart style, KP horary,
+  // DST correction) are optional overrides and are never required for the
+  // transit result. When omitted we do not send them so the engine uses
+  // its existing defaults.
+  if (isTransit) {
+    delete payload.name;
+    delete payload.gender;
+    delete payload.ayanamsa;
+    delete payload.houseSystem;
+    delete payload.chartStyle;
+    delete payload.kpHoraryNumber;
+    delete payload.dstCorrection;
+  }
+  // Never send NaN coordinates — treat missing coordinates as omitted so
+  // the backend geocodes the place text instead of trying to compute a chart
+  // at lat/lon 0,0.
+  if (payload.latitude !== undefined && !Number.isFinite(payload.latitude)) {
+    delete payload.latitude;
+  }
+  if (payload.longitude !== undefined && !Number.isFinite(payload.longitude)) {
+    delete payload.longitude;
+  }
+  if (payload.timeZone !== undefined && !payload.timeZone.trim()) {
+    delete payload.timeZone;
+  }
+  return payload;
+};
 
 /* ---- one person's birth details (pair mode) ---- */
 const PersonCard = ({ number, person, errors, onChange }) => {
@@ -130,7 +185,7 @@ const PersonCard = ({ number, person, errors, onChange }) => {
           <input
             type="date"
             value={person.date}
-            min="1900-01-01"
+            min="1200-01-01"
             max="2100-12-31"
             onChange={(e) => patch({ date: e.target.value })}
             className={inputClass}
@@ -159,26 +214,38 @@ const PersonCard = ({ number, person, errors, onChange }) => {
   );
 };
 
+/* Transit chart reads ANY selected moment (past or future). The shared
+   "birth" picker caps the date range at 2100-12-31 for real birth dates,
+   so transits get their own picker with a wider but still engine-safe
+   range (1200-01-01 … 2100-12-31, matching backend validation). */
+const TRANSIT_DATE_MIN = "1200-01-01";
+const TRANSIT_DATE_MAX = "2100-12-31";
+
 /* ---- shared birth fields (single-birth mode) ---- */
-const BirthFields = ({ person, errors, onChange, showAyanamsa }) => {
+const BirthFields = ({ person, errors, onChange, showAyanamsa, isTransit }) => {
   const patch = onChange;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Field label="Date of Birth" error={errors.date} required>
+      <Field label={isTransit ? "Date" : "Date of Birth"} error={errors.date} required
+        hint={isTransit ? "Pick any day — past, present or upcoming." : undefined}>
         <input
           type="date"
           value={person.date}
-          min="1900-01-01"
-          max="2100-12-31"
+          min={isTransit ? TRANSIT_DATE_MIN : "1900-01-01"}
+          max={TRANSIT_DATE_MAX}
           onChange={(e) => patch({ date: e.target.value })}
           className={inputClass}
         />
       </Field>
       <Field
-        label="Time of Birth (local clock)"
+        label={isTransit ? "Time (local clock)" : "Time of Birth (local clock)"}
         error={errors.time}
         required
-        hint="Exact time matters — the Moon and Ascendant move continuously."
+        hint={
+          isTransit
+            ? "Local clock time at the selected place — DST is handled automatically."
+            : "Exact time matters — the Moon and Ascendant move continuously."
+        }
       >
         <input
           type="time"
@@ -188,7 +255,7 @@ const BirthFields = ({ person, errors, onChange, showAyanamsa }) => {
         />
       </Field>
       <div className="md:col-span-2">
-        <Field label="Place of Birth" error={errors.location} required>
+        <Field label={isTransit ? "Place" : "Place of Birth"} error={errors.location} required>
           <LocationInput
             idPrefix="birth"
             value={person}
@@ -287,9 +354,15 @@ const CalculatorForm = ({ calc, loading, onCalculate, onReset }) => {
         };
       }
     } else if (kind === "birth") {
-      validateBirth(person, "", nextErrors);
+      const isTransit = calc.slug === "planetary-transits";
+      validateBirth(person, "", nextErrors, isTransit);
       if (!Object.keys(nextErrors).length) {
-        payload = birthPayload(person, vedic ? { ayanamsa: person.ayanamsa } : {});
+        payload = birthPayload(person, {
+          ...(vedic ? { ayanamsa: person.ayanamsa } : {}),
+          // The sky can be read for any moment, so transits may use future
+          // dates. Without this the shared birth-date validator rejects them.
+          ...(isTransit ? { allowFuture: true } : {}),
+        }, isTransit);
       }
     } else {
       nextErrors = collectPairErrors(people);
@@ -386,6 +459,7 @@ const CalculatorForm = ({ calc, loading, onCalculate, onReset }) => {
       {kind === "birth" && (
         <BirthFields
           person={person} errors={errors} showAyanamsa={vedic}
+          isTransit={calc.slug === "planetary-transits"}
           onChange={(patch) => setPerson((prev) => ({ ...prev, ...patch }))}
         />
       )}

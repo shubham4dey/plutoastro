@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import astroReducer from "./AstroSlice"
-import commentReducer from "./CommentsSlice"
-import userReducer from "./userSlice"
-import followReducer from "./followSlice"
+import astroReducer from "./AstroSlice";
+import commentReducer from "./CommentsSlice";
+import userReducer from "./userSlice";
+import followReducer from "./followSlice";
 import configAppSliceReducer from "./configAppSlice";
+import birthDetailsReducer from "./birthDetailsSlice";
 
 
 const appStore = configureStore({
@@ -13,6 +14,7 @@ const appStore = configureStore({
         user: userReducer,
         follow: followReducer,
         configApp: configAppSliceReducer,
+        birthDetails: birthDetailsReducer,
     }
 })
 export default appStore;

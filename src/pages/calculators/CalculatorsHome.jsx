@@ -6,7 +6,7 @@
 
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { CALCULATORS, calculatorTitle } from "../../utils/calculators";
+import { LISTED_CALCULATORS, calculatorTitle } from "../../utils/calculators";
 
 const CalculatorsHome = () => {
   useEffect(() => {
@@ -40,7 +40,7 @@ const CalculatorsHome = () => {
 
         {/* ================= GRID ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {CALCULATORS.map((calc) => (
+          {LISTED_CALCULATORS.map((calc) => (
             <Link
               key={calc.slug}
               to={`/calculators/${calc.slug}`}

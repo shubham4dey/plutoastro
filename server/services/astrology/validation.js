@@ -37,7 +37,7 @@ const isRealDate = (year, month, day) => {
  * @param {{requireTime?:boolean, requireName?:boolean}} options
  */
 const validateBirthDetails = (body, prefix = "", options = {}) => {
-  const { requireTime = true, requireName = false } = options;
+  const { requireTime = true, requireName = false, allowFuture = false, allowAutoResolve = false } = options;
   const errors = [];
   const value = {};
   const label = prefix ? `${prefix}.` : "";
@@ -75,6 +75,7 @@ const validateBirthDetails = (body, prefix = "", options = {}) => {
     } else if (!isRealDate(year, month, day)) {
       pushError(errors, `${label}date`, "That calendar date does not exist. Please check the date.");
     } else if (
+      !allowFuture &&
       Date.UTC(year, month - 1, day) >
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
     ) {
@@ -103,38 +104,58 @@ const validateBirthDetails = (body, prefix = "", options = {}) => {
     value.time = "12:00:00";
   }
 
-  /* ---- birth place ---- */
+  /* ---- birth place (basic detail: free text is enough) ----
+   * BASIC details flow: Name + Sex + DOB + Time + Birth Place must be
+   * enough. The backend auto-resolves coordinates/timezone (see
+   * transitChart fallback), so a plain typed place string is valid here.
+   * Advanced manual lat/lon/timezone values are OPTIONAL overrides. */
   const city = typeof source.city === "string" ? source.city.trim().slice(0, 120) : "";
   const region = typeof source.region === "string" ? source.region.trim().slice(0, 120) : "";
   const country = typeof source.country === "string" ? source.country.trim().slice(0, 120) : "";
+  const freePlace = typeof source.place === "string" ? source.place.trim().slice(0, 200) : "";
   value.city = city || null;
   value.region = region || null;
   value.country = country || null;
-  value.place = [city, region, country].filter(Boolean).join(", ") || null;
+  value.place = [city, region, country].filter(Boolean).join(", ") || freePlace || null;
 
-  /* ---- coordinates ---- */
-  const latitude = Number(source.latitude);
-  const longitude = Number(source.longitude);
-  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+  const hasPlaceText = Boolean(value.place);
+
+  /* ---- coordinates (OPTIONAL override; auto-resolved when missing) ----
+   * When the caller passes allowAutoResolve (transit flow), missing or
+   * invalid coordinates do NOT fail validation: the controller geocodes
+   * the birth-place text instead. Explicit values are range-checked. */
+  const rawLat = source.latitude;
+  const rawLon = source.longitude;
+  const latMissing = rawLat === undefined || rawLat === null || rawLat === "";
+  const lonMissing = rawLon === undefined || rawLon === null || rawLon === "";
+  const latitude = Number(rawLat);
+  const longitude = Number(rawLon);
+  const latOk = Number.isFinite(latitude) && latitude >= -90 && latitude <= 90;
+  const lonOk = Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
+  if (latOk) {
+    value.latitude = latitude;
+  } else if (!latMissing || !options.allowAutoResolve || !hasPlaceText) {
     pushError(
       errors,
       `${label}latitude`,
       "Birth latitude is missing or invalid. Search for your birth city or enter a latitude between -90 and 90."
     );
   } else {
-    value.latitude = latitude;
+    value.latitude = null;
   }
-  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+  if (lonOk) {
+    value.longitude = longitude;
+  } else if (!lonMissing || !options.allowAutoResolve || !hasPlaceText) {
     pushError(
       errors,
       `${label}longitude`,
       "Birth longitude is missing or invalid. Search for your birth city or enter a longitude between -180 and 180."
     );
   } else {
-    value.longitude = longitude;
+    value.longitude = null;
   }
 
-  /* ---- time zone / UTC offset ---- */
+  /* ---- time zone / UTC offset (OPTIONAL; auto-resolved when missing) ---- */
   const rawOffset = source.utcOffsetMinutes;
   const hasOffset =
     rawOffset !== undefined &&
@@ -152,11 +173,18 @@ const validateBirthDetails = (body, prefix = "", options = {}) => {
       value.timeZone = timezoneService.isValidTimeZone(timeZone) ? timeZone : null;
     }
   } else if (!timeZone) {
-    pushError(
-      errors,
-      `${label}timeZone`,
-      "The time zone of the birth place is required. Select your birth city from the suggestions, or set the UTC offset manually."
-    );
+    // Transit/basic flow: a free-text place is enough — the controller
+    // auto-resolves the IANA zone from the geocoded birth place.
+    if (options.allowAutoResolve && hasPlaceText) {
+      value.timeZone = null;
+      value.utcOffsetMinutes = null;
+    } else {
+      pushError(
+        errors,
+        `${label}timeZone`,
+        "The time zone of the birth place is required. Select your birth city from the suggestions, or set the UTC offset manually."
+      );
+    }
   } else if (!timezoneService.isValidTimeZone(timeZone)) {
     pushError(errors, `${label}timeZone`, `'${timeZone}' is not a recognised IANA time zone.`);
   } else {
@@ -164,7 +192,7 @@ const validateBirthDetails = (body, prefix = "", options = {}) => {
     value.utcOffsetMinutes = null;
   }
 
-  /* ---- engine options ---- */
+  /* ---- engine options (all OPTIONAL; engine defaults apply) ---- */
   const ayanamsa = typeof source.ayanamsa === "string" ? source.ayanamsa.trim().toLowerCase() : "";
   if (ayanamsa && !engine.AYANAMSA_SYSTEMS[ayanamsa]) {
     pushError(
@@ -187,6 +215,35 @@ const validateBirthDetails = (body, prefix = "", options = {}) => {
   } else {
     value.houseSystem = houseSystem || engine.DEFAULT_HOUSE_SYSTEM;
   }
+
+  /* ---- optional transit extras (DST correction, chart style, KP horary) ----
+   * Stored/forwarded only; never required.	dstCorrection: "auto" (default)
+   * uses real historical DST rules from timezoneService; a numeric minute
+   * value applies a manual override on top of the resolved offset. */
+  const dstRaw = source.dstCorrection;
+  if (dstRaw === undefined || dstRaw === null || dstRaw === "") {
+    value.dstCorrection = null;
+  } else if (typeof dstRaw === "string" && dstRaw.trim().toLowerCase() === "auto") {
+    value.dstCorrection = "auto";
+  } else if (Number.isFinite(Number(dstRaw)) && Number(dstRaw) >= -180 && Number(dstRaw) <= 180) {
+    value.dstCorrection = Number(dstRaw);
+  } else {
+    pushError(errors, `${label}dstCorrection`, "DST correction must be 'auto' or between -180 and +180 minutes.");
+  }
+  const chartStyle = typeof source.chartStyle === "string" ? source.chartStyle.trim().slice(0, 40) : "";
+  value.chartStyle = chartStyle || null;
+  const horaryRaw = source.kpHoraryNumber;
+  if (horaryRaw === undefined || horaryRaw === null || horaryRaw === "") {
+    value.kpHoraryNumber = null;
+  } else if (Number.isInteger(Number(horaryRaw)) && Number(horaryRaw) >= 1 && Number(horaryRaw) <= 249) {
+    value.kpHoraryNumber = Number(horaryRaw);
+  } else {
+    pushError(errors, `${label}kpHoraryNumber`, "KP horary number must be an integer between 1 and 249.");
+  }
+  const sexRaw = typeof source.sex === "string" ? source.sex.trim().toLowerCase()
+    : typeof source.gender === "string" ? source.gender.trim().toLowerCase() : "";
+  value.sex = ["male", "female", "other"].includes(sexRaw) ? sexRaw : null;
+  if (sexRaw) value.gender = value.sex;
 
   return { ok: errors.length === 0, errors, value };
 };

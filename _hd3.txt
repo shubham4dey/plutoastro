@@ -1,0 +1,19 @@
+253: [ ]
+254: [                                      CALCULATORS]
+255: []
+256: [            </Link>]
+257: []
+258: [            <Link to="/planetary-changes" className={liCSS}>]
+259: []
+260: [              PLANETARY CHANGES]
+261: []
+262: [            </Link>]
+263: []
+264: [            <Link to="/about" className={liCSS}>]
+265: []
+266: [              {lang[Langkey].ABOUT}]
+267: [</Link>]
+268: [ ]
+269: [            <Link]
+270: []
+271: [              to="/become-astrologer"]

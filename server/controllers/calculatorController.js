@@ -71,6 +71,65 @@ const ayanamsa = single(validation.validateAyanamsa, calculatorService.ayanamsa)
 const nakshatra = single(validation.validateBirthDetails, calculatorService.nakshatra);
 const loveCompatibility = pair(calculatorService.loveCompatibility);
 const friendshipCompatibility = pair(calculatorService.friendshipCompatibility);
+// Transits describe ANY moment (past, present or future: "what is the sky doing
+// on this date?"), so the shared birth-date validator must not reject future dates.
+// BASIC-DETAILS-FIRST flow: Name + Sex + DOB + Time + Birth Place is enough.
+// When coordinates/timezone are missing, they are auto-resolved by geocoding
+// the birth-place text (existing geoService + timezoneService + Swiss
+// Ephemeris). Advanced values, when supplied, always override the auto result.
+const transitChart = async (req, res) => {
+  try {
+    const body = req.body || {};
+    const result = validation.validateBirthDetails(body, "", {
+      requireTime: true,
+      allowFuture: Boolean(body && body.allowFuture),
+      allowAutoResolve: true,
+    });
+    if (!result.ok) {
+      return res.status(400).json({
+        success: false,
+        errors:
+          result.errors && result.errors.length
+            ? result.errors
+            : [{ field: "form", message: "Invalid input." }],
+      });
+    }
+    const value = { ...result.value };
+    const coordsMissing = value.latitude == null || value.longitude == null;
+    const zoneMissing = !value.timeZone && value.utcOffsetMinutes == null;
+    if ((coordsMissing || zoneMissing) && value.place) {
+      let resolved = null;
+      try {
+        resolved = await geoService.resolveFirst(value.place);
+      } catch (geoError) {
+        resolved = null;
+      }
+      if (!resolved) {
+        return res.status(400).json({
+          success: false,
+          errors: [
+            {
+              field: "place",
+              message: `Could not find "${value.place}". Please pick your birth city from the suggestions or add the advanced location details.`,
+            },
+          ],
+        });
+      }
+      if (value.latitude == null) value.latitude = resolved.latitude;
+      if (value.longitude == null) value.longitude = resolved.longitude;
+      if (!value.timeZone && value.utcOffsetMinutes == null && resolved.timeZone) {
+        value.timeZone = resolved.timeZone;
+      }
+      if (!value.city && resolved.city) value.city = resolved.city;
+      if (!value.region && resolved.region) value.region = resolved.region;
+      if (!value.country && resolved.country) value.country = resolved.country;
+      if (resolved.place) value.resolvedPlace = resolved.place;
+    }
+    return res.json({ success: true, data: calculatorService.transitChart(value) });
+  } catch (error) {
+    return failure(res, error);
+  }
+};
 
 /* =========================
    LOCATION AUTOCOMPLETE
@@ -100,5 +159,6 @@ module.exports = {
   nakshatra,
   loveCompatibility,
   friendshipCompatibility,
+  transitChart,
   geoSearch,
 };

@@ -20,9 +20,10 @@ import {
   NakshatraResult,
   LoveCompatibilityResult,
   FriendshipResult,
+  TransitResult,
 } from "../../components/calculators/ResultRenderers";
 import {
-  CALCULATORS,
+  LISTED_CALCULATORS,
   CALCULATOR_API,
   calculatorBySlug,
   calculatorTitle,
@@ -38,6 +39,7 @@ const RENDERERS = {
   nakshatra: NakshatraResult,
   "love-calculator": LoveCompatibilityResult,
   "friendship-calculator": FriendshipResult,
+  "planetary-transits": TransitResult,
 };
 
 const RESULT_SUBTITLES = {
@@ -50,6 +52,8 @@ const RESULT_SUBTITLES = {
   nakshatra: "From the sidereal Moon position",
   "love-calculator": "Guna Milan + real synastry aspects",
   "friendship-calculator": "Real chart-to-chart contacts",
+  "planetary-transits":
+    "Live planetary positions from the Swiss Ephemeris for your selected moment, place and time zone",
 };
 
 /** Plain-text summary of a result — used by the copy/share buttons. */
@@ -88,6 +92,17 @@ const buildShareText = (slug, result) => {
     push("Score", `${result.score?.value}% — ${result.score?.label}`);
     if (result.communication) push("Communication", `${result.communication.score}% — ${result.communication.label}`);
     push("Guna Milan", result.gunaMilan ? `${result.gunaMilan.total}/${result.gunaMilan.max}` : null);
+  } else if (slug === "planetary-transits") {
+    const wheel = result.tropicalWheel || [];
+    wheel.forEach((p) => {
+      if (p && p.label && p.sign) {
+        const dir = p.isRetrograde ? " (Rx)" : "";
+        push(`${p.label}`, `${p.sign.name} ${Math.floor(p.degreesInSign)}°${dir}`);
+      }
+    });
+    result.upcomingTransits?.forEach((t) => {
+      push(`Next ${t.aspect}`, `${t.transitLabel} → ${t.natalLabel} in ~${t.withinNextDays}d`);
+    });
   }
 
   return lines.length ? `${lines.join("\n")}\n\nCalculated with PlutoAstro` : "My PlutoAstro result";
@@ -261,7 +276,7 @@ const CalculatorPage = () => {
             ✦ Explore More Calculators
           </h2>
           <div className="flex flex-wrap gap-2.5">
-            {CALCULATORS.filter((entry) => entry.slug !== calc.slug).map((entry) => (
+            {LISTED_CALCULATORS.filter((entry) => entry.slug !== calc.slug).map((entry) => (
               <Link
                 key={entry.slug}
                 to={`/calculators/${entry.slug}`}

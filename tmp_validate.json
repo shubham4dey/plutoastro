@@ -1,0 +1,33 @@
+{
+  "ok": false,
+  "errors": [
+    {
+      "field": "latitude",
+      "message": "Birth latitude is missing or invalid. Search for your birth city or enter a latitude between -90 and 90."
+    },
+    {
+      "field": "longitude",
+      "message": "Birth longitude is missing or invalid. Search for your birth city or enter a longitude between -180 and 180."
+    },
+    {
+      "field": "timeZone",
+      "message": "The time zone of the birth place is required. Select your birth city from the suggestions, or set the UTC offset manually."
+    }
+  ],
+  "value": {
+    "name": "Ash",
+    "date": "1990-01-01",
+    "time": "12:00:00",
+    "city": null,
+    "region": null,
+    "country": null,
+    "place": null,
+    "ayanamsa": "lahiri",
+    "houseSystem": "P",
+    "dstCorrection": null,
+    "chartStyle": null,
+    "kpHoraryNumber": null,
+    "sex": "male",
+    "gender": "male"
+  }
+}
