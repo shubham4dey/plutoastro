@@ -37,7 +37,7 @@ export const CHAT_BOT = {
 
 // ✅ UPDATED - Sirf 4 types chahiye
 export const HOROSCOPE = {
-  types: ["daily", "weekly", "monthly", "love"],
+  types: ["daily", "weekly", "monthly", "yearly"],
   defaultType: "daily",
   cacheDuration: 3600000,
 };

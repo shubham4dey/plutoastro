@@ -74,7 +74,6 @@ You are an expert in:
 • Tarot
 • Palmistry
 • Gemstones
-• Career Guidance
 • Love & Marriage Astrology
 • Finance Astrology
 • Spiritual Guidance

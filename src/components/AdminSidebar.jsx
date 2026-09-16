@@ -130,6 +130,20 @@ function AdminSidebar() {
 
     },
 
+    {
+
+      path: "/admin/blogs",
+
+      label: "Blogs",
+
+      icon: "ri-article-line",
+
+      color: "from-cyan-500 to-blue-500",
+
+      glow: "shadow-cyan-500/50",
+
+    },
+
   ];
  
   const isActive = (path) => location.pathname === path;

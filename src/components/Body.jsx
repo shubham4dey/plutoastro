@@ -87,6 +87,9 @@ import AIAstrologersAdmin from "../pages/AIAstrologersAdmin";
 import UsersAdmin from "../pages/UsersAdmin";
 
 import OrdersAdmin from "../pages/OrdersAdmin";
+import BlogsAdmin from "../pages/BlogsAdmin";
+import BlogDetail from "../pages/BlogDetail";
+import BlogsList from "../pages/BlogsList";
 
 import BecomeAstrologer from "../pages/BecomeAstrologer";
 
@@ -95,6 +98,10 @@ import AstrologerApplications from "../pages/AstrologerApplications";
 // Other Pages
 
 import Zodiac from "../pages/Zodiac";
+
+// PlutoAstro — Calculators
+import CalculatorsHome from "../pages/calculators/CalculatorsHome";
+import CalculatorPage from "../pages/calculators/CalculatorPage";
 
 import AstrologerLogin from "../pages/AstrologerLogin";
 
@@ -171,6 +178,14 @@ const appLayout = createBrowserRouter([
     path: "/admin/orders",
 
     element: <OrdersAdmin />,
+
+  },
+
+  {
+
+    path: "/admin/blogs",
+
+    element: <BlogsAdmin />,
 
   },
 
@@ -441,9 +456,47 @@ const appLayout = createBrowserRouter([
 
       {
 
+        path: "blogs",
+
+        element: <BlogsList />,
+
+      },
+
+      {
+
+        path: "blog/:slug",
+
+        element: <BlogDetail />,
+
+      },
+
+      {
+
         path: "zodiac",
 
         element: <Zodiac />,
+
+      },
+
+      /* =========================
+
+          CALCULATORS (PlutoAstro)
+
+      ========================= */
+
+      {
+
+        path: "calculators",
+
+        element: <CalculatorsHome />,
+
+      },
+
+      {
+
+        path: "calculators/:slug",
+
+        element: <CalculatorPage />,
 
       },
 

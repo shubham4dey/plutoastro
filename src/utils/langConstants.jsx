@@ -10,7 +10,7 @@ const lang = {
     alreadyAcc: "Already have an account?",
     welcome: "Beyond the Stars",
     astroGPT: "PlutoAstro",
-    finger: "Smart Spiritual Insights",
+    finger: "Guidance for Your Life Journey",
     gptSearch: "GPT Search",
     loginDescription:"Connect with astrologers, get real-time insights, generate natal charts, and discover your cosmic destiny.",
     explore: "BluBot",

@@ -100,7 +100,7 @@ const Footer = () => {
 
       {/* Main Footer Links */}
       <div className="lg:px-12 md:px-12 px-4 lg:py-20 md:py-16 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 lg:gap-8">
           
           {/* Horoscope */}
           <div>
@@ -112,7 +112,6 @@ const Footer = () => {
               <li><Link to="/horoscope/weekly" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Weekly Horoscope</Link></li>
               <li><Link to="/horoscope/monthly" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Monthly Horoscope</Link></li>
               <li><Link to="/horoscope/yearly" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Yearly Horoscope</Link></li>
-              <li><Link to="/horoscope/love" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Love Horoscope</Link></li>
               <li><Link to="/horoscope/career" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Career Horoscope</Link></li>
             </ul>
           </div>
@@ -124,26 +123,9 @@ const Footer = () => {
             </span>
             <ul className="space-y-3">
               <li><Link to="/birth-chart" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Birth Chart Reading</Link></li>
-              <li><Link to="/kundli" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Kundli Analysis</Link></li>
               <li><Link to="/compatibility" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Compatibility Report</Link></li>
               <li><Link to="/numerology" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Numerology</Link></li>
-              <li><Link to="/vastu" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Vastu Shastra</Link></li>
               <li><Link to="/tarot" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Tarot Reading</Link></li>
-            </ul>
-          </div>
-
-          {/* Shubh Muhurat */}
-          <div>
-            <span className={`${titleCss} after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-fuchsia-500`}>
-              Shubh Muhurat
-            </span>
-            <ul className="space-y-3">
-              <li><Link to="/muhurat/marriage" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Marriage Muhurat</Link></li>
-              <li><Link to="/muhurat/griha-pravesh" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Griha Pravesh</Link></li>
-              <li><Link to="/muhurat/vehicle" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Vehicle Muhurat</Link></li>
-              <li><Link to="/muhurat/annaprashan" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Annaprashan</Link></li>
-              <li><Link to="/muhurat/naamkaran" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Naamkaran</Link></li>
-              <li><Link to="/panchang" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Today Panchang</Link></li>
             </ul>
           </div>
 
@@ -157,23 +139,6 @@ const Footer = () => {
               <li><Link to="/call" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Call Astrologer</Link></li>
               <li><Link to="/video-call" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Video Consultation</Link></li>
               <li><Link to="/ai-astro" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>AI Astrologer</Link></li>
-              <li><Link to="/relationship" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Relationship Advice</Link></li>
-              <li><Link to="/career-astrology" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Career Guidance</Link></li>
-            </ul>
-          </div>
-
-          {/* Spiritual Shop */}
-          <div>
-            <span className={`${titleCss} after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:to-fuchsia-500`}>
-              Spiritual Shop
-            </span>
-            <ul className="space-y-3">
-              <li><Link to="/shop/rudraksha" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Rudraksha</Link></li>
-              <li><Link to="/shop/gemstones" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Gemstones</Link></li>
-              <li><Link to="/shop/yantra" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Vedic Yantra</Link></li>
-              <li><Link to="/shop/jewelry" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Zodiac Jewelry</Link></li>
-              <li><Link to="/shop/crystals" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>Healing Crystals</Link></li>
-              <li><Link to="/shop" className={LiCss}><span className="w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full group-hover/link:scale-150 transition-transform"></span>View All</Link></li>
             </ul>
           </div>
 
@@ -244,10 +209,8 @@ const Footer = () => {
               {[
                 { icon: "ri-facebook-circle-fill", url: "https://facebook.com", label: "Facebook" },
                 { icon: "ri-instagram-line", url: "https://instagram.com", label: "Instagram" },
-                { icon: "ri-twitter-x-fill", url: "https://twitter.com", label: "Twitter" },
                 { icon: "ri-linkedin-box-fill", url: "https://linkedin.com", label: "LinkedIn" },
                 { icon: "ri-youtube-fill", url: "https://youtube.com", label: "YouTube" },
-                { icon: "ri-tiktok-fill", url: "https://tiktok.com", label: "TikTok" },
               ].map((social, index) => (
                 <Link
                   key={index}

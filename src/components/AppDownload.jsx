@@ -40,7 +40,7 @@ const AppDownload = () => {
                   </span>
                 </h2>
                 <p className="text-purple-200/80 text-lg leading-relaxed max-w-lg">
-                  Chat with astrologers anytime. Get daily horoscopes, free kundli, compatibility reports & muhurat alerts — all in one app.
+                  Chat with astrologers anytime. Get daily horoscopes, free kundli & compatibility reports — all in one app.
                 </p>
               </div>
 

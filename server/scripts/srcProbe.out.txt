@@ -1,0 +1,168 @@
+[D] prebuilds\darwin-arm64
+    prebuilds\darwin-arm64\sweph.node  708KB
+[D] prebuilds\linux-arm64
+    prebuilds\linux-arm64\sweph.node  724KB
+[D] prebuilds\linux-x64
+    prebuilds\linux-x64\sweph.node  864KB
+[D] prebuilds\win32-x64
+    prebuilds\win32-x64\sweph.node  1031KB
+--- swisseph files: swecl.c, swedate.c, swedate.h, swehel.c, swehouse.c, swehouse.h, swejpl.c, swejpl.h, swemmoon.c, swemplan.c, swemptab.h, swenut2000a.h, sweodef.h, sweph.c, sweph.h, swephexp.h, swephlib.c, swephlib.h
+sweph.c:131: "Fagan/Bradley",                    /*  0 SE_SIDM_FAGAN_BRADLEY */
+sweph.c:132: "Lahiri",                           /*  1 SE_SIDM_LAHIRI */
+sweph.c:133: "De Luce",                          /*  2 SE_SIDM_DELUCE */
+sweph.c:134: "Raman",                            /*  3 SE_SIDM_RAMAN */
+sweph.c:135: "Usha/Shashi",                      /*  4 SE_SIDM_USHASHASHI */
+sweph.c:136: "Krishnamurti",                     /*  5 SE_SIDM_KRISHNAMURTI */
+sweph.c:137: "Djwhal Khul",                      /*  6 SE_SIDM_DJWHAL_KHUL */
+sweph.c:138: "Yukteshwar",                       /*  7 SE_SIDM_YUKTESHWAR */
+sweph.c:139: "J.N. Bhasin",                      /*  8 SE_SIDM_JN_BHASIN */
+sweph.c:140: "Babylonian/Kugler 1",              /*  9 SE_SIDM_BABYL_KUGLER1 */
+sweph.c:141: "Babylonian/Kugler 2",              /* 10 SE_SIDM_BABYL_KUGLER2 */
+sweph.c:142: "Babylonian/Kugler 3",              /* 11 SE_SIDM_BABYL_KUGLER3 */
+sweph.c:143: "Babylonian/Huber",                 /* 12 SE_SIDM_BABYL_HUBER */
+sweph.c:144: "Babylonian/Eta Piscium",           /* 13 SE_SIDM_BABYL_ETPSC */
+sweph.c:145: "Babylonian/Aldebaran = 15 Tau",    /* 14 SE_SIDM_ALDEBARAN_15TAU */
+sweph.c:146: "Hipparchos",                       /* 15 SE_SIDM_HIPPARCHOS */
+sweph.c:147: "Sassanian",                        /* 16 SE_SIDM_SASSANIAN */
+sweph.c:148: "Galact. Center = 0 Sag",           /* 17 SE_SIDM_GALCENT_0SAG */
+sweph.c:149: "J2000",                            /* 18 SE_SIDM_J2000 */
+sweph.c:150: "J1900",                            /* 19 SE_SIDM_J1900 */
+sweph.c:151: "B1950",                            /* 20 SE_SIDM_B1950 */
+sweph.c:152: "Suryasiddhanta",                   /* 21 SE_SIDM_SURYASIDDHANTA */
+sweph.c:153: "Suryasiddhanta, mean Sun",         /* 22 SE_SIDM_SURYASIDDHANTA_MSUN */
+sweph.c:154: "Aryabhata",                        /* 23 SE_SIDM_ARYABHATA */
+sweph.c:155: "Aryabhata, mean Sun",              /* 24 SE_SIDM_ARYABHATA_MSUN */
+sweph.c:156: "SS Revati",                        /* 25 SE_SIDM_SS_REVATI */
+sweph.c:157: "SS Citra",                         /* 26 SE_SIDM_SS_CITRA */
+sweph.c:158: "True Citra",                       /* 27 SE_SIDM_TRUE_CITRA */
+sweph.c:159: "True Revati",                      /* 28 SE_SIDM_TRUE_REVATI */
+sweph.c:160: "True Pushya (PVRN Rao)",           /* 29 SE_SIDM_TRUE_PUSHYA */
+sweph.c:161: "Galactic Center (Gil Brand)",      /* 30 SE_SIDM_GALCENT_RGILBRAND */
+sweph.c:162: "Galactic Equator (IAU1958)",       /* 31 SE_SIDM_GALEQU_IAU1958 */
+sweph.c:163: "Galactic Equator",                 /* 32 SE_SIDM_GALEQU_TRUE */
+sweph.c:164: "Galactic Equator mid-Mula",        /* 33 SE_SIDM_GALEQU_MULA */
+sweph.c:165: "Skydram (Mardyks)",                /* 34 SE_SIDM_GALALIGN_MARDYKS */
+sweph.c:166: "True Mula (Chandra Hari)",         /* 35 SE_SIDM_TRUE_MULA */
+sweph.c:167: "Dhruva/Gal.Center/Mula (Wilhelm)", /* 36 SE_SIDM_GALCENT_MULA_WILHELM */
+sweph.c:168: "Aryabhata 522",                    /* 37 SE_SIDM_ARYABHATA_522 */
+sweph.c:169: "Babylonian/Britton",               /* 38 SE_SIDM_BABYL_BRITTON */
+sweph.c:170: "\"Vedic\"/Sheoran",                /* 39 SE_SIDM_TRUE_SHEORAN */
+sweph.c:171: "Cochrane (Gal.Center = 0 Cap)",    /* 40 SE_SIDM_GALCENT_COCHRANE */
+sweph.c:172: "Galactic Equator (Fiorenza)",      /* 41 SE_SIDM_GALEQU_FIORENZA */
+sweph.c:173: "Vettius Valens",                   /* 42 SE_SIDM_VALENS_MOON */
+sweph.c:174: "Lahiri 1940",                      /* 43 SE_SIDM_LAHIRI_1940 */
+sweph.c:175: "Lahiri VP285",                     /* 44 SE_SIDM_LAHIRI_VP285 */
+sweph.c:176: "Krishnamurti-Senthilathiban",      /* 45 SE_SIDM_KRISHNAMURTI_VP291 */
+sweph.c:177: "Lahiri ICRC",                      /* 46 SE_SIDM_LAHIRI_ICRC */
+sweph.c:642: swe_set_sid_mode(SE_SIDM_FAGAN_BRADLEY, 0, 0);
+sweph.c:2861: void CALL_CONV swe_set_sid_mode(int32 sid_mode, double t0, double ayan_t0)
+sweph.c:2871: if (sid_mode == SE_SIDM_J2000
+sweph.c:2872: || sid_mode == SE_SIDM_J1900
+sweph.c:2873: || sid_mode == SE_SIDM_B1950
+sweph.c:2874: || sid_mode == SE_SIDM_GALALIGN_MARDYKS
+sweph.c:2880: if (sid_mode == SE_SIDM_TRUE_CITRA
+sweph.c:2881: || sid_mode == SE_SIDM_TRUE_REVATI
+sweph.c:2882: || sid_mode == SE_SIDM_TRUE_PUSHYA
+sweph.c:2883: || sid_mode == SE_SIDM_TRUE_SHEORAN
+sweph.c:2884: || sid_mode == SE_SIDM_TRUE_MULA
+sweph.c:2885: || sid_mode == SE_SIDM_GALCENT_0SAG
+sweph.c:2886: || sid_mode == SE_SIDM_GALCENT_COCHRANE
+sweph.c:2887: || sid_mode == SE_SIDM_GALCENT_RGILBRAND
+sweph.c:2888: || sid_mode == SE_SIDM_GALCENT_MULA_WILHELM
+sweph.c:2889: || sid_mode == SE_SIDM_GALEQU_IAU1958
+sweph.c:2890: || sid_mode == SE_SIDM_GALEQU_TRUE
+sweph.c:2891: || sid_mode == SE_SIDM_GALEQU_MULA
+sweph.c:2896: // make sure that sid_mode is either SE_SIDM_USER or < SE_NSIDM_PREDEF
+sweph.c:2897: if (sid_mode >= SE_NSIDM_PREDEF && sid_mode != SE_SIDM_USER)
+sweph.c:2898: sip->sid_mode = sid_mode = SE_SIDM_FAGAN_BRADLEY;
+sweph.c:2900: if (sid_mode == SE_SIDM_USER) {
+sweph.c:2901: sip->t0 = t0;
+sweph.c:2902: sip->ayan_t0 = ayan_t0;
+sweph.c:2907: sip->t0 = ayanamsa[sid_mode].t0;
+sweph.c:2908: sip->ayan_t0 = ayanamsa[sid_mode].ayan_t0;
+sweph.c:2969: if (sip->t0 == J2000)
+sweph.c:2978: t0 = sip->t0;
+sweph.c:3032: && (sid_mode ==  SE_SIDM_TRUE_CITRA
+sweph.c:3033: || sid_mode == SE_SIDM_TRUE_REVATI
+sweph.c:3034: || sid_mode == SE_SIDM_TRUE_PUSHYA
+sweph.c:3035: || sip->sid_mode == SE_SIDM_TRUE_SHEORAN
+sweph.c:3036: || sid_mode == SE_SIDM_TRUE_MULA
+sweph.c:3037: || sid_mode == SE_SIDM_GALCENT_0SAG
+sweph.c:3038: || sid_mode == SE_SIDM_GALCENT_COCHRANE
+sweph.c:3039: || sid_mode == SE_SIDM_GALCENT_RGILBRAND
+sweph.c:3040: || sid_mode == SE_SIDM_GALCENT_MULA_WILHELM
+sweph.c:3041: || sid_mode == SE_SIDM_GALEQU_IAU1958
+sweph.c:3042: || sid_mode == SE_SIDM_GALEQU_TRUE
+sweph.c:3043: || sid_mode == SE_SIDM_GALEQU_MULA)
+sweph.c:3048: swe_set_sid_mode(SE_SIDM_FAGAN_BRADLEY, 0, 0);
+sweph.c:3049: if (sid_mode == SE_SIDM_TRUE_CITRA) {
+sweph.c:3058: if (sid_mode == SE_SIDM_TRUE_REVATI) {
+sweph.c:3065: if (sid_mode == SE_SIDM_TRUE_PUSHYA) {
+sweph.c:3072: if (sid_mode == SE_SIDM_TRUE_SHEORAN) {
+sweph.c:3079: if (sid_mode == SE_SIDM_TRUE_MULA) {
+sweph.c:3086: if (sid_mode ==  SE_SIDM_GALCENT_0SAG) {
+sweph.c:3094: if (sid_mode ==  SE_SIDM_GALCENT_COCHRANE) {
+sweph.c:3102: if (sid_mode ==  SE_SIDM_GALCENT_RGILBRAND) {
+sweph.c:3110: if (sid_mode == SE_SIDM_GALCENT_MULA_WILHELM) {
+sweph.c:3122: if (sid_mode == SE_SIDM_GALEQU_IAU1958) {
+sweph.c:3129: if (sid_mode == SE_SIDM_GALEQU_TRUE) {
+sweph.c:3136: if (sid_mode == SE_SIDM_GALEQU_MULA) {
+sweph.c:3147: // Precession is measured on the ecliptic of the start epoch t0 (ayan_t0),
+sweph.c:3163: t0 = sip->t0;
+sweph.c:3173: x[0] = -x[0] * RADTODEG + sip->ayan_t0;
+sweph.c:3180: // at t0, we have ayanamsha sip->ayan_t0
+sweph.c:3181: x[0] = swe_degnorm(sip->ayan_t0) * DEGTORAD;
+sweph.c:3184: t0 = sip->t0;
+sweph.c:3294: /* subtract ayan_t0 */
+sweph.c:3296: x[0] -= sip->ayan_t0 * DEGTORAD;
+sweph.c:3349: /* subtract ayan_t0 */
+sweph.c:3351: x[0] -= sip->ayan_t0;
+sweph.c:5845: /* subtract ayan_t0 */
+sweph.c:5847: xx[0] -= sip->ayan_t0;
+sweph.c:6445: swe_set_sid_mode(SE_SIDM_FAGAN_BRADLEY, 0, 0);
+sweph.c:6754: /* Ayanamsha SE_SIDM_TRUE_CITRA */
+sweph.c:6759: /* Ayanamsha SE_SIDM_TRUE_REVATI */
+sweph.c:6764: /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
+sweph.c:6769: /* Ayanamsha SE_SIDM_TRUE_SHEORAN */
+sweph.c:6774: /* Ayanamsha SE_SIDM_TRUE_MULA */
+sweph.c:6779: /* Ayanamsha SE_SIDM_GALCENT_0SAG */
+sweph.c:6780: /* Ayanamsha SE_SIDM_GALCENT_COCHRANE */
+sweph.c:6781: /* Ayanamsha SE_SIDM_GALCENT_RGILBRAND */
+sweph.c:6786: /* Ayanamsha SE_SIDM_GALEQU_IAU1958 */
+sweph.c:6791: /* Ayanamsha SE_SIDM_GALEQU_TRUE */
+sweph.c:6796: /* Ayanamsha SE_SIDM_GALEQU_MULA */
+sweph.c:7419: tjd_lmt0 = tjd_lmt - geolon / 360.0;
+sweph.c:7429: tjd_lmt0 = tjd_lat - geolon / 360.0;
+sweph.c:7653: swe_set_sid_mode(SE_SIDM_FAGAN_BRADLEY, 0, 0);
+swephlib.c:751: *t0 = t0s[0];
+swephlib.c:756: *t0 = t0s[i];
+swephlib.c:958: t0 = (int) tofs;
+swephlib.c:1058: double t1 = (J2000 - 2415020.3135) / 36524.2199;
+swephlib.c:2141: swed.interpol.tjd_nut0 = tjd - 1.0; // one day earlier
+swephlib.c:2190: t0 = (int) t;
+swephlib.c:2298: double det0 = -0.0199 * DAS2R;
+swephlib.c:2967: /*21*/ {2413194.5, 2415020.5,    -5.017,     0.134,     3.138,    -0.232}, /* ybeg=1895, yend=1900 */
+swephlib.c:2968: /*22*/ {2415020.5, 2416846.5,    -1.977,     5.715,     2.443,    -1.257}, /* ybeg=1900, yend=1905 */
+swephlib.c:3566: swed.interpol.tjd_nut0 = 0;
+swephlib.c:3952: if ((swed.sidd.sid_mode & SE_SIDM_TRUE_SHEORAN) == SE_SIDM_TRUE_SHEORAN)
+sweph.h:69: #define J1900           2415020.0  	/* 1900 January 0.5 */
+sweph.h:339: * ayan_t0  ayanamsa value at epoch
+sweph.h:348: double ayan_t0;
+sweph.h:374: /* 1: Standard Lahiri
+sweph.h:385: Lahiri (derived from: Indian Astronomical Ephemeris 1989, p. 556;
+sweph.h:387: {2435553.5, 23.250182778 - 0.004658035, FALSE, SEMOD_PREC_IAU_1976}, // 1: Lahiri
+sweph.h:568: /* 43: Lahiri (1940), book "Panchanga darpan":
+sweph.h:570: {J1900, 22.44597222, FALSE, SEMOD_PREC_NEWCOMB}, // 43: Lahiri (1940)
+sweph.h:572: /* 44: Lahiri (VP285), mean sun at 360° in 285CE; epoch for mean sun at 0 acc.
+sweph.h:574: (Preface to Lahiri's "Indian Ephemeris" 1980) */
+sweph.h:575: {1825235.2458513028, 0.0, FALSE, 0}, // 44: Lahiri VP285 (1980)
+sweph.h:584: /* 46: Lahiri original: Calendar Reform Committee 1956,
+sweph.h:592: for unknown reasons. The difference between Lahiri (1) and
+sweph.h:593: Lahiri ICRC (45) amounts to 1.1". */
+sweph.h:594: {2435553.5, 23.25 - 0.00464207, FALSE, SEMOD_PREC_NEWCOMB}, // 46: SE_SIDM_LAHIRI_ICRC
+sweph.h:767: double ayan_t0;
+--- get_ayanamsa_ut => 23.857092353708822
+--- get_ayanamsa_ex_ut => {"flag":4,"error":"","data":23.853222486029065}
+--- get_ayanamsa => 23.8570923254552
+--- ayanamsa_name => Lahiri
+--- julday 1900-01-01 12UT => 2415021

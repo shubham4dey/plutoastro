@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Chatbot from "./Chatbot";
 import bg from "../image/bg1.jpg";
@@ -8,6 +8,7 @@ import lang from "../utils/langConstants";
 
 const Horoscope = () => {
   const { type, sign } = useParams();
+  const navigate = useNavigate();
   const [horoscopeData, setHoroscopeData] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,11 +21,18 @@ const Horoscope = () => {
   const currentType = type || "daily";
   const currentSign = sign || "aries";
 
+  // Redirect legacy "Love Horoscope" URLs to the Yearly Horoscope
+  useEffect(() => {
+    if (type && type.toLowerCase() === "love") {
+      navigate(`/horoscope/yearly/${currentSign}`, { replace: true });
+    }
+  }, [type, currentSign, navigate]);
+
   const horoscopeTypes = [
     { key: "daily", label: "Daily Horoscope", path: "/horoscope/daily", icon: "☀️" },
     { key: "weekly", label: "Weekly Horoscope", path: "/horoscope/weekly", icon: "🌙" },
     { key: "monthly", label: "Monthly Horoscope", path: "/horoscope/monthly", icon: "⭐" },
-    { key: "love", label: "Love Horoscope", path: "/horoscope/love", icon: "💖" },
+    { key: "yearly", label: "Yearly Horoscope", path: "/horoscope/yearly", icon: "📅" },
   ];
 
   const zodiacSigns = {
@@ -413,7 +421,7 @@ const Horoscope = () => {
           planetary: "Neptune enhances intuition. Venus brings artistic inspiration.",
         },
       },
-      love: {
+      yearly: {
         aries: {
           main: "Love life undergoes beautiful transformation for Aries. Venus aligns with your sign, bringing romantic opportunities and deeper connections. Single signs: A meaningful encounter awaits, possibly through travel or cultural events. Coupled signs: Plan a romantic getaway or explore new experiences together.",
           love: "Passionate and direct in love. You pursue what you want with determination. Fire signs and air signs most compatible. Adventure and spontaneity keep spark alive.",

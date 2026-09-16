@@ -7,7 +7,7 @@ import Chatbot from "./Chatbot";
 import Coming from "./Coming";
 import AstrologersGrid from "./AstrologersGrid";
 import AIAstrologers from "./AIAstrologers";
-import AstrologyProducts from "./AstrologyProducts";
+import LatestBlogs from "./LatestBlogs";
 import FAQ from "./FAQ";
 import SpecialtiesBanner from "./SpecialtiesBanner";
 import AppDownload from "./AppDownload";
@@ -87,9 +87,9 @@ const Hero = () => {
             <AIAstrologers />
           </div>
 
-          {/* Astrology Products */}
+          {/* Latest Blogs */}
           <div className="mt-28 lg:mt-36">
-            <AstrologyProducts />
+            <LatestBlogs />
           </div>
 
           {/* Zodiac Search */}
@@ -136,8 +136,11 @@ const Hero = () => {
           alt="Pluto Bot"
           onClick={handleBot}
           className="
-            w-24
-            lg:w-32
+            w-12
+            h-12
+            lg:w-14
+            lg:h-14
+            object-contain
             cursor-pointer
             hover:scale-110
             transition-all

@@ -174,7 +174,8 @@ const Header = () => {
 
         "
 >
-<div className="flex items-center justify-between px-4 lg:px-10 py-3">
+{/* min-h keeps the header band exactly the same height as before the logo swap */}
+<div className="flex items-center justify-between px-4 lg:px-10 py-3 min-h-[86px] md:min-h-[104px] lg:min-h-[122px] 2xl:min-h-[149px]">
 
           {/* Logo */}
 <Link to="/">
@@ -184,7 +185,7 @@ const Header = () => {
 
               alt="PlutoAstro"
 
-              className="w-28 md:w-36 lg:w-44 2xl:w-56"
+              className="h-10 md:h-12 lg:h-14 2xl:h-16 w-auto shrink-0 object-contain"
 
             />
 </Link>
@@ -250,6 +251,12 @@ const Header = () => {
               ZODIAC
 </Link>
  
+            <Link to="/calculators" className={liCSS}>
+
+              CALCULATORS
+
+            </Link>
+
             <Link to="/about" className={liCSS}>
 
               {lang[Langkey].ABOUT}
@@ -451,6 +458,12 @@ const Header = () => {
               ZODIAC SIGNS
 </Link>
  
+            <Link to="/calculators" onClick={() => setMobileMenu(false)}>
+
+              CALCULATORS
+
+            </Link>
+
             <Link to="/about" onClick={() => setMobileMenu(false)}>
 
               {lang[Langkey].ABOUT}

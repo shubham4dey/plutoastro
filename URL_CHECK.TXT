@@ -1,0 +1,21 @@
+src\pages\BlogsAdmin.jsx:5:// Development: http://localhost:5000
+src\pages\BlogsAdmin.jsx:14:    ? "http://localhost:5000"
+src\pages\BlogsAdmin.jsx:16:      "https://plutoastro-backend.onrender.com";
+src\pages\BlogsAdmin.jsx:130:        `${BASE_URL}/api/blogs/admin/all?search=${encodeURIComponent(search)}`,
+src\pages\BlogsAdmin.jsx:296:      const res = await fetch(`${BASE_URL}/api/blogs`, {
+src\pages\BlogsAdmin.jsx:365:      const res = await fetch(`${BASE_URL}/api/blogs/${editingId}`, {
+src\pages\BlogsAdmin.jsx:399:        `${BASE_URL}/api/blogs/${blog._id}/publish`,
+src\pages\BlogsAdmin.jsx:440:      const res = await fetch(`${BASE_URL}/api/blogs/${id}`, {
+src\components\LatestBlogs.jsx:29:// http://localhost:5000
+src\components\LatestBlogs.jsx:43:    ? "http://localhost:5000"
+src\components\LatestBlogs.jsx:45:      "https://plutoastro-backend.onrender.com";
+src\components\LatestBlogs.jsx:67:        `${API_BASE}/api/blogs?limit=6`
+src\components\LatestBlogs.jsx:71:        `${API_BASE}/api/blogs?limit=6`
+src\pages\BlogDetail.jsx:5:// Development: http://localhost:5000
+src\pages\BlogDetail.jsx:11:    ? "http://localhost:5000"
+src\pages\BlogDetail.jsx:13:      "https://plutoastro-backend.onrender.com";
+src\pages\BlogDetail.jsx:44:        `${API_BASE}/api/blogs/${slug}`
+src\pages\BlogsList.jsx:21:// Development: http://localhost:5000
+src\pages\BlogsList.jsx:27:    ? "http://localhost:5000"
+src\pages\BlogsList.jsx:29:      "https://plutoastro-backend.onrender.com";
+src\pages\BlogsList.jsx:48:        `${API_BASE}/api/blogs?${params.toString()}`

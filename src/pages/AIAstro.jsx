@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import bg from "../image/bg1.jpg";
 import {
-  FaBriefcase,
   FaHeart,
   FaCalendarAlt,
   FaWallet,
@@ -37,11 +36,6 @@ function AIAstro() {
   };
  
   const features = [
-    {
-      icon: <FaBriefcase size={36} className="text-purple-400" />,
-      title: "Career Guidance",
-      desc: "AI-based career guidance and predictions.",
-    },
     {
       icon: <FaHeart size={36} className="text-pink-400" />,
       title: "Love & Relationships",

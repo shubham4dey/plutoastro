@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
  
 import lang from "../utils/langConstants";
@@ -7,17 +7,11 @@ import ZodiacContainer from "./ZodiacContainer";
 import handbg from "../image/hand_bg.png";
 import hand from "../image/hand.png";
  
-import { addBot } from "../store/configAppSlice";
  
 const Explore = () => {
   const Langkey = useSelector((store) => store.configApp.lang);
  
-  const dispatch = useDispatch();
- 
-  const handlebot = () => {
-    dispatch(addBot());
-  };
- 
+
   return (
     <div className="w-full flex flex-col">
       {/* HERO SECTION */}
@@ -113,7 +107,7 @@ const Explore = () => {
             {lang[Langkey].loginDescription}
           </p>
  
-          {/* BUTTONS */}
+          {/* CTA BUTTON */}
           <div
             className="
               flex
@@ -124,74 +118,18 @@ const Explore = () => {
               mt-8
             "
           >
-            {/* Astro Bot */}
-            <button
-              onClick={handlebot}
-              className="
-                px-6
-                py-3
-                rounded-full
-                bg-purple-700
-                border-2
-                border-purple-700
-                text-white
-                font-semibold
-                uppercase
-                shadow-lg
-                hover:bg-transparent
-                hover:scale-105
-                transition-all
-                duration-300
-              "
+            {/* Free Chat */}
+            <Link
+              to="/chat"
+              className="group relative inline-flex items-center gap-3 pl-8 pr-10 py-4 rounded-full text-white font-bold text-base lg:text-lg tracking-wide bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 shadow-[0_0_40px_rgba(168,85,247,0.55)] hover:shadow-[0_0_60px_rgba(217,70,239,0.8)] hover:scale-105 active:scale-95 transition-all duration-300 overflow-hidden"
             >
-              {lang[Langkey].astroBot}
-            </button>
- 
-            {/* Kundli GPT */}
-            <Link to="/kundligpt">
-              <button
-                className="
-                  px-6
-                  py-3
-                  rounded-full
-                  bg-purple-700
-                  border-2
-                  border-purple-700
-                  text-white
-                  font-semibold
-                  uppercase
-                  shadow-lg
-                  hover:bg-transparent
-                  hover:scale-105
-                  transition-all
-                  duration-300
-                "
-              >
-                {lang[Langkey].astroKundli}
-              </button>
-            </Link>
- 
-            {/* NEW AI ASTRO */}
-            <Link to="/ai-astro">
-              <button
-                className="
-                  px-6
-                  py-3
-                  rounded-full
-                  bg-gradient-to-r
-                  from-fuchsia-600
-                  to-purple-700
-                  text-white
-                  font-semibold
-                  uppercase
-                  shadow-lg
-                  hover:scale-105
-                  transition-all
-                  duration-300
-                "
-              >
-                🤖 AI Astro
-              </button>
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out"></span>
+              <i className="ri-chat-1-line text-2xl relative z-10 group-hover:scale-110 transition-transform duration-300"></i>
+              <span className="relative z-10">Free Chat</span>
+              <span className="relative z-10 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+              </span>
             </Link>
           </div>
         </div>

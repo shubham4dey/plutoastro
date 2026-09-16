@@ -22,6 +22,8 @@ const astrologerApplicationRoutes = require("./routes/astrologerApplicationRoute
 
 const productRoutes = require("./routes/productRoutes");
 
+const blogRoutes = require("./routes/blogRoutes");
+
 const newsletterRoutes = require("./routes/newsletterRoutes");
 
 const walletRoutes = require("./routes/walletRoutes");
@@ -33,6 +35,10 @@ const chatSessionRoutes = require("./routes/chatSessionRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
 const astrologerDashboardRoutes = require("./routes/astrologerDashboardRoutes");
+
+/* PlutoAstro — Calculators */
+const calculatorRoutes = require("./routes/calculatorRoutes");
+
 
 const callRoutes = require("./routes/callRoutes");
  
@@ -220,6 +226,8 @@ app.use("/api/astrologer-applications", astrologerApplicationRoutes);
 
 app.use("/api/products", productRoutes);
 
+app.use("/api/blogs", blogRoutes);
+
 app.use("/api/newsletter", newsletterRoutes);
 
 app.use("/api/pricing", pricingRoutes);
@@ -241,6 +249,14 @@ app.use("/api/wallet", (req, res, next) => {
 app.use("/api/wallet", walletRoutes);
  
 app.use("/api/astrologer-dashboard", astrologerDashboardRoutes);
+
+/* =========================
+
+   CALCULATORS (PlutoAstro — Swiss Ephemeris engine)
+
+========================= */
+
+app.use("/api/calculators", calculatorRoutes);
  
 /* =========================
 
