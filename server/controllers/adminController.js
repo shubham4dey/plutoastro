@@ -11,6 +11,15 @@ const WalletTransaction = require("../models/WalletTransaction"); // ✅ NEW
 const bcrypt = require("bcryptjs");
 
 const jwt = require("jsonwebtoken");
+
+// Permanent image storage — selected images are received in memory by
+// multer and pushed straight to Cloudinary (never to the local disk).
+const {
+  CLOUDINARY_FOLDERS,
+  uploadBufferToCloudinary,
+  destroyCloudinaryAsset,
+  removeOldImage,
+} = require("../utils/cloudinaryUpload");
  
 /* =========================
 
@@ -384,14 +393,19 @@ const createAstrologer = async (req, res) => {
 
   try {
 
+    // ✅ SAFE DEBUG LOG — password ka value kabhi log nahi hota
     console.log("========== CREATE ASTROLOGER ==========");
 
-    console.log("BODY:", req.body);
+    console.log({
+      email: req.body.email,
+      passwordReceived: Boolean(req.body.password),
+      hasFile: Boolean(req.file),
+    });
 
-    console.log("FILE:", req.file);
+    console.log("BODY keys:", Object.keys(req.body || {}));
  
-    const { name, experience, pricePerMinute, rating, status, skills, languages } = req.body;
- 
+    const { name, email, password, experience, pricePerMinute, rating, status, skills, languages } = req.body;
+
     if (!name || name.trim() === "") {
 
       return res.status(400).json({
@@ -403,6 +417,49 @@ const createAstrologer = async (req, res) => {
       });
 
     }
+
+    // Email + Password required for a NEW astrologer (login credentials)
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "A valid email is required",
+
+      });
+
+    }
+
+    if (!password || password.length < 6) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "Password is required (minimum 6 characters)",
+
+      });
+
+    }
+
+    // Duplicate email check (unique index se pehle friendly error)
+    const existingAstrologer = await Astrologer.findOne({ email: email.trim().toLowerCase() });
+
+    if (existingAstrologer) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "An astrologer with this email already exists",
+
+      });
+
+    }
+
+    // ✅ Password plaintext mein kabhi store nahi hota — bcrypt hash
+    const hashedPassword = await bcrypt.hash(password, 10);
  
     let skillsArray = [];
 
@@ -420,9 +477,33 @@ const createAstrologer = async (req, res) => {
 
     }
  
-    const astrologer = await Astrologer.create({
+    // Upload the selected image straight to Cloudinary (memory → cloud).
+    let uploadedImage = null;
 
-      name: name.trim(),
+    if (req.file) {
+      try {
+        uploadedImage = await uploadBufferToCloudinary(req.file, {
+          folder: CLOUDINARY_FOLDERS.astrologers,
+        });
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: uploadError.message,
+        });
+      }
+    }
+
+    let astrologer;
+
+    try {
+
+      astrologer = await Astrologer.create({
+
+        name: name.trim(),
+
+        email: email.trim().toLowerCase(),
+
+        password: hashedPassword,
 
       experience: Number(experience) || 0,
 
@@ -436,9 +517,19 @@ const createAstrologer = async (req, res) => {
 
       languages: languagesArray,
 
-      image: req.file ? `/uploads/${req.file.filename}` : "",
+      image: uploadedImage ? uploadedImage.secure_url : "",
 
-    });
+        imagePublicId: uploadedImage ? uploadedImage.public_id : "",
+
+      });
+    } catch (createError) {
+      // DB write failed after upload → clean up the orphaned asset.
+      if (uploadedImage) {
+        destroyCloudinaryAsset(uploadedImage.public_id);
+      }
+
+      throw createError;
+    }
  
     res.status(201).json({
 
@@ -476,13 +567,15 @@ const updateAstrologer = async (req, res) => {
 
   try {
 
+    // ✅ SAFE DEBUG LOG — password ka value kabhi log nahi hota
     console.log("========== UPDATE ASTROLOGER ==========");
 
-    console.log("BODY:", req.body);
-
-    console.log("FILE:", req.file);
-
-    console.log("ID:", req.params.id);
+    console.log({
+      email: req.body.email,
+      passwordReceived: Boolean(req.body.password),
+      hasFile: Boolean(req.file),
+      id: req.params.id,
+    });
  
     const astrologer = await Astrologer.findById(req.params.id);
  
@@ -498,9 +591,63 @@ const updateAstrologer = async (req, res) => {
 
     }
  
-    const { name, experience, pricePerMinute, rating, status, skills, languages } = req.body;
+    const { name, email, password, experience, pricePerMinute, rating, status, skills, languages } = req.body;
  
     const updateData = {};
+
+    // Email optional on update — sirf tab update karo jab bheja gaya ho
+    if (email !== undefined) {
+
+      const trimmedEmail = email.trim().toLowerCase();
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message: "Please provide a valid email",
+
+        });
+
+      }
+
+      const emailOwner = await Astrologer.findOne({ email: trimmedEmail });
+
+      if (emailOwner && emailOwner._id.toString() !== req.params.id) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message: "Another astrologer already uses this email",
+
+        });
+
+      }
+
+      updateData.email = trimmedEmail;
+
+    }
+
+    // Password optional on update — blank matlb current password unchanged
+    if (password) {
+
+      if (password.length < 6) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message: "Password must be at least 6 characters",
+
+        });
+
+      }
+
+      updateData.password = await bcrypt.hash(password, 10);
+
+    }
  
     if (name !== undefined) {
 
@@ -556,9 +703,29 @@ const updateAstrologer = async (req, res) => {
 
     }
  
+    // Previous image — deleted ONLY after the replacement is saved.
+    const previousImage = astrologer.image;
+    const previousImagePublicId = astrologer.imagePublicId;
+
+    let uploadedImage = null;
+
     if (req.file) {
 
-      updateData.image = `/uploads/${req.file.filename}`;
+      // Upload the replacement straight to Cloudinary (memory → cloud).
+      try {
+        uploadedImage = await uploadBufferToCloudinary(req.file, {
+          folder: CLOUDINARY_FOLDERS.astrologers,
+        });
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: uploadError.message,
+        });
+      }
+
+      updateData.image = uploadedImage.secure_url;
+
+      updateData.imagePublicId = uploadedImage.public_id;
 
     }
  
@@ -576,21 +743,41 @@ const updateAstrologer = async (req, res) => {
  
     console.log("UPDATE DATA:", updateData);
  
-    const updatedAstrologer = await Astrologer.findByIdAndUpdate(
+    let updatedAstrologer;
 
-      req.params.id,
+    try {
+      updatedAstrologer = await Astrologer.findByIdAndUpdate(
 
-      updateData,
+        req.params.id,
 
-      {
+        updateData,
 
-        new: true,
+        {
 
-        runValidators: true,
+          new: true,
 
+          runValidators: true,
+
+        }
+
+      );
+    } catch (updateError) {
+      // DB write failed after upload → remove the orphaned new asset.
+      if (uploadedImage) {
+        destroyCloudinaryAsset(uploadedImage.public_id);
       }
 
-    );
+      throw updateError;
+    }
+
+    // New image is saved — now it is safe to drop the previous one
+    // (Cloudinary asset by public_id, or legacy /uploads/ file).
+    if (uploadedImage && (previousImage || previousImagePublicId)) {
+      removeOldImage({
+        imageUrl: previousImage,
+        publicId: previousImagePublicId,
+      });
+    }
  
     res.status(200).json({
 
@@ -642,7 +829,13 @@ const deleteAstrologer = async (req, res) => {
 
     }
  
+    const imageUrl = astrologer.image;
+    const imagePublicId = astrologer.imagePublicId;
+
     await Astrologer.findByIdAndDelete(req.params.id);
+
+    // Best-effort cleanup of the Cloudinary asset (or legacy local file).
+    removeOldImage({ imageUrl, publicId: imagePublicId });
  
     res.status(200).json({
 

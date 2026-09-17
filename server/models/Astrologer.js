@@ -13,6 +13,7 @@ const astrologerSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false, // Hash kabhi API responses mein leak na ho (login findOne pe asar nahi padta)
     },
     isApproved: {
       type: Boolean,
@@ -33,6 +34,14 @@ const astrologerSchema = new mongoose.Schema(
       required: true,
     },
     image: {
+      type: String,
+      default: "",
+    },
+    // Cloudinary public_id of the profile image. Needed to delete the
+    // old asset when the image is replaced or the record is removed.
+    // Empty for records created before the Cloudinary migration
+    // (their stored URLs keep working as-is).
+    imagePublicId: {
       type: String,
       default: "",
     },

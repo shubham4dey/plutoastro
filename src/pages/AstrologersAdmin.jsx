@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
+import { resolveImageUrl } from "../utils/imageUrl";
 
-// ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
+// ✅ FIXED: environment-aware BASE_URL — local dev pe LOCAL server (port 5000),
+// production build pe Render URL. Pehle dono branches Render ko hit kar rahe
+// the — is wajah se "Save Astrologer" hamesha PURANE deployed backend par ja
+// raha tha jisme email/password handling nahi thi, isliye Mongoose
+// "password/email required" validation error aa raha tha.
 const BASE_URL =
   process.env.NODE_ENV === "development"
-    ? "https://plutoastro-backend.onrender.com"
+    ? "http://localhost:5000"
     : "https://plutoastro-backend.onrender.com";
 
 function AstrologersAdmin() {
@@ -19,6 +24,8 @@ function AstrologersAdmin() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
+    password: "",
     experience: "",
     pricePerMinute: "",
     rating: "",
@@ -150,6 +157,8 @@ function AstrologersAdmin() {
     setPreview("");
     setFormData({
       name: "",
+      email: "",
+      password: "",
       experience: "",
       pricePerMinute: "",
       rating: "",
@@ -168,8 +177,18 @@ function AstrologersAdmin() {
      Create Astrologer
   ========================= */
   const createAstrologer = async () => {
-    if (!formData.name || !formData.experience || !formData.pricePerMinute) {
+    if (!formData.name || !formData.email || !formData.password || !formData.experience || !formData.pricePerMinute) {
       alert("Please fill all required fields");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      alert("Please enter a valid email address");
+      return;
+    }
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters long");
       return;
     }
 
@@ -178,6 +197,8 @@ function AstrologersAdmin() {
       const form = new FormData();
 
       form.append("name", formData.name.trim());
+      form.append("email", formData.email.trim());
+      form.append("password", formData.password);
       form.append("experience", formData.experience);
       form.append("pricePerMinute", formData.pricePerMinute);
       form.append("rating", formData.rating || "0");
@@ -188,6 +209,16 @@ function AstrologersAdmin() {
       if (image) {
         form.append("image", image);
       }
+
+      // ✅ TEMP DEBUG — multipart payload verify (password value kabhi print nahi hota)
+      console.log(
+        "Create Astrologer → FormData fields:",
+        [...form.entries()].map(([k, v]) => ({
+          field: k,
+          isFile: v instanceof File || v instanceof Blob,
+          passwordPresent: k === "password" ? Boolean(v) : undefined,
+        }))
+      );
 
       const res = await fetch(`${BASE_URL}/api/admin/astrologer`, {
         method: "POST",
@@ -216,8 +247,19 @@ function AstrologersAdmin() {
      Update Astrologer
   ========================= */
   const updateAstrologer = async () => {
-    if (!formData.name || !formData.experience || !formData.pricePerMinute) {
+    if (!formData.name || !formData.email || !formData.experience || !formData.pricePerMinute) {
       alert("Please fill all required fields");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      alert("Please enter a valid email address");
+      return;
+    }
+    // Edit ke waqt password optional hai — sirf tab bhejo jab admin naya password daale
+    if (formData.password && formData.password.length < 6) {
+      alert("Password must be at least 6 characters long");
       return;
     }
 
@@ -226,6 +268,10 @@ function AstrologersAdmin() {
       const form = new FormData();
 
       form.append("name", formData.name.trim());
+      form.append("email", formData.email.trim());
+      if (formData.password) {
+        form.append("password", formData.password);
+      }
       form.append("experience", formData.experience);
       form.append("pricePerMinute", formData.pricePerMinute);
       form.append("rating", formData.rating || "0");
@@ -325,6 +371,8 @@ function AstrologersAdmin() {
     setEditingId(astro._id);
     setFormData({
       name: astro.name,
+      email: astro.email || "",
+      password: "",
       experience: astro.experience,
       pricePerMinute: astro.pricePerMinute,
       rating: astro.rating,
@@ -332,7 +380,7 @@ function AstrologersAdmin() {
       skills: astro.skills || [],
       languages: astro.languages || [],
     });
-    setPreview(astro.image ? `${BASE_URL}${astro.image}` : "");
+    setPreview(resolveImageUrl(astro.image));
     setShowModal(true);
   };
 
@@ -505,11 +553,10 @@ function AstrologersAdmin() {
                   <tr key={astro._id}>
                     <td style={td}>
                       <img
-                        src={
-                          astro.image
-                            ? `${BASE_URL}${astro.image}`
-                            : "https://via.placeholder.com/50"
-                        }
+                        src={resolveImageUrl(
+                          astro.image,
+                          "https://via.placeholder.com/50"
+                        )}
                         alt=""
                         style={{
                           width: "55px",
@@ -811,6 +858,28 @@ function AstrologersAdmin() {
                   onChange={handleChange}
                   style={input}
                   required
+                />
+
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email (Login ID) *"
+                  value={formData.email}
+                  onChange={handleChange}
+                  style={input}
+                  autoComplete="off"
+                  required
+                />
+
+                <input
+                  type="password"
+                  name="password"
+                  placeholder={editingId ? "New Password (leave blank to keep current)" : "Password (min 6 chars) *"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  style={input}
+                  autoComplete="new-password"
+                  required={!editingId}
                 />
 
                 <input
