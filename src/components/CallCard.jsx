@@ -1,11 +1,7 @@
 import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
-
-const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5000"
-    : "https://plutoastro-backend.onrender.com";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const CallCard = ({ info }) => {
   const Langkey = useSelector((store) => store.configApp?.lang) || "en";
@@ -15,12 +11,9 @@ const CallCard = ({ info }) => {
     return <ShimmerList />;
   }
 
-  const imageSrc =
-    info?.image && typeof info.image === "string"
-      ? info.image.startsWith("http")
-        ? info.image
-        : `${BASE_URL}${info.image}`
-      : "/Logo.png";
+  // Cloudinary URLs are used as-is; legacy relative /uploads/ paths are
+  // resolved against the API base.
+  const imageSrc = resolveImageUrl(info?.image, "/Logo.png");
 
   return (
     <div className="flex flex-row justify-start items-start gap-4 w-full h-full px-2 py-2 bg-purple-950/55 rounded-xl shadow-sm shadow-zinc-700 hover:bg-purple-800/55 transition-all duration-300 overflow-hidden">

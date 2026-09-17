@@ -6,6 +6,14 @@ const AstrologerApplication = require("../models/AstrologerApplication");
 const Astrologer = require("../models/Astrologer");
 const upload = require("../middleware/upload");
 
+// Permanent image storage — multer memory buffer → Cloudinary.
+const {
+  CLOUDINARY_FOLDERS,
+  uploadBufferToCloudinary,
+  destroyCloudinaryAsset,
+  removeOldImage,
+} = require("../utils/cloudinaryUpload");
+
 /* =========================
    APPLY AS ASTROLOGER
 ========================= */
@@ -35,18 +43,32 @@ router.post(
         });
       }
 
-      let image = "";
+      // Upload the selected photo straight to Cloudinary (memory → cloud).
+      let uploadedImage = null;
 
       if (req.file) {
-        image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        try {
+          uploadedImage = await uploadBufferToCloudinary(req.file, {
+            folder: CLOUDINARY_FOLDERS.astrologers,
+          });
+        } catch (uploadError) {
+          return res.status(500).json({
+            success: false,
+            message: uploadError.message,
+          });
+        }
       }
 
-      const application = await AstrologerApplication.create({
+      let application;
+
+      try {
+        application = await AstrologerApplication.create({
         name,
         email,
         phone,
         password,
-        image,
+        image: uploadedImage ? uploadedImage.secure_url : "",
+        imagePublicId: uploadedImage ? uploadedImage.public_id : "",
         experience: Number(experience) || 0,
 
         languages:
@@ -62,7 +84,15 @@ router.post(
         price: Number(price) || 10,
         about,
         status: "pending",
-      });
+        });
+      } catch (createError) {
+        // DB write failed after upload → clean up the orphaned asset.
+        if (uploadedImage) {
+          destroyCloudinaryAsset(uploadedImage.public_id);
+        }
+
+        throw createError;
+      }
 
       res.status(201).json({
         success: true,
@@ -153,6 +183,7 @@ router.patch("/approve/:id", async (req, res) => {
         email: application.email,             // ✅ ADDED
         password: hashedPassword,             // ✅ ADDED
         image: application.image,
+        imagePublicId: application.imagePublicId || "",
         experience: Number(application.experience) || 0,
         languages: application.languages || [],
         skills: application.speciality || [],
@@ -226,6 +257,13 @@ router.delete("/:id", async (req, res) => {
         message: "Application not found",
       });
     }
+
+    // Best-effort cleanup of the application photo (Cloudinary asset
+    // by public_id, or legacy /uploads/ file).
+    removeOldImage({
+      imageUrl: application.image,
+      publicId: application.imagePublicId,
+    });
 
     res.status(200).json({
       success: true,

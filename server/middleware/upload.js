@@ -1,23 +1,9 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
-// Local uploads folder: server/uploads
-const uploadsDir = path.join(__dirname, "../uploads");
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "astrologer-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
+// Image uploads are staged in MEMORY only and pushed straight to
+// Cloudinary by the route/controller (see server/utils/cloudinaryUpload.js).
+// Nothing is written to the project's uploads/ folder anymore, so
+// uploaded images survive Render restarts and redeploys.
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = [
@@ -41,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB

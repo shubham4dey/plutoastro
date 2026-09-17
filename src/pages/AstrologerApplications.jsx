@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const AstrologerApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -91,7 +92,7 @@ const AstrologerApplications = () => {
                 <div className="p-5 border-b border-purple-800/50">
                   <div className="flex items-center gap-4 mb-4">
                     <img 
-                      src={app.image || "https://via.placeholder.com/150"} 
+                      src={resolveImageUrl(app.image, "https://via.placeholder.com/150")} 
                       alt={app.name} 
                       className="w-16 h-16 rounded-full object-cover border-2 border-purple-500"
                     />

@@ -2,28 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const cloudinary = require('../cloudinary');
-const fs = require('fs');
-const path = require('path');
 
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'astrologer-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+// Configure multer for in-memory file upload — the buffer is pushed
+// straight to Cloudinary below. Nothing is written to the local disk.
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
@@ -51,8 +34,11 @@ router.post('/astrologer', upload.single('image'), async (req, res) => {
       });
     }
 
-    // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    // Upload to Cloudinary straight from the in-memory buffer.
+    const dataUri =
+      'data:' + req.file.mimetype + ';base64,' + req.file.buffer.toString('base64');
+
+    const result = await cloudinary.uploader.upload(dataUri, {
       folder: 'plutoastro/astrologers',
       width: 400,
       height: 400,
@@ -60,9 +46,6 @@ router.post('/astrologer', upload.single('image'), async (req, res) => {
       quality: 'auto',
       fetch_format: 'auto',
     });
-
-    // Delete local file after upload
-    fs.unlinkSync(req.file.path);
 
     // Send response
     res.json({
@@ -78,10 +61,7 @@ router.post('/astrologer', upload.single('image'), async (req, res) => {
   } catch (error) {
     console.error('Cloudinary upload error:', error);
     
-    // Clean up local file if upload failed
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
-    }
+    // Nothing to clean up locally — the image never touched the disk.
 
     res.status(500).json({ 
       success: false, 

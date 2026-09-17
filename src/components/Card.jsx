@@ -1,12 +1,7 @@
 import ShimmerList from "../shimmer/ShimmerList";
 import lang from "../utils/langConstants";
 import { useSelector } from "react-redux";
-
-// ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
-const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5000"
-    : "https://plutoastro-backend.onrender.com";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const Card = ({ info }) => {
 const Langkey = useSelector(
@@ -17,12 +12,9 @@ if (!info) {
 return <ShimmerList />;
 }
 
-// ✅ FIXED: build full image URL from relative path
-const imageSrc = info?.image
-  ? info.image.startsWith("http")
-    ? info.image
-    : `${BASE_URL}${info.image}`
-  : "/Logo.png";
+// Cloudinary URLs are used as-is; legacy relative /uploads/ paths are
+// resolved against the API base.
+const imageSrc = resolveImageUrl(info?.image, "/Logo.png");
 
 return ( <div
    className="

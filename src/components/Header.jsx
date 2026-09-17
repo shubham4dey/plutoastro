@@ -308,7 +308,7 @@ const Header = () => {
 
             <Link to="/zodiac" className={liCSS}>
 
-              ZODIAC
+              ZODIAC FEATURES
             </Link>
 
             <Link to="/calculators" className={liCSS}>

@@ -93,6 +93,19 @@ let createdBlog = null;
   createdBlog = created.data.blog;
   check("created blog saved with slug", createdBlog && !!createdBlog.slug, createdBlog && createdBlog.slug);
   check("created blog has featuredImage URL", createdBlog && !!createdBlog.featuredImage, createdBlog && createdBlog.featuredImage);
+  // Cloudinary migration assertions — new/replaced images must live on
+  // Cloudinary, never on the server's local disk (/uploads/blogs).
+  check("featuredImage starts with https://res.cloudinary.com/",
+    !!createdBlog && typeof createdBlog.featuredImage === "string" &&
+    createdBlog.featuredImage.startsWith("https://res.cloudinary.com/"),
+    createdBlog && createdBlog.featuredImage);
+  check("featuredImage is NOT a local /uploads/ URL",
+    !!createdBlog && !String(createdBlog.featuredImage || "").includes("/uploads/"),
+    createdBlog && createdBlog.featuredImage);
+  check("featuredImagePublicId saved under plutoastro/blogs/",
+    !!createdBlog && typeof createdBlog.featuredImagePublicId === "string" &&
+    createdBlog.featuredImagePublicId.startsWith("plutoastro/blogs/"),
+    createdBlog && createdBlog.featuredImagePublicId);
   check("created blog is draft (isPublished=false)", createdBlog && createdBlog.isPublished === false);
 
   // image actually served?
@@ -138,6 +151,9 @@ let createdBlog = null;
   editForm.append("excerpt", "E2E excerpt EDITED");
   const edited = await call(`/api/blogs/${createdBlog._id}`, { method: "PUT", body: editForm });
   check("PUT /api/blogs/:id -> updated", edited.status === 200 && edited.data.blog.title === "E2E Test Blog - EDITED");
+  check("edit WITHOUT new image keeps existing Cloudinary featuredImage",
+    edited.data.blog && edited.data.blog.featuredImage === createdBlog.featuredImage,
+    edited.data.blog && edited.data.blog.featuredImage);
 
   // ---------- UNPUBLISH ----------
   const unpublished = await call(`/api/blogs/${createdBlog._id}/publish`, {

@@ -10,6 +10,8 @@ import {
   useParams,
 } from "react-router-dom";
 
+import { resolveImageUrl } from "../utils/imageUrl";
+
 import {
   motion,
 } from "framer-motion";
@@ -73,12 +75,7 @@ function AIAstroProfile() {
     );
   }
 
-  const imageUrl =
-    astro?.image?.startsWith("http")
-      ? astro.image
-      : astro?.image
-      ? `https://plutoastro-backend.onrender.com${astro.image}`
-      : "/Logo.png";
+  const imageUrl = resolveImageUrl(astro?.image, "/Logo.png");
 
   return (
     <div className="relative min-h-screen overflow-hidden text-white pt-32 pb-20">

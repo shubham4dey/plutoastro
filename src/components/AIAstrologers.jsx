@@ -10,6 +10,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 function AIAstrologers() {
   const [aiAstrologers, setAiAstrologers] =
@@ -290,14 +291,10 @@ function AIAstrologers() {
                 >
                   <div className="relative">
                     <img
-                      src={
-                        astro.image
-                          ? astro.image
-                          : avatars[
-                              index %
-                                avatars.length
-                            ]
-                      }
+                      src={resolveImageUrl(
+                        astro.image,
+                        avatars[index % avatars.length]
+                      )}
                       alt={
                         astro.name
                       }

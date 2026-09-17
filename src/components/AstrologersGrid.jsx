@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 // ✅ FIXED: environment-aware BASE_URL — local dev pe localhost:5000, production pe Render URL
 const BASE_URL =
@@ -150,13 +151,10 @@ const AstrologersGrid = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
                         <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-purple-400 border-opacity-50">
                           <img
-  src={
-    astrologer.image
-      ? astrologer.image.startsWith("http")
-        ? astrologer.image
-        : `${BASE_URL}${astrologer.image}`
-      : "https://via.placeholder.com/150"
-  }
+  src={resolveImageUrl(
+    astrologer.image,
+    "https://via.placeholder.com/150"
+  )}
   alt={astrologer.name}
   className="w-full h-full object-cover"
   onError={(e) => {

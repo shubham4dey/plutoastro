@@ -1,5 +1,13 @@
 const Astrologer = require("../models/Astrologer");
 
+// Permanent image storage — images go straight from memory to Cloudinary.
+const {
+  CLOUDINARY_FOLDERS,
+  uploadBufferToCloudinary,
+  destroyCloudinaryAsset,
+  removeOldImage,
+} = require("../utils/cloudinaryUpload");
+
 const parseArrayField = (value) => {
   if (value === undefined) {
     return undefined;
@@ -24,12 +32,16 @@ const parseArrayField = (value) => {
   }
 };
 
-const getUploadedImageUrl = (file) => {
+// Uploads the multer memory buffer straight to Cloudinary and returns
+// { secure_url, public_id }, or null when no file was selected.
+const uploadImageIfPresent = async (file) => {
   if (!file) {
-    return "";
+    return null;
   }
 
-  return file.path || file.secure_url || file.url || "";
+  return uploadBufferToCloudinary(file, {
+    folder: CLOUDINARY_FOLDERS.astrologers,
+  });
 };
 
 const getAstrologers = async (req, res) => {
@@ -107,16 +119,44 @@ const createAstrologer = async (req, res) => {
       });
     }
 
-    const astrologer = await Astrologer.create({
-      name: name.trim(),
-      experience: Number(experience) || 0,
-      pricePerMinute: Number(pricePerMinute) || 10,
-      rating: Number(rating) || 5,
-      status: status || "online",
-      skills: parseArrayField(skills) || [],
-      languages: parseArrayField(languages) || [],
-      image: getUploadedImageUrl(req.file) || req.body.image || "",
-    });
+    // Upload the selected image straight to Cloudinary (memory → cloud).
+    let uploadedImage = null;
+
+    if (req.file) {
+      try {
+        uploadedImage = await uploadImageIfPresent(req.file);
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: uploadError.message,
+        });
+      }
+    }
+
+    let astrologer;
+
+    try {
+      astrologer = await Astrologer.create({
+        name: name.trim(),
+        experience: Number(experience) || 0,
+        pricePerMinute: Number(pricePerMinute) || 10,
+        rating: Number(rating) || 5,
+        status: status || "online",
+        skills: parseArrayField(skills) || [],
+        languages: parseArrayField(languages) || [],
+        image: uploadedImage
+          ? uploadedImage.secure_url
+          : req.body.image || "",
+        imagePublicId: uploadedImage ? uploadedImage.public_id : "",
+      });
+    } catch (createError) {
+      // DB write failed after upload → clean up the orphaned asset.
+      if (uploadedImage) {
+        destroyCloudinaryAsset(uploadedImage.public_id);
+      }
+
+      throw createError;
+    }
 
     res.status(201).json({
       success: true,
@@ -182,9 +222,33 @@ const updateAstrologer = async (req, res) => {
       updateData.languages = parsedLanguages;
     }
 
-    const uploadedImageUrl = getUploadedImageUrl(req.file);
-    if (uploadedImageUrl) {
-      updateData.image = uploadedImageUrl;
+    let uploadedImage = null;
+    let previousImage = "";
+    let previousImagePublicId = "";
+
+    if (req.file) {
+      // Read the current image first so it can be deleted only after the
+      // replacement has been saved successfully.
+      const existing = await Astrologer.findById(req.params.id).select(
+        "image imagePublicId"
+      );
+
+      if (existing) {
+        previousImage = existing.image || "";
+        previousImagePublicId = existing.imagePublicId || "";
+      }
+
+      try {
+        uploadedImage = await uploadImageIfPresent(req.file);
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: uploadError.message,
+        });
+      }
+
+      updateData.image = uploadedImage.secure_url;
+      updateData.imagePublicId = uploadedImage.public_id;
     }
 
     if (Object.keys(updateData).length === 0) {
@@ -194,16 +258,40 @@ const updateAstrologer = async (req, res) => {
       });
     }
 
-    const astrologer = await Astrologer.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    let astrologer;
+
+    try {
+      astrologer = await Astrologer.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true, runValidators: true }
+      );
+    } catch (updateError) {
+      // DB write failed after upload → clean up the orphaned asset.
+      if (uploadedImage) {
+        destroyCloudinaryAsset(uploadedImage.public_id);
+      }
+
+      throw updateError;
+    }
 
     if (!astrologer) {
+      if (uploadedImage) {
+        destroyCloudinaryAsset(uploadedImage.public_id);
+      }
+
       return res.status(404).json({
         success: false,
         message: "Astrologer not found",
+      });
+    }
+
+    // New image is saved — now drop the previous one (Cloudinary asset
+    // by public_id, or legacy /uploads/ file).
+    if (uploadedImage && (previousImage || previousImagePublicId)) {
+      removeOldImage({
+        imageUrl: previousImage,
+        publicId: previousImagePublicId,
       });
     }
 
@@ -231,6 +319,12 @@ const deleteAstrologer = async (req, res) => {
         message: "Astrologer not found",
       });
     }
+
+    // Best-effort cleanup of the stored image.
+    removeOldImage({
+      imageUrl: astrologer.image,
+      publicId: astrologer.imagePublicId,
+    });
 
     res.status(200).json({
       success: true,

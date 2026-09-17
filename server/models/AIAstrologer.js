@@ -14,6 +14,14 @@ const aiAstrologerSchema = new mongoose.Schema(
       default: "",
     },
 
+    // Cloudinary public_id of the profile image. Needed to delete the
+    // old asset when the image is replaced or the record is removed.
+    // Empty for records created before the Cloudinary migration.
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
+
     price: {
       type: Number,
       default: 0,

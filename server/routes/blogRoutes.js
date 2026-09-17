@@ -130,46 +130,89 @@ const parseBoolean = (value) => {
 
 const CLOUDINARY_BLOGS_FOLDER = "plutoastro/blogs";
 
-// Uploads the multer memory buffer to Cloudinary and resolves
-// { secure_url, public_id }.
-// NOTE: the installed cloudinary v1 SDK signature is
-// upload_stream(callback, options).
-const uploadBlogImageToCloudinary = (file) =>
-  new Promise((resolve, reject) => {
-    if (!file || !file.buffer) {
-      return reject(
-        new Error("No image data received.")
+// Hard ceiling for the Cloudinary upload. If the SDK/promise never
+// settles (network black hole, SDK quirk), the API still responds
+// and the admin UI never stays stuck on "Saving...".
+const CLOUDINARY_UPLOAD_TIMEOUT_MS = 30000;
+
+// Uploads the multer MEMORY buffer straight to Cloudinary and
+// resolves { secure_url, public_id }.
+//
+// The buffer is converted to a base64 data URI and passed to
+// cloudinary.uploader.upload(dataUri, options) — the SDK's supported
+// fully in-memory upload path. Nothing is ever written to disk:
+// not the project's uploads/blogs folder, not even the OS temp dir.
+//
+// NOTE: cloudinary.uploader.upload_stream MUST NOT be used with the
+// currently installed cloudinary@1.21.0 build — its v1/v2 argument
+// adapter crashes the entire Node process with
+// "TypeError: callback is not a function" (verified empirically),
+// which killed the API and left the admin UI stuck on "Saving...".
+const uploadBlogImageToCloudinary = async (file) => {
+  if (!file || !file.buffer || !file.buffer.length) {
+    throw new Error("No image data received.");
+  }
+
+  // In-memory only: multer.memoryStorage() buffer → base64 data URI.
+  const dataUri = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+  try {
+    const uploadPromise = cloudinary.uploader.upload(dataUri, {
+      folder: CLOUDINARY_BLOGS_FOLDER,
+      resource_type: "image",
+      timeout: CLOUDINARY_UPLOAD_TIMEOUT_MS,
+    });
+
+    // Belt-and-braces timeout: if the SDK promise never settles,
+    // reject so the request returns an error instead of hanging.
+    const timeoutPromise = new Promise((_, reject) => {
+      const timer = setTimeout(
+        () =>
+          reject(
+            new Error(
+              "Image upload timed out. Please try again."
+            )
+          ),
+        CLOUDINARY_UPLOAD_TIMEOUT_MS + 5000
+      );
+
+      // Don't let the safety timer keep the process alive.
+      if (typeof timer.unref === "function") {
+        timer.unref();
+      }
+    });
+
+    const result = await Promise.race([
+      uploadPromise,
+      timeoutPromise,
+    ]);
+
+    if (!result || !result.secure_url) {
+      throw new Error(
+        "Image upload failed. Please try again."
       );
     }
 
-    const stream = cloudinary.uploader.upload_stream(
-      (error, result) => {
-        if (error || !result) {
-          console.error(
-            "Cloudinary blog image upload failed:",
-            error
-          );
-
-          return reject(
-            new Error(
-              "Image upload failed. Please try again."
-            )
-          );
-        }
-
-        resolve({
-          secure_url: result.secure_url,
-          public_id: result.public_id,
-        });
-      },
-      {
-        folder: CLOUDINARY_BLOGS_FOLDER,
-        resource_type: "image",
-      }
+    return {
+      secure_url: result.secure_url,
+      public_id: result.public_id,
+    };
+  } catch (error) {
+    console.error(
+      "Cloudinary blog image upload failed:",
+      error
     );
 
-    stream.end(file.buffer);
-  });
+    // Surface Cloudinary's own message (invalid creds, quota,
+    // disallowed format, timeout) when available.
+    throw new Error(
+      (error &&
+        (error.message ||
+          (error.error && error.error.message))) ||
+      "Image upload failed. Please try again."
+    );
+  }
+};
 
 // Best-effort: derive the Cloudinary public_id from a stored
 // URL. Used only for blogs created before the

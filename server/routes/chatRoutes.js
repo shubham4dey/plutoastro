@@ -22,21 +22,21 @@ const {
  
 const Chat = require("../models/Chat");
  
-// ✅ NEW: Audio upload setup
+// ✅ Audio upload setup — audio is buffered in MEMORY and pushed
+// straight to Cloudinary (under the "video" resource type, which is how
+// Cloudinary stores audio). Nothing is written to the Render
+// filesystem, so audio messages survive restarts and redeploys.
 
-const storage = multer.diskStorage({
-
-  destination: (req, file, cb) =>
-
-    cb(null, path.join(__dirname, "../uploads")),
-
-  filename: (req, file, cb) =>
-
-    cb(null, `audio-${Date.now()}${path.extname(file.originalname)}`),
-
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB
 });
 
-const upload = multer({ storage });
+// Permanent storage helper (multer memory buffer → Cloudinary).
+const {
+  CLOUDINARY_FOLDERS,
+  uploadBufferToCloudinary,
+} = require("../utils/cloudinaryUpload");
  
 /* ==========================================
 
@@ -60,7 +60,7 @@ router.get("/history/:roomId", getChatHistory);
 
 ========================================== */
  
-router.post("/upload-audio", upload.single("audio"), (req, res) => {
+router.post("/upload-audio", upload.single("audio"), async (req, res) => {
 
   if (!req.file) {
 
@@ -68,7 +68,40 @@ router.post("/upload-audio", upload.single("audio"), (req, res) => {
 
   }
 
-  res.json({ success: true, url: `/uploads/${req.file.filename}` });
+  // Store permanently on Cloudinary — no local/Render disk usage.
+  try {
+
+    const uploaded = await uploadBufferToCloudinary(req.file, {
+
+      folder: CLOUDINARY_FOLDERS.chatAudio,
+
+      resourceType: "video", // Cloudinary stores audio as "video"
+
+    });
+
+    return res.json({
+
+      success: true,
+
+      url: uploaded.secure_url,
+
+      public_id: uploaded.public_id,
+
+    });
+
+  } catch (error) {
+
+    console.error("Audio upload error:", error);
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message || "Audio upload failed",
+
+    });
+
+  }
 
 });
  

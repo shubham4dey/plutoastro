@@ -29,6 +29,14 @@ const astrologerApplicationSchema =
         default: "",
       },
 
+      // Cloudinary public_id of the application photo. Needed to delete
+      // the asset when the application is removed/rejected.
+      // Empty for applications created before the Cloudinary migration.
+      imagePublicId: {
+        type: String,
+        default: "",
+      },
+
       experience: {
         type: Number,
         default: 0,

@@ -7,6 +7,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import PreChatForm from "./PreChatForm";
 import { rechargeWithRazorpay } from "../utils/razorpay";
+// Cloudinary-aware resolver — keeps legacy /uploads paths working too.
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const API = process.env.REACT_APP_API_URL || "https://plutoastro-backend.onrender.com";
 
@@ -547,7 +549,7 @@ const ChatInbox = () => {
                         }`}
                       >
                         {msg.messageType === "audio" && msg.attachment ? (
-                          <audio controls src={`${API}${msg.attachment}`} className="w-56" />
+                          <audio controls src={resolveImageUrl(msg.attachment)} className="w-56" />
                         ) : (
                           <p className="whitespace-pre-wrap">{msg.message || msg.text}</p>
                         )}

@@ -18,6 +18,9 @@ import { useState, useEffect } from "react";
 
 import { addForm } from "../store/configAppSlice";
 
+// Cloudinary-aware image URL resolver (works for legacy /uploads paths too)
+import { resolveImageUrl } from "../utils/imageUrl";
+
 import Chatbot from "./Chatbot";
 
 import bg from "../image/bg1.jpg";
@@ -572,7 +575,7 @@ const AstroProfile = () => {
 
                     className="w-full h-auto"
 
-                    src={data?.image ? `${API}${data.image}` : PROFILE_IMG}
+                    src={resolveImageUrl(data?.image, PROFILE_IMG)}
 
                     alt={data?.name}
 

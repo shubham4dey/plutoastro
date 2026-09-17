@@ -8,6 +8,7 @@ import Chatbot from "./Chatbot";
 import panditphone from "../image/pandit showing phone screen.png";
 import panditwelcome from "../image/pandit welcome.webp";
 import lang from "../utils/langConstants";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const Following = () => {
   const dispatch = useDispatch();
@@ -149,11 +150,10 @@ const Following = () => {
                             <img
                               className="relative w-20 h-20 rounded-full border-2 border-purple-400 border-opacity-50 object-cover"
                               alt={astrologer.name}
-                              src={
-                                astrologer.image
-                                  ? `https://plutoastro-backend.onrender.com${astrologer.image}`
-                                  : PROFILE_IMG
-                              }
+                              src={resolveImageUrl(
+                                astrologer.image,
+                                PROFILE_IMG
+                              )}
                             />
                             {astrologer.status === "online" && (
                               <div className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-purple-950 flex items-center justify-center">

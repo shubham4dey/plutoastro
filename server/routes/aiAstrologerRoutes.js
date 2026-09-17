@@ -7,6 +7,14 @@ const router = express.Router();
 const AIAstrologer = require("../models/AIAstrologer");
 const upload = require("../middleware/upload");
 
+// Permanent image storage — multer memory buffer → Cloudinary.
+const {
+  CLOUDINARY_FOLDERS,
+  uploadBufferToCloudinary,
+  destroyCloudinaryAsset,
+  removeOldImage,
+} = require("../utils/cloudinaryUpload");
+
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -127,25 +135,33 @@ router.post(
         isActive,
       } = req.body;
 
-      let image = "";
+      let uploadedImage = null;
 
       if (req.file) {
-        image = `${req.protocol}://${req.get(
-          "host"
-        )}/uploads/${
-          req.file.filename
-        }`;
+        try {
+          uploadedImage = await uploadBufferToCloudinary(req.file, {
+            folder: CLOUDINARY_FOLDERS.aiAstrologers,
+          });
+        } catch (uploadError) {
+          return res.status(500).json({
+            success: false,
+            message: uploadError.message,
+          });
+        }
       }
 
-      const astrologer =
-        await AIAstrologer.create({
+      let astrologer;
+
+      try {
+        astrologer = await AIAstrologer.create({
           name,
           price:
             Number(price) ||
             0,
           description,
           prompt,
-          image,
+          image: uploadedImage ? uploadedImage.secure_url : "",
+          imagePublicId: uploadedImage ? uploadedImage.public_id : "",
 
           speciality:
             typeof speciality ===
@@ -167,6 +183,14 @@ router.post(
               ? false
               : true,
         });
+      } catch (createError) {
+        // DB write failed after upload → clean up the orphaned asset.
+        if (uploadedImage) {
+          destroyCloudinaryAsset(uploadedImage.public_id);
+        }
+
+        throw createError;
+      }
 
       res.status(201).json({
         success: true,
@@ -286,16 +310,47 @@ router.put(
           "true";
       }
 
+      let uploadedImage = null;
+
       if (req.file) {
-        astrologer.image =
-          `${req.protocol}://${req.get(
-            "host"
-          )}/uploads/${
-            req.file.filename
-          }`;
+        try {
+          uploadedImage = await uploadBufferToCloudinary(req.file, {
+            folder: CLOUDINARY_FOLDERS.aiAstrologers,
+          });
+        } catch (uploadError) {
+          return res.status(500).json({
+            success: false,
+            message: uploadError.message,
+          });
+        }
       }
 
-      await astrologer.save();
+      // Previous image — deleted only after the new one is saved.
+      const previousImage = astrologer.image;
+      const previousImagePublicId = astrologer.imagePublicId;
+
+      if (uploadedImage) {
+        astrologer.image = uploadedImage.secure_url;
+        astrologer.imagePublicId = uploadedImage.public_id;
+      }
+
+      try {
+        await astrologer.save();
+      } catch (saveError) {
+        // DB write failed after upload → clean up the orphaned asset.
+        if (uploadedImage) {
+          destroyCloudinaryAsset(uploadedImage.public_id);
+        }
+
+        throw saveError;
+      }
+
+      if (uploadedImage && (previousImage || previousImagePublicId)) {
+        removeOldImage({
+          imageUrl: previousImage,
+          publicId: previousImagePublicId,
+        });
+      }
 
       res.status(200).json({
         success: true,
@@ -350,7 +405,13 @@ router.delete(
         });
       }
 
+      const imageUrl = astrologer.image;
+      const imagePublicId = astrologer.imagePublicId;
+
       await astrologer.deleteOne();
+
+      // Best-effort cleanup of the Cloudinary asset (or legacy local file).
+      removeOldImage({ imageUrl, publicId: imagePublicId });
 
       res.status(200).json({
         success: true,

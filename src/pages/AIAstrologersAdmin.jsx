@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 function AIAstrologersAdmin() {
   const [astrologers, setAstrologers] = useState([]);
@@ -76,7 +77,7 @@ function AIAstrologersAdmin() {
       isActive: astro.isActive,
     });
 
-    setPreview(astro.image || "");
+    setPreview(resolveImageUrl(astro.image));
 
     setImage(null);
 
@@ -403,11 +404,7 @@ function AIAstrologersAdmin() {
           >
             <div className="flex gap-5 items-center">
               <img
-                src={
-                  astro.image
-                    ? `https://plutoastro-backend.onrender.com${astro.image}`
-                    : "/Logo.png"
-                }
+                src={resolveImageUrl(astro.image, "/Logo.png")}
                 alt=""
                 className="
                   w-20

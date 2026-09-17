@@ -5,4 +5,8 @@ node_modules/
 uploads/
 
 logs/
+
+# Runtime logs of locally started server processes
+server-run.log
+server-run.err.log
  
