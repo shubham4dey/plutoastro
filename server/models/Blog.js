@@ -19,6 +19,14 @@ const blogSchema = new mongoose.Schema(
       type: String,
       default: ""
     },
+    // Cloudinary public_id of the featuredImage. Needed to delete
+    // the old asset from Cloudinary when the image is replaced or
+    // the blog is deleted. Empty for blogs created before the
+    // Cloudinary migration (their stored URLs keep working as-is).
+    featuredImagePublicId: {
+      type: String,
+      default: ""
+    },
     excerpt: {
       type: String,
       default: "",

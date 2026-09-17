@@ -8,6 +8,13 @@ const router = express.Router();
 
 const Blog = require("../models/Blog");
 
+// Permanent image storage — credentials come from
+// CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY /
+// CLOUDINARY_API_SECRET (configured in server/cloudinary.js).
+// The API secret stays on the backend and is never exposed
+// to the React frontend.
+const cloudinary = require("../cloudinary");
+
 // =====================================================
 // AUTH
 // =====================================================
@@ -30,8 +37,14 @@ if (typeof adminAuth !== "function") {
 
 // =====================================================
 // UPLOAD CONFIGURATION
+// Images are staged in MEMORY only (multer.memoryStorage)
+// and streamed straight to Cloudinary — nothing is written
+// to the Render filesystem, so blog images survive
+// restarts and redeploys.
 // =====================================================
 
+// Kept ONLY for deleteLocalImage() below, which cleans up
+// images stored by the legacy local-disk flow.
 const uploadsDir = path.join(
   __dirname,
   "..",
@@ -45,28 +58,8 @@ if (!fs.existsSync(uploadsDir)) {
   });
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-
-    const safeName = path
-      .basename(file.originalname, ext)
-      .replace(/[^a-zA-Z0-9-_]/g, "-")
-      .substring(0, 60);
-
-    cb(
-      null,
-      `${Date.now()}-${safeName}${ext}`
-    );
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
 
   limits: {
     fileSize: 5 * 1024 * 1024,
@@ -128,15 +121,83 @@ const parseBoolean = (value) => {
   return false;
 };
 
-const getImageUrl = (req, file) => {
-  if (!file) return "";
+// =====================================================
+// CLOUDINARY STORAGE (permanent image hosting)
+// Images are uploaded from the backend to Cloudinary and
+// ONLY the returned secure_url is stored in MongoDB — the
+// frontend renders that URL directly.
+// =====================================================
 
-  const baseUrl =
-    process.env.SERVER_URL ||
-    process.env.BACKEND_URL ||
-    `${req.protocol}://${req.get("host")}`;
+const CLOUDINARY_BLOGS_FOLDER = "plutoastro/blogs";
 
-  return `${baseUrl}/uploads/blogs/${file.filename}`;
+// Uploads the multer memory buffer to Cloudinary and resolves
+// { secure_url, public_id }.
+// NOTE: the installed cloudinary v1 SDK signature is
+// upload_stream(callback, options).
+const uploadBlogImageToCloudinary = (file) =>
+  new Promise((resolve, reject) => {
+    if (!file || !file.buffer) {
+      return reject(
+        new Error("No image data received.")
+      );
+    }
+
+    const stream = cloudinary.uploader.upload_stream(
+      (error, result) => {
+        if (error || !result) {
+          console.error(
+            "Cloudinary blog image upload failed:",
+            error
+          );
+
+          return reject(
+            new Error(
+              "Image upload failed. Please try again."
+            )
+          );
+        }
+
+        resolve({
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+        });
+      },
+      {
+        folder: CLOUDINARY_BLOGS_FOLDER,
+        resource_type: "image",
+      }
+    );
+
+    stream.end(file.buffer);
+  });
+
+// Best-effort: derive the Cloudinary public_id from a stored
+// URL. Used only for blogs created before the
+// featuredImagePublicId field existed. Returns null for
+// non-Cloudinary (legacy local /uploads/...) URLs.
+const extractCloudinaryPublicId = (imageUrl) => {
+  try {
+    if (
+      !imageUrl ||
+      !imageUrl.includes("res.cloudinary.com")
+    ) {
+      return null;
+    }
+
+    const pathname =
+      new URL(imageUrl).pathname;
+
+    // .../upload/[v<version>/]<public_id>.<ext>
+    const match = pathname.match(
+      /\/upload\/(?:v\d+\/)?(.+?)(?:\.[^./]+)?$/
+    );
+
+    return match && match[1]
+      ? decodeURIComponent(match[1])
+      : null;
+  } catch (error) {
+    return null;
+  }
 };
 
 const deleteLocalImage = (imageUrl) => {
@@ -174,6 +235,48 @@ const cleanupUploadedFile = (file) => {
     console.warn(
       "Could not cleanup uploaded file:",
       error.message
+    );
+  }
+};
+
+// Safely removes the previous blog image, wherever it lives:
+//   1. New flow            — stored Cloudinary public_id → destroy.
+//   2. Legacy Cloudinary URL — derive public_id → destroy.
+//   3. Legacy local file (/uploads/blogs/...) — delete from disk.
+// Best-effort only: failures are logged and never break the
+// blog create/update/delete request itself.
+const destroyOldBlogImage = ({ imageUrl, publicId } = {}) => {
+  if (!imageUrl && !publicId) return;
+
+  try {
+    const targetPublicId =
+      publicId || extractCloudinaryPublicId(imageUrl);
+
+    if (targetPublicId) {
+      cloudinary.uploader
+        .destroy(targetPublicId)
+        .then((result) =>
+          console.log(
+            `🗑️ Old blog image removed from Cloudinary (${targetPublicId}):`,
+            result && result.result
+          )
+        )
+        .catch((error) =>
+          console.warn(
+            `Could not delete old Cloudinary image (${targetPublicId}):`,
+            error && error.message
+          )
+        );
+
+      return;
+    }
+
+    // Legacy local image from the old Render-disk flow.
+    deleteLocalImage(imageUrl);
+  } catch (error) {
+    console.warn(
+      "Could not delete old blog image:",
+      error && error.message
     );
   }
 };
@@ -451,9 +554,36 @@ router.post(
         blogData.publishDate = new Date();
       }
 
+      // Uploaded just now — needed to clean up the Cloudinary
+      // asset if blog creation fails below.
+      let uploadedPublicId = null;
+
       if (req.file) {
-        blogData.featuredImage =
-          getImageUrl(req, req.file);
+        try {
+          const uploadedImage =
+            await uploadBlogImageToCloudinary(req.file);
+
+          blogData.featuredImage =
+            uploadedImage.secure_url;
+
+          blogData.featuredImagePublicId =
+            uploadedImage.public_id;
+
+          uploadedPublicId =
+            uploadedImage.public_id;
+        } catch (uploadError) {
+          console.error(
+            "POST /api/blogs image upload error:",
+            uploadError
+          );
+
+          return res.status(500).json({
+            success: false,
+            message:
+              uploadError.message ||
+              "Image upload failed. Please try again.",
+          });
+        }
       }
 
       const blog =
@@ -469,6 +599,19 @@ router.post(
         "POST /api/blogs error:",
         error
       );
+
+      // Remove the just-uploaded Cloudinary asset if the blog
+      // could not be created (prevents orphaned uploads).
+      if (uploadedPublicId) {
+        cloudinary.uploader
+          .destroy(uploadedPublicId)
+          .catch((destroyError) =>
+            console.warn(
+              "Could not clean up orphaned Cloudinary upload:",
+              destroyError && destroyError.message
+            )
+          );
+      }
 
       cleanupUploadedFile(req.file);
 
@@ -615,19 +758,54 @@ router.put(
         }
       }
 
+      // Previous image details (captured before overwriting) and
+      // the new upload's public_id (for orphan cleanup on failure).
+      let previousImage = null;
+      let previousImagePublicId = null;
+      let uploadedPublicId = null;
+
       if (req.file) {
-        const oldImage =
-          blog.featuredImage;
+        try {
+          const uploadedImage =
+            await uploadBlogImageToCloudinary(req.file);
 
-        blog.featuredImage =
-          getImageUrl(req, req.file);
+          previousImage = blog.featuredImage;
+          previousImagePublicId = blog.featuredImagePublicId;
 
-        if (oldImage) {
-          deleteLocalImage(oldImage);
+          blog.featuredImage =
+            uploadedImage.secure_url;
+
+          blog.featuredImagePublicId =
+            uploadedImage.public_id;
+
+          uploadedPublicId =
+            uploadedImage.public_id;
+        } catch (uploadError) {
+          console.error(
+            "PUT /api/blogs/:id image upload error:",
+            uploadError
+          );
+
+          return res.status(500).json({
+            success: false,
+            message:
+              uploadError.message ||
+              "Image upload failed. Please try again.",
+          });
         }
       }
 
       await blog.save();
+
+      // The old asset is deleted only AFTER the new image is
+      // safely saved, so a failed save never leaves the blog
+      // without its featured image.
+      if (previousImage || previousImagePublicId) {
+        destroyOldBlogImage({
+          imageUrl: previousImage,
+          publicId: previousImagePublicId,
+        });
+      }
 
       return res.json({
         success: true,
@@ -639,6 +817,19 @@ router.put(
         "PUT /api/blogs/:id error:",
         error
       );
+
+      // Remove the just-uploaded Cloudinary asset if the blog
+      // could not be saved (prevents orphaned uploads).
+      if (uploadedPublicId) {
+        cloudinary.uploader
+          .destroy(uploadedPublicId)
+          .catch((destroyError) =>
+            console.warn(
+              "Could not clean up orphaned Cloudinary upload:",
+              destroyError && destroyError.message
+            )
+          );
+      }
 
       cleanupUploadedFile(req.file);
 
@@ -762,10 +953,16 @@ router.delete(
       const imageUrl =
         blog.featuredImage;
 
+      const imagePublicId =
+        blog.featuredImagePublicId;
+
       await Blog.findByIdAndDelete(id);
 
-      if (imageUrl) {
-        deleteLocalImage(imageUrl);
+      if (imageUrl || imagePublicId) {
+        destroyOldBlogImage({
+          imageUrl,
+          publicId: imagePublicId,
+        });
       }
 
       return res.json({
